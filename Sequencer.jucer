@@ -51,18 +51,18 @@
                        osxArchitecture="default" isDebug="0" optimisation="3" targetName="Sequencer"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="../../../../Volumes/Macintosh HD/Users/sealabs/dev/Sequencer/Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="Libraries/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
   </EXPORTFORMATS>
