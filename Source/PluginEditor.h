@@ -14,7 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 
-class SequencerAudioProcessorEditor  : public AudioProcessorEditor, public SliderListener, public Timer
+class SequencerAudioProcessorEditor  : public AudioProcessorEditor, public SliderListener, ValueTree::Listener
 {
 public:
     SequencerAudioProcessorEditor (SequencerAudioProcessor* ownerFilter);
@@ -23,7 +23,11 @@ public:
     void paint (Graphics& g);
 	void sliderValueChanged(Slider* slider);
 	void resized();
-	void timerCallback() override;
+	void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property);
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
+	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
+	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 private:
 	
 	SequencerAudioProcessor* getProcessor() const
@@ -31,6 +35,7 @@ private:
         return static_cast <SequencerAudioProcessor*> (getAudioProcessor());
     }
 	OwnedArray<Slider> theStepSliders;
+	ValueTree theAudioConfig;
 };
 
 

@@ -16,14 +16,19 @@
 SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter)
 {
+	theAudioConfig = getProcessor()->getValueTree();
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
 		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle (Slider::LinearBarVertical);
+		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->addListener (this);
 		theStepSliders[i]->setRange (-12, 12, 1);
+		theStepSliders[i]->setValue(theAudioConfig.getChild(i).getProperty("Pitch"));
 	}
     setSize (600, 300);
+	
+	theAudioConfig.addListener(this);
 }
 
 SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
@@ -53,10 +58,21 @@ void SequencerAudioProcessorEditor::sliderValueChanged(Slider* slider)
 		getProcessor()->setParameterNotifyingHost(index + 32, slider->getValue());
 	}
 }
-
-void SequencerAudioProcessorEditor::timerCallback()
+void SequencerAudioProcessorEditor::valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property)
 {
-    SequencerAudioProcessor* ourProcessor = getProcessor();
+	int index = treeWhosePropertyHasChanged.getParent().indexOf(treeWhosePropertyHasChanged);
+	if(String(property) == "Pitch")
+	{
+		theStepSliders[index]->setValue(treeWhosePropertyHasChanged.getProperty(property));
+	}
+	else if(String(property) == "Velocity")
+	{
+		theStepSliders[index]->setValue(treeWhosePropertyHasChanged.getProperty(property));
+	}
+	else if(String(property) == "State")
+	{
+		theStepSliders[index]->setValue(treeWhosePropertyHasChanged.getProperty(property));
+	}
 }
 
 void SequencerAudioProcessorEditor::resized()
@@ -66,7 +82,6 @@ void SequencerAudioProcessorEditor::resized()
 		theStepSliders[i]->setBounds((getWidth()/16)*i, getHeight()/3, 20, 100);
 	}
 }
-
 
 
 

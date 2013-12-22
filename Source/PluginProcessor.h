@@ -21,6 +21,8 @@ public:
     SequencerAudioProcessor();
     ~SequencerAudioProcessor();
 	
+	ValueTree& getValueTree(){return *theAudioConfig;}
+	
 	int lastUIWidth, lastUIHeight;
 	int theSequencerLength;
 	
@@ -38,7 +40,8 @@ public:
 	
 	ValueTree* theAudioConfig;
 	UndoManager* theUndoManager;
-
+	
+	
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);

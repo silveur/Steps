@@ -26,6 +26,8 @@ public:
 		theState = theStepTree.getProperty("State");
 		theStepTree.addListener(this);
 	}
+	~Step()
+	{}
 	int theVelocity;
 	int thePitch;
 	bool theState;

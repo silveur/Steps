@@ -11,6 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+void copyTree(ValueTree& destinationTree,ValueTree& sourceTree);
 
 SequencerAudioProcessor::SequencerAudioProcessor()
 {
@@ -69,6 +70,7 @@ void SequencerAudioProcessor::setParameter(int index, float newValue)
 	if(index < 16)
 	{
 		theSteps[index]->thePitch = newValue;
+		theAudioConfig->getChild(index).setProperty("Pitch", newValue, theUndoManager);
 	}
 	else if(index >= 16 && index < 24)
 	{
@@ -232,34 +234,14 @@ AudioProcessorEditor* SequencerAudioProcessor::createEditor()
 //==============================================================================
 void SequencerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    XmlElement xml ("MYPLUGINSETTINGS");
-	
-    xml.setAttribute ("uiWidth", lastUIWidth);
-    xml.setAttribute ("uiHeight", lastUIHeight);
-    xml.setAttribute ("Length", theSequencerLength);
-	for(int i=0;i<NUM_CHANNELS_MAX;i++)
-	{
-		xml.setAttribute ("StepPitch" + String(i), theSteps[i]->thePitch);
-		xml.setAttribute ("StepVelocity" + String(i), theSteps[i]->theVelocity);
-		xml.setAttribute ("StepState" + String(i), theSteps[i]->theState);
-	}
-	
-    copyXmlToBinary (xml, destData);
+	MemoryOutputStream rawStream(destData, false);
+	theAudioConfig->writeToStream(rawStream);
 }
 
 void SequencerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
-	
-    if (xmlState != nullptr)
-    {
-        if (xmlState->hasTagName ("MYPLUGINSETTINGS"))
-        {
-            lastUIWidth  = xmlState->getIntAttribute ("uiWidth", lastUIWidth);
-            lastUIHeight = xmlState->getIntAttribute ("uiHeight", lastUIHeight);
-            theSequencerLength  = (float) xmlState->getDoubleAttribute ("Lengh", theSequencerLength);
-        }
-	}
+	ValueTree treeToRead(ValueTree::readFromData(data, sizeInBytes));
+	copyTree(*theAudioConfig, treeToRead);
 }
 
 //==============================================================================
@@ -267,4 +249,23 @@ void SequencerAudioProcessor::setStateInformation (const void* data, int sizeInB
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new SequencerAudioProcessor();
+}
+
+inline void copyTree(ValueTree& destinationTree,ValueTree& sourceTree)
+{
+    destinationTree.copyPropertiesFrom(sourceTree, 0);
+    const int numChildren = sourceTree.getNumChildren();
+    for (int i = 0; i < numChildren; ++i)
+    {
+		String sourceTreeChildName = (String)sourceTree.getChild(i).getType();
+		String destTreeChildName = (String)destinationTree.getChild(i).getType();
+		ValueTree sourceChild = sourceTree.getChild(i);
+        ValueTree destinationChild = destinationTree.getChild(i);
+        if(destinationChild.isValid() && sourceChild.isValid())
+		{
+            destinationChild.copyPropertiesFrom(sourceChild, 0);
+			if(sourceChild.getNumChildren()!=0)
+				copyTree(destinationChild,sourceChild);
+		}
+    }
 }
