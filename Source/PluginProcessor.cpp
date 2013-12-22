@@ -1,343 +1,203 @@
 /*
- ==============================================================================
- 
- This file was auto-generated!
- 
- It contains the basic startup code for a Juce application.
- 
- ==============================================================================
- */
+  ==============================================================================
+
+    This file was auto-generated!
+
+    It contains the basic startup code for a Juce application.
+
+  ==============================================================================
+*/
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
 //==============================================================================
-SequencerAuAudioProcessor::SequencerAuAudioProcessor():delayBuffer (2, 12000)
+SequencerAudioProcessor::SequencerAudioProcessor()
 {
-    // Set up some default values..
-    gain = 1.0f;
-    delay = 0.5f;
-    sampleCount=0;
-    lastUIWidth = 400;
-    lastUIHeight = 200;
-    theSampleRate=0;
-    lastPosInfo.resetToDefault();
-    previousStep =0;
-    numSteps=16;
-    rootKey = 0;
-    transpose=0;
-    theMidiCore = new MidiCore();
-    isRunning=false;
-    currentArray.clear();
-    shuffle=0.2;
-    newStep=0;
-    midiOutputIndex=0;
-    for(int i=0;i<16;i++)
-    {
-        noteValues[i]=0;
-        velocities[i]=127;
-        theOnOffArray[i]=true;
-    }
-    setMidiOutputDevice();
+	for(int i=0;i<NUM_CHANNELS_MAX;i++)
+	{
+		theSteps.add(new Step());
+	}
+
 }
 
-SequencerAuAudioProcessor::~SequencerAuAudioProcessor()
+SequencerAudioProcessor::~SequencerAudioProcessor()
 {
-    flush();
-    deleteAndZero(theMidiCore);
 }
 
 //==============================================================================
-const String SequencerAuAudioProcessor::getName() const
+const String SequencerAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-int SequencerAuAudioProcessor::getNumParameters()
+int SequencerAudioProcessor::getNumParameters()
 {
-    return 0;
+    return totalNumParams;
 }
 
-float SequencerAuAudioProcessor::getParameter (int index)
+float SequencerAudioProcessor::getParameter (int index)
 {
-    // This method will be called by the host, probably on the audio thread, so
-    // it's absolutely time-critical. Don't use critical sections or anything
-    // UI-related, or anything at all that may block in any way!
-    switch (index)
+	switch (index)
+	{
+		case SequencerLength:	return theSequencerLength;
+		default:				return 0.0f;
+	}
+}
+
+void SequencerAudioProcessor::setParameter (int index, float newValue)
+{
+	switch (index)
     {
-        case gainParam:     return gain;
-        case delayParam:    return delay;
-        default:            return 0.0f;
+        case SequencerLength:	theSequencerLength = newValue;  break;
+        default:												break;
     }
 }
 
-void SequencerAuAudioProcessor::setParameter (int index, float newValue)
+const String SequencerAudioProcessor::getParameterName (int index)
 {
     switch (index)
     {
-        case gainParam:     gain = newValue;  break;
-        case delayParam:    delay = newValue;  break;
-        default:            break;
+        case SequencerLength:     return "Length";
+        default:					break;
     }
-}
-
-const String SequencerAuAudioProcessor::getParameterName (int index)
-{
-    switch (index)
-    {
-        case gainParam:     return "gain";
-        case delayParam:    return "delay";
-        default:            break;
-    }
-    
+	
     return String::empty;
 }
 
-const String SequencerAuAudioProcessor::getParameterText (int index)
+const String SequencerAudioProcessor::getParameterText (int index)
 {
     return String (getParameter (index), 2);
 }
 
-const String SequencerAuAudioProcessor::getInputChannelName (int channelIndex) const
+const String SequencerAudioProcessor::getInputChannelName (int channelIndex) const
 {
     return String (channelIndex + 1);
 }
 
-const String SequencerAuAudioProcessor::getOutputChannelName (int channelIndex) const
+const String SequencerAudioProcessor::getOutputChannelName (int channelIndex) const
 {
     return String (channelIndex + 1);
 }
 
-bool SequencerAuAudioProcessor::isInputChannelStereoPair (int index) const
+bool SequencerAudioProcessor::isInputChannelStereoPair (int index) const
 {
     return true;
 }
 
-bool SequencerAuAudioProcessor::isOutputChannelStereoPair (int index) const
+bool SequencerAudioProcessor::isOutputChannelStereoPair (int index) const
 {
     return true;
 }
 
-bool SequencerAuAudioProcessor::acceptsMidi() const
+bool SequencerAudioProcessor::acceptsMidi() const
 {
-#if JucePlugin_WantsMidiInput
+   #if JucePlugin_WantsMidiInput
     return true;
-#else
+   #else
     return false;
-#endif
+   #endif
 }
 
-bool SequencerAuAudioProcessor::producesMidi() const
+bool SequencerAudioProcessor::producesMidi() const
 {
-#if JucePlugin_ProducesMidiOutput
+   #if JucePlugin_ProducesMidiOutput
     return true;
-#else
+   #else
     return false;
-#endif
+   #endif
 }
 
-bool SequencerAuAudioProcessor::silenceInProducesSilenceOut() const
+bool SequencerAudioProcessor::silenceInProducesSilenceOut() const
 {
     return false;
 }
 
-int SequencerAuAudioProcessor::getNumPrograms()
+double SequencerAudioProcessor::getTailLengthSeconds() const
+{
+    return 0.0;
+}
+
+int SequencerAudioProcessor::getNumPrograms()
 {
     return 0;
 }
 
-int SequencerAuAudioProcessor::getCurrentProgram()
+int SequencerAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void SequencerAuAudioProcessor::setCurrentProgram (int index)
+void SequencerAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String SequencerAuAudioProcessor::getProgramName (int index)
+const String SequencerAudioProcessor::getProgramName (int index)
 {
     return String::empty;
 }
 
-void SequencerAuAudioProcessor::changeProgramName (int index, const String& newName)
+void SequencerAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void SequencerAuAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void SequencerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    synth.setCurrentPlaybackSampleRate (sampleRate);
-    keyboardState.reset();
-    delayBuffer.clear();
-    theSampleRate=sampleRate;
+    // Use this method as the place to do any pre-playback
+    // initialisation that you need..
 }
 
-void SequencerAuAudioProcessor::releaseResources()
+void SequencerAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
-    keyboardState.reset();
-}
-void SequencerAuAudioProcessor::reset()
-{
-    // Use this method as the place to clear any delay lines, buffers, etc, as it
-    // means there's been a break in the audio's continuity.
-    delayBuffer.clear();
 }
 
-void SequencerAuAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    AudioPlayHead::CurrentPositionInfo newTime;
-    getPlayHead()->getCurrentPosition (newTime);
-    
-    const int numSamples = buffer.getNumSamples();
-//    MidiBuffer::Iterator midiIterator (midiMessages);
-//    midiIterator.setNextSamplePosition (0);
-//    MidiMessage m (0xf4, 0.0);
-//    
-//    while (numSamples > 0)
-//    {
-//        int midiEventPos;
-//        //const bool useEvent = midiIterator.getNextEvent (m, midiEventPos) && midiEventPos < 0 + numSamples;
-//        
-//        //if (useEvent)
-//            //handleMidiEvent (m);
-//    }
-//    
-    
-    
-    double modulo=0.25;
-    
-    if(newTime.isPlaying==false)
+    // This is the place where you'd normally do the guts of your plugin's
+    // audio processing...
+    for (int channel = 0; channel < getNumInputChannels(); ++channel)
     {
-        flush();
-        previousStep = -1;
-        inc=0;
-        sequencerPosition=0;
-        sequencerCount=0;
-    }
-    else if(newTime.isPlaying==true)
-    {
-             getPlayHead()->getCurrentPosition (newTime);
-             double quarterNotes = newTime.ppqPosition;
-             int step = (int)4*modf(quarterNotes, &modulo);
-             //DBG(String(step));
-             DBG(String(quarterNotes));
-             newStep = step;
+        float* channelData = buffer.getSampleData (channel);
 
-             if(newStep!=previousStep)
-             {
-                 int noteValue = (60+(12*transpose)+rootKey+(noteValues[sequencerPosition]));
-                 flush();
-                 if(theOnOffArray[sequencerPosition]==true)
-                 {
-                     theMidiCore->noteOn(noteValue,velocities[sequencerPosition]);
-                     currentArray.add(noteValue);
-                 }
-                 previousStep=newStep;
-                 sequencerCount++;
-                 sequencerPosition = sequencerCount%numSteps;
-             }
+        // ..do something to the data...
     }
+
+    // In case we have more outputs than inputs, we'll clear any output
+    // channels that didn't contain input data, (because these aren't
+    // guaranteed to be empty - they may contain garbage).
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
-}
-//void SequencerAuAudioProcessor::handleMidiEvent(const juce::MidiMessage &m)
-//{
-//    if (m.isNoteOn())
-//    {
-//        this->rootKey=m.getNoteNumber();
-//    }
-//}
-int SequencerAuAudioProcessor::getStep()
-{
-    return sequencerPosition;
-}
-void SequencerAuAudioProcessor::setMidiOutputDevice()
-{
-    theMidiCore->openMidiOutput(midiOutputIndex);
-}
-void SequencerAuAudioProcessor::init()
-{
-    previousStep=0;
-}
-void SequencerAuAudioProcessor::rootKeyChanged(int newRootKey)
-{
-    rootKey=newRootKey;
-}
-void SequencerAuAudioProcessor::transposeChanged(int newTranspose)
-{
-    transpose=newTranspose;
-}
-void SequencerAuAudioProcessor::killNotes()
-{
-    theMidiCore->killNotes();
-}
-void SequencerAuAudioProcessor::stopSequence()
-{
-    // stopTimer(MAIN_TIMER);
-    ////theSequencer->isRunning=false;
-    this->flush();
-}
-void SequencerAuAudioProcessor::setBPM(double newBPM)
-{
-    //  computedBPM = (1.0/(((newBPM/60.0)*4.0)))*1000.0;
-}
-void SequencerAuAudioProcessor::setShuffle(float value)
-{
-    //shuffle = theSequencer->getShuffle();
-}
-void SequencerAuAudioProcessor::newChord(Array<int> newArray)
-{
-    currentArray.clear();
-    currentArray.swapWithArray(newArray);
-}
-void SequencerAuAudioProcessor::flush()
-{
-    for(int i=0;i<currentArray.size();i++)
     {
-        theMidiCore->noteOff(currentArray.getUnchecked(i));
-        currentArray.remove(i);
+        buffer.clear (i, 0, buffer.getNumSamples());
     }
 }
-
 
 //==============================================================================
-bool SequencerAuAudioProcessor::hasEditor() const
+bool SequencerAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* SequencerAuAudioProcessor::createEditor()
+AudioProcessorEditor* SequencerAudioProcessor::createEditor()
 {
-    return new PluginEditor (this);
+    return new SequencerAudioProcessorEditor (this);
 }
 
 //==============================================================================
-void SequencerAuAudioProcessor::getStateInformation (MemoryBlock& destData)
+void SequencerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    XmlElement xml ("MYPLUGINSETTINGS");
-    
-    // add some attributes to it..
-    xml.setAttribute ("uiWidth", lastUIWidth);
-    xml.setAttribute ("uiHeight", lastUIHeight);
-    xml.setAttribute ("gain", gain);
-    xml.setAttribute ("delay", delay);
-    
-    // then use this helper function to stuff it into the binary blob and return it..
-    copyXmlToBinary (xml, destData);
 }
 
-void SequencerAuAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void SequencerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
     ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
-    
+	
     if (xmlState != nullptr)
     {
         // make sure that it's actually our type of XML object..
@@ -346,19 +206,16 @@ void SequencerAuAudioProcessor::setStateInformation (const void* data, int sizeI
             // ok, now pull out our parameters..
             lastUIWidth  = xmlState->getIntAttribute ("uiWidth", lastUIWidth);
             lastUIHeight = xmlState->getIntAttribute ("uiHeight", lastUIHeight);
-            
-            gain  = (float) xmlState->getDoubleAttribute ("gain", gain);
-            delay = (float) xmlState->getDoubleAttribute ("delay", delay);
+			
+            theSequencerLength  = (float) xmlState->getDoubleAttribute ("Lengh", theSequencerLength);
+
         }
-    }
+	}
 }
-double SequencerAuAudioProcessor::getTailLengthSeconds() const
-{
-    return 1;
-}
+
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new SequencerAuAudioProcessor();
+    return new SequencerAudioProcessor();
 }
