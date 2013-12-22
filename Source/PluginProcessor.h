@@ -28,10 +28,16 @@ public:
 	
 	enum Parameters
     {
+		StepPitchs = 16,
+		StepVelocities = 32,
+		StepState = 48,
         SequencerLength,
 		
         totalNumParams
     };
+	
+	ValueTree* theAudioConfig;
+	UndoManager* theUndoManager;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();

@@ -14,7 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 
-class SequencerAudioProcessorEditor  : public AudioProcessorEditor, public SliderListener
+class SequencerAudioProcessorEditor  : public AudioProcessorEditor, public SliderListener, public Timer
 {
 public:
     SequencerAudioProcessorEditor (SequencerAudioProcessor* ownerFilter);
@@ -23,8 +23,13 @@ public:
     void paint (Graphics& g);
 	void sliderValueChanged(Slider* slider);
 	void resized();
+	void timerCallback() override;
 private:
 	
+	SequencerAudioProcessor* getProcessor() const
+    {
+        return static_cast <SequencerAudioProcessor*> (getAudioProcessor());
+    }
 	OwnedArray<Slider> theStepSliders;
 };
 

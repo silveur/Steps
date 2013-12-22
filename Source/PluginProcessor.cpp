@@ -12,14 +12,20 @@
 #include "PluginEditor.h"
 
 
-//==============================================================================
 SequencerAudioProcessor::SequencerAudioProcessor()
 {
+	theAudioConfig = new ValueTree("AudioConfig");
+	theUndoManager = new UndoManager(1000, 1);
+	theSequencerLength =NUM_CHANNELS_MAX;
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
-		theSteps.add(new Step());
+		ValueTree StepTree("Step" + String(i));
+		StepTree.setProperty("Pitch", 0, theUndoManager);
+		StepTree.setProperty("Velocity", 127, theUndoManager);
+		StepTree.setProperty("State", 1, theUndoManager);
+		theAudioConfig->addChild(StepTree, i, theUndoManager);
+		theSteps.add(new Step(StepTree));
 	}
-
 }
 
 SequencerAudioProcessor::~SequencerAudioProcessor()
@@ -37,8 +43,20 @@ int SequencerAudioProcessor::getNumParameters()
     return totalNumParams;
 }
 
-float SequencerAudioProcessor::getParameter (int index)
+float SequencerAudioProcessor::getParameter(int index)
 {
+	if(index < 16)
+	{
+		return theSteps[index]->thePitch;
+	}
+	else if(index >= 16 && index < 24)
+	{
+		return theSteps[index % 16]->theVelocity;
+	}
+	else if(index >= 24 && index < 32)
+	{
+		return theSteps[index % 16]->theState;
+	}
 	switch (index)
 	{
 		case SequencerLength:	return theSequencerLength;
@@ -46,8 +64,21 @@ float SequencerAudioProcessor::getParameter (int index)
 	}
 }
 
-void SequencerAudioProcessor::setParameter (int index, float newValue)
+void SequencerAudioProcessor::setParameter(int index, float newValue)
 {
+	if(index < 16)
+	{
+		theSteps[index]->thePitch = newValue;
+	}
+	else if(index >= 16 && index < 24)
+	{
+		theSteps[index]->theVelocity = newValue;
+	}
+	else if(index >= 24 && index < 32)
+	{
+		theSteps[index]->theState = newValue;
+	}
+	
 	switch (index)
     {
         case SequencerLength:	theSequencerLength = newValue;  break;
@@ -57,6 +88,18 @@ void SequencerAudioProcessor::setParameter (int index, float newValue)
 
 const String SequencerAudioProcessor::getParameterName (int index)
 {
+	if(index < 16)
+	{
+		return "Step" + String(index % 16) + "pitch";
+	}
+	else if(index >= 16 && index < 24)
+	{
+		return "Step" + String(index % 16) + "Velocity";
+	}
+	else if(index >= 24 && index < 32)
+	{
+		return "Step" + String(index % 16) + "State";
+	}
     switch (index)
     {
         case SequencerLength:     return "Length";
@@ -189,9 +232,19 @@ AudioProcessorEditor* SequencerAudioProcessor::createEditor()
 //==============================================================================
 void SequencerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    XmlElement xml ("MYPLUGINSETTINGS");
+	
+    xml.setAttribute ("uiWidth", lastUIWidth);
+    xml.setAttribute ("uiHeight", lastUIHeight);
+    xml.setAttribute ("Length", theSequencerLength);
+	for(int i=0;i<NUM_CHANNELS_MAX;i++)
+	{
+		xml.setAttribute ("StepPitch" + String(i), theSteps[i]->thePitch);
+		xml.setAttribute ("StepVelocity" + String(i), theSteps[i]->theVelocity);
+		xml.setAttribute ("StepState" + String(i), theSteps[i]->theState);
+	}
+	
+    copyXmlToBinary (xml, destData);
 }
 
 void SequencerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
@@ -200,15 +253,11 @@ void SequencerAudioProcessor::setStateInformation (const void* data, int sizeInB
 	
     if (xmlState != nullptr)
     {
-        // make sure that it's actually our type of XML object..
         if (xmlState->hasTagName ("MYPLUGINSETTINGS"))
         {
-            // ok, now pull out our parameters..
             lastUIWidth  = xmlState->getIntAttribute ("uiWidth", lastUIWidth);
             lastUIHeight = xmlState->getIntAttribute ("uiHeight", lastUIHeight);
-			
             theSequencerLength  = (float) xmlState->getDoubleAttribute ("Lengh", theSequencerLength);
-
         }
 	}
 }

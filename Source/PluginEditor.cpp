@@ -18,13 +18,12 @@ SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProc
 {
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
-		addAndMakeVisible(theStepSliders.add(new Slider("Step" + String(i))));
+		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle (Slider::LinearBarVertical);
 		theStepSliders[i]->addListener (this);
 		theStepSliders[i]->setRange (-12, 12, 1);
 	}
-	
-    setSize (400, 300);
+    setSize (600, 300);
 }
 
 SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
@@ -34,23 +33,37 @@ SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
 void SequencerAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (Colours::white);
-    g.setColour (Colours::black);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!",
-                      0, 0, getWidth(), getHeight(),
-                      Justification::centred, 1);
 }
 
 void SequencerAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
-	
+	if(slider->getName().contains("Pitch"))
+	{
+		int index = slider->getName().getTrailingIntValue();
+		getProcessor()->setParameterNotifyingHost(index, slider->getValue());
+	}
+	else if(slider->getName().contains("Velocity"))
+	{
+		int index = slider->getName().getTrailingIntValue();
+		getProcessor()->setParameterNotifyingHost(index + 16, slider->getValue());
+	}
+	else if(slider->getName().contains("State"))
+	{
+		int index = slider->getName().getTrailingIntValue();
+		getProcessor()->setParameterNotifyingHost(index + 32, slider->getValue());
+	}
+}
+
+void SequencerAudioProcessorEditor::timerCallback()
+{
+    SequencerAudioProcessor* ourProcessor = getProcessor();
 }
 
 void SequencerAudioProcessorEditor::resized()
 {
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
-		theStepSliders[i]->setBounds(10 + 10*i, 20, 50, 100);
+		theStepSliders[i]->setBounds((getWidth()/16)*i, getHeight()/3, 20, 100);
 	}
 }
 
