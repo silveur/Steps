@@ -20,17 +20,14 @@ public:
     MidiCore(int index);
     ~MidiCore();
     
-    void midiNoteOn(int noteNumber,int velocity);
-    void midiNoteOff(int noteNumber);
-    
-    int getNumberOfOutput();
-    
-    void changeMidiOutput(int index);
-    
+	void openMidiOutput(int index);
+    void noteOn(int noteNumber,int velocity);
+    void noteOff(int noteNumber);
     void killNotes();
+	void outputMidi(const MidiMessage& msg);
 private:
     
-    ScopedPointer<MidiOutput> theOutput;
+    MidiOutput* theMidiOutput;
 };
 
 

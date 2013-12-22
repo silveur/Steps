@@ -11,51 +11,50 @@
 #include "MidiCore.h"
 
 
-MidiCore::MidiCore():theOutput(0)
+MidiCore::MidiCore()
 {
-    theOutput=MidiOutput::openDevice(0);
-    if(theOutput==nullptr)
-    {
-        AlertWindow::AlertIconType icon = AlertWindow::NoIcon;
-        icon = AlertWindow::InfoIcon;
-        AlertWindow::showMessageBoxAsync (icon,
-                                          "Midi failed opening a port!",
-                                          "Please create some midi buses before using the sequencer! It can be done via the Audio Midi Setup of your Mac...",
-                                          "Got it!");
-    }
+    theMidiOutput = nullptr;
 }
-void MidiCore::changeMidiOutput(int index)
+
+void MidiCore::openMidiOutput(int index)
 {
-    theOutput =MidiOutput::openDevice(index);
+    theMidiOutput = MidiOutput::openDevice(index);
 }
 
 MidiCore::~MidiCore()
 {
-    killNotes();
+	killNotes();
+	if(theMidiOutput != nullptr) delete theMidiOutput;
 }
 
-int MidiCore::getNumberOfOutput()
+void MidiCore::noteOn(int noteNumber,int velocity)
 {
-    theOutput =MidiOutput::openDevice(0);
-    if(theOutput==nullptr)
-    {return 0;}
-    return 1;
-}
-void MidiCore::midiNoteOn(int noteNumber,int velocity)
-{
-    Time theTime;
     const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
-    theOutput->sendMessageNow(midiMessage);
+    outputMidi(midiMessage);
 }
-void MidiCore::midiNoteOff(int noteNumber)
+
+void MidiCore::noteOff(int noteNumber)
 {
-    Time theTime;
     const MidiMessage midiMessage(0x80,noteNumber,127,0);
-    theOutput->sendMessageNow(midiMessage);
+    outputMidi(midiMessage);
 }
 
 void MidiCore::killNotes()
 {
-    theOutput->sendMessageNow(MidiMessage::allNotesOff(1));
-    theOutput->sendMessageNow(MidiMessage::allSoundOff(1));
+	for(int i=0;i<NUM_CHANNELS_MAX;i++)
+	{
+		outputMidi(MidiMessage::allNotesOff(i));
+		outputMidi(MidiMessage::allSoundOff(i));
+	}
 }
+
+void MidiCore::outputMidi(const MidiMessage &msg)
+{
+	if(theMidiOutput != nullptr)
+	{
+		theMidiOutput->sendMessageNow(msg);
+	}
+}
+
+
+

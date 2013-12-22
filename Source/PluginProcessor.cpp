@@ -232,7 +232,7 @@ void SequencerAuAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuf
                  flush();
                  if(theOnOffArray[sequencerPosition]==true)
                  {
-                     theMidiCore->midiNoteOn(noteValue,velocities[sequencerPosition]);
+                     theMidiCore->noteOn(noteValue,velocities[sequencerPosition]);
                      currentArray.add(noteValue);
                  }
                  previousStep=newStep;
@@ -256,7 +256,7 @@ int SequencerAuAudioProcessor::getStep()
 }
 void SequencerAuAudioProcessor::setMidiOutputDevice()
 {
-    theMidiCore->changeMidiOutput(midiOutputIndex);
+    theMidiCore->openMidiOutput(midiOutputIndex);
 }
 void SequencerAuAudioProcessor::init()
 {
@@ -297,7 +297,7 @@ void SequencerAuAudioProcessor::flush()
 {
     for(int i=0;i<currentArray.size();i++)
     {
-        theMidiCore->midiNoteOff(currentArray.getUnchecked(i));
+        theMidiCore->noteOff(currentArray.getUnchecked(i));
         currentArray.remove(i);
     }
 }
