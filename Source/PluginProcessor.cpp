@@ -1,9 +1,7 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
-
-    It contains the basic startup code for a Juce application.
+    Author:  Silvere Letellier
 
   ==============================================================================
 */
@@ -17,13 +15,14 @@ SequencerAudioProcessor::SequencerAudioProcessor()
 {
 	theAudioConfig = new ValueTree("AudioConfig");
 	theUndoManager = new UndoManager(1000, 1);
+	theSequencer = new Sequencer();
 	theSequencerLength =NUM_CHANNELS_MAX;
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
 		ValueTree StepTree("Step" + String(i));
 		StepTree.setProperty("Pitch", 0, theUndoManager);
 		StepTree.setProperty("Velocity", 127, theUndoManager);
-		StepTree.setProperty("State", 1, theUndoManager);
+		StepTree.setProperty("State", 0, theUndoManager);
 		theAudioConfig->addChild(StepTree, i, theUndoManager);
 		theSteps.add(new Step(StepTree));
 	}
@@ -31,9 +30,11 @@ SequencerAudioProcessor::SequencerAudioProcessor()
 
 SequencerAudioProcessor::~SequencerAudioProcessor()
 {
+	delete theAudioConfig;
+	delete theUndoManager;
+	delete theSequencer;
 }
 
-//==============================================================================
 const String SequencerAudioProcessor::getName() const
 {
     return JucePlugin_Name;
@@ -46,17 +47,17 @@ int SequencerAudioProcessor::getNumParameters()
 
 float SequencerAudioProcessor::getParameter(int index)
 {
-	if(index < 16)
+	if(index < NUM_CHANNELS_MAX)
 	{
 		return theSteps[index]->thePitch;
 	}
-	else if(index >= 16 && index < 24)
+	else if(index >= NUM_CHANNELS_MAX && index < NUM_CHANNELS_MAX*2)
 	{
-		return theSteps[index % 16]->theVelocity;
+		return theSteps[index % NUM_CHANNELS_MAX]->theVelocity;
 	}
-	else if(index >= 24 && index < 32)
+	else if(index >= NUM_CHANNELS_MAX*2 && index < NUM_CHANNELS_MAX*3)
 	{
-		return theSteps[index % 16]->theState;
+		return theSteps[index % NUM_CHANNELS_MAX]->theState;
 	}
 	switch (index)
 	{
@@ -67,40 +68,41 @@ float SequencerAudioProcessor::getParameter(int index)
 
 void SequencerAudioProcessor::setParameter(int index, float newValue)
 {
-	if(index < 16)
+	if(index < NUM_CHANNELS_MAX)
 	{
 		theSteps[index]->thePitch = newValue;
-		theAudioConfig->getChild(index).setProperty("Pitch", newValue, theUndoManager);
 	}
-	else if(index >= 16 && index < 24)
+	else if(index >= NUM_CHANNELS_MAX && index < NUM_CHANNELS_MAX*2)
 	{
-		theSteps[index]->theVelocity = newValue;
+		theSteps[index % NUM_CHANNELS_MAX]->theVelocity = newValue;
 	}
-	else if(index >= 24 && index < 32)
+	else if(index >= NUM_CHANNELS_MAX*2 && index < NUM_CHANNELS_MAX*3)
 	{
-		theSteps[index]->theState = newValue;
+		theSteps[index % NUM_CHANNELS_MAX]->theState = newValue;
 	}
-	
-	switch (index)
-    {
-        case SequencerLength:	theSequencerLength = newValue;  break;
-        default:												break;
-    }
+	else
+	{
+		switch (index)
+		{
+			case SequencerLength:	theSequencerLength = newValue;  break;
+			default:												break;
+		}
+	}
 }
 
 const String SequencerAudioProcessor::getParameterName (int index)
 {
-	if(index < 16)
+	if(index < NUM_CHANNELS_MAX)
 	{
-		return "Step" + String(index % 16) + "pitch";
+		return "Step" + String(index % NUM_CHANNELS_MAX) + "pitch";
 	}
-	else if(index >= 16 && index < 24)
+	else if(index >= NUM_CHANNELS_MAX && index < NUM_CHANNELS_MAX*2)
 	{
-		return "Step" + String(index % 16) + "Velocity";
+		return "Step" + String(index % NUM_CHANNELS_MAX) + "Velocity";
 	}
-	else if(index >= 24 && index < 32)
+	else if(index >= NUM_CHANNELS_MAX*2 && index < NUM_CHANNELS_MAX*3)
 	{
-		return "Step" + String(index % 16) + "State";
+		return "Step" + String(index % NUM_CHANNELS_MAX) + "State";
 	}
     switch (index)
     {
@@ -187,43 +189,30 @@ void SequencerAudioProcessor::changeProgramName (int index, const String& newNam
 {
 }
 
-//==============================================================================
 void SequencerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
 }
 
 void SequencerAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+
 }
 
 void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    for (int channel = 0; channel < getNumInputChannels(); ++channel)
-    {
-        float* channelData = buffer.getSampleData (channel);
+	AudioPlayHead::CurrentPositionInfo newTime;
+	getPlayHead()->getCurrentPosition (newTime);
 
-        // ..do something to the data...
-    }
-
-    // In case we have more outputs than inputs, we'll clear any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
+	theSequencer->setPosition(newTime);
+	DBG(newTime.ppqPosition);
+	
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
-    {
         buffer.clear (i, 0, buffer.getNumSamples());
-    }
 }
 
-//==============================================================================
 bool SequencerAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 AudioProcessorEditor* SequencerAudioProcessor::createEditor()
@@ -231,9 +220,15 @@ AudioProcessorEditor* SequencerAudioProcessor::createEditor()
     return new SequencerAudioProcessorEditor (this);
 }
 
-//==============================================================================
 void SequencerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
+	for(int i=0;i<NUM_CHANNELS_MAX;i++)
+	{
+		theAudioConfig->getChild(i).setProperty("Pitch", theSteps[i]->thePitch, theUndoManager);
+		theAudioConfig->getChild(i).setProperty("Velocity", theSteps[i]->theVelocity, theUndoManager);
+		theAudioConfig->getChild(i).setProperty("State", theSteps[i]->theState, theUndoManager);
+	}
+	theAudioConfig->setProperty("Length", theSequencerLength, theUndoManager);
 	MemoryOutputStream rawStream(destData, false);
 	theAudioConfig->writeToStream(rawStream);
 }
@@ -244,8 +239,6 @@ void SequencerAudioProcessor::setStateInformation (const void* data, int sizeInB
 	copyTree(*theAudioConfig, treeToRead);
 }
 
-//==============================================================================
-// This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new SequencerAudioProcessor();

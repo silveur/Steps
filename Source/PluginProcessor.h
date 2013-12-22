@@ -1,9 +1,7 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
-
-    It contains the basic startup code for a Juce application.
+    Author:  Silvere Letellier
 
   ==============================================================================
 */
@@ -13,7 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Step.h"
-
+#include "Sequencer.h"
 class SequencerAudioProcessor  : public AudioProcessor
 {
 public:
@@ -40,7 +38,7 @@ public:
 	
 	ValueTree* theAudioConfig;
 	UndoManager* theUndoManager;
-	
+	Sequencer* theSequencer;
 	
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();

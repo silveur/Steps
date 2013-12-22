@@ -11,6 +11,8 @@
               pluginAAXCategory="AAX_ePlugInCategory_Dynamics" jucerVersion="3.1.0">
   <MAINGROUP id="cIdagt" name="Sequencer">
     <GROUP id="{C6C092D4-2140-CA8E-3C96-35E571D1DEF5}" name="Source">
+      <FILE id="B3j9pm" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
+      <FILE id="pOd57w" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
       <FILE id="wE8BT6" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
       <FILE id="Ptuhqm" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
