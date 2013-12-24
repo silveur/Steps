@@ -20,9 +20,10 @@ public:
     ~SequencerAudioProcessor();
 	
 	ValueTree& getValueTree(){return *theAudioConfig;}
-	
+	void setSequencerPosition(int newPos);
 	int lastUIWidth, lastUIHeight;
 	int theSequencerLength;
+	int theSequencerPosition;
 	AudioPlayHead::CurrentPositionInfo lastPosInfo;
 	OwnedArray<Step> theSteps;
 	

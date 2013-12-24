@@ -12,7 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 
-class SequencerAudioProcessorEditor  : public AudioProcessorEditor, public SliderListener, ValueTree::Listener, ButtonListener
+class SequencerAudioProcessorEditor  : public AudioProcessorEditor, public SliderListener, ValueTree::Listener, ButtonListener, Timer
 {
 public:
     SequencerAudioProcessorEditor (SequencerAudioProcessor* ownerFilter);
@@ -22,6 +22,7 @@ public:
 	void sliderValueChanged(Slider* slider);
 	void buttonClicked(Button* button);
 	void resized();
+	void timerCallback();
 	void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
@@ -37,6 +38,7 @@ private:
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;
 	ValueTree theAudioConfig;
+	int thePosition;
 };
 
 

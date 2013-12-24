@@ -12,11 +12,12 @@
 #define SEQUENCER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+class SequencerAudioProcessor;
 
 class Sequencer: Thread
 {
 public:
-	Sequencer();
+	Sequencer(SequencerAudioProcessor* processor);
 	~Sequencer(){}
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
@@ -24,11 +25,13 @@ public:
 	void start(){startThread();}
 	void stop(){stopThread(200);}
 	
+	
 private:
 	
 	double theTempo;
+	double thePPQPosition;
 	double thePosition;
-	
+	SequencerAudioProcessor* theProcessor;
 };
 
 #endif  // SEQUENCER_H_INCLUDED

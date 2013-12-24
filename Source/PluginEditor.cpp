@@ -31,8 +31,10 @@ SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProc
 		theStateButtons[i]->addListener(this);
 		theStateButtons[i]->setToggleState((bool)theAudioConfig.getChild(i).getProperty("State"), dontSendNotification);
 	}
+	thePosition = 0;
     setSize (600, 300);
 	theAudioConfig.addListener(this);
+	startTimer(50);
 }
 
 SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
@@ -42,6 +44,8 @@ SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
 void SequencerAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (Colours::white);
+	g.setColour(Colours::red); 
+	g.drawEllipse(theStepSliders[thePosition]->getX(), theStateButtons[thePosition]->getBottom(), 20, 20, 2);
 }
 
 void SequencerAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -79,6 +83,11 @@ void SequencerAudioProcessorEditor::valueTreePropertyChanged (ValueTree& treeWho
 	}
 }
 
+void SequencerAudioProcessorEditor::timerCallback()
+{
+	thePosition = getProcessor()->theSequencerPosition;
+	repaint();
+}
 void SequencerAudioProcessorEditor::resized()
 {
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)

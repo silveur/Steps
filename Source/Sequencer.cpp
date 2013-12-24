@@ -9,26 +9,38 @@
 */
 
 #include "Sequencer.h"
+#include "PluginProcessor.h"
 
-Sequencer::Sequencer(): Thread("SequencerThread")
+Sequencer::Sequencer(SequencerAudioProcessor* processor): Thread("SequencerThread")
 {
+	theProcessor = processor;
 	theTempo = -1;
 	thePosition = -1;
+	setPriority(8);
 }
 
 void Sequencer::setPosition(AudioPlayHead::CurrentPositionInfo& info)
 {
-	thePosition = info.ppqPosition;
+	thePPQPosition = info.ppqPosition;
+	int subPos = fmod(thePPQPosition, 1.0)*4;
+	thePosition = subPos + ((int)thePPQPosition%4) * 4;
 	theTempo = info.bpm;
+	startThread();
 }
 
 void Sequencer::run()
 {
-	while(!threadShouldExit())
+	while(!threadShouldExit() && theTempo != -1 && thePosition != -1)
 	{
-		
-		sleep(200);
+		theProcessor->setSequencerPosition(thePosition);
+		sleep(20);
 	}
 	
 	
 }
+
+
+
+
+
+

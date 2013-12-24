@@ -15,8 +15,9 @@ SequencerAudioProcessor::SequencerAudioProcessor()
 {
 	theAudioConfig = new ValueTree("AudioConfig");
 	theUndoManager = new UndoManager(1000, 1);
-	theSequencer = new Sequencer();
+	theSequencer = new Sequencer(this);
 	theSequencerLength =NUM_CHANNELS_MAX;
+	theSequencerPosition = 0;
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
 		ValueTree StepTree("Step" + String(i));
@@ -38,6 +39,11 @@ SequencerAudioProcessor::~SequencerAudioProcessor()
 const String SequencerAudioProcessor::getName() const
 {
     return JucePlugin_Name;
+}
+
+void SequencerAudioProcessor::setSequencerPosition(int newPos)
+{
+	theSequencerPosition = newPos;
 }
 
 int SequencerAudioProcessor::getNumParameters()
