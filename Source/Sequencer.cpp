@@ -35,12 +35,13 @@ void Sequencer::run()
 		theProcessor->setSequencerPosition(thePosition);
 		sleep(20);
 	}
+}
+
+void Sequencer::newStep()
+{
+	
 	
 	
 }
-
-
-
-
 
 

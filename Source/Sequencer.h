@@ -24,6 +24,7 @@ public:
 	void run();
 	void start(){startThread();}
 	void stop(){stopThread(200);}
+	void newStep();
 	
 	
 private:
