@@ -13,12 +13,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 class SequencerAudioProcessor;
+class MidiCore;
 
 class Sequencer: Thread
 {
 public:
 	Sequencer(SequencerAudioProcessor* processor);
-	~Sequencer(){}
+	~Sequencer();
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
 	void run();
@@ -26,12 +27,12 @@ public:
 	void stop(){stopThread(200);}
 	void newStep();
 	
-	
 private:
-	
+	MidiCore* theMidiCore;
 	double theTempo;
 	double thePPQPosition;
-	double thePosition;
+	int thePosition;
+	int thePreviousPosition;
 	SequencerAudioProcessor* theProcessor;
 };
 
