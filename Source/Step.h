@@ -21,7 +21,7 @@ public:
 	Step(ValueTree& stepTree)
 	{
 		theStepTree = stepTree;
-		thePitch = theStepTree.getProperty("Pitch");
+			thePitch = theStepTree.getProperty("Pitch");
 		theVelocity = theStepTree.getProperty("Velocity");
 		theState = theStepTree.getProperty("State");
 		theStepTree.addListener(this);

@@ -13,17 +13,21 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Sequencer
+class Sequencer: Thread
 {
 public:
-	Sequencer(){}
+	Sequencer();
 	~Sequencer(){}
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
+	void run();
+	void start(){startThread();}
+	void stop(){stopThread(200);}
 	
 private:
 	
-	
+	double theTempo;
+	double thePosition;
 	
 };
 

@@ -23,7 +23,7 @@ public:
 	
 	int lastUIWidth, lastUIHeight;
 	int theSequencerLength;
-	
+	AudioPlayHead::CurrentPositionInfo lastPosInfo;
 	OwnedArray<Step> theSteps;
 	
 	enum Parameters
