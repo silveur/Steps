@@ -24,7 +24,8 @@ public:
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
 	void run();
-	void stop(){stopThread(500);}
+	void stop(){stopThread(800);}
+	void start(){}
 	void newStep();
 	void repositionSequencer();
 private:
@@ -33,10 +34,8 @@ private:
 	double theTempo;
 	double thePPQPosition;
 	int thePosition;
-	int theThreadDelay;
 	int theSyncTime;
 	bool isPlaying;
-	bool isSyncing;
 };
 
 #endif  // SEQUENCER_H_INCLUDED

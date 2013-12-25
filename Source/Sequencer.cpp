@@ -20,6 +20,7 @@ Sequencer::Sequencer(SequencerAudioProcessor* processor): Thread("SequencerThrea
 	theTempo = -1;
 	thePosition = 0;
 	setPriority(8);
+	
 }
 
 Sequencer::~Sequencer()
@@ -32,41 +33,38 @@ void Sequencer::setPosition(AudioPlayHead::CurrentPositionInfo& info)
 	theTempo = info.bpm;
 	thePPQPosition = info.ppqPosition;
 	isPlaying = true;
-	theThreadDelay = 1 / (theTempo / 60.0) * 250;
 	repositionSequencer();
-	startThread();
 }
 
 void Sequencer::run()
 {
-	while(!threadShouldExit() && theTempo != -1)
-	{
-		if(isSyncing)
-		{
-			wait(theSyncTime);
-		}
-		newStep();
-		wait(theThreadDelay);
-		
-	}
+//	wait(theSyncTime);
+	sleep(theSyncTime);
+	newStep();
 }
 
 void Sequencer::repositionSequencer()
 {
-	isSyncing = true;
-	theSyncTime = 0;
+	int subPos = fmod(thePPQPosition, 1.0)*4;
+	int newPos = subPos + ((int)thePPQPosition%4) * 4;
+	thePosition = newPos;
+	
+	float diff = (thePPQPosition-(int)thePPQPosition) * (1.0 / (theTempo / 60.0) * 250);
+	theSyncTime = (1.0 / (theTempo / 60.0) * 250) - diff;
+	DBG(theSyncTime);
+	startThread();
 }
 
 void Sequencer::newStep()
 {
+	thePosition = (thePosition + 1) % theProcessor->theSequencerLength;
+	theProcessor->setSequencerPosition(thePosition);
 	if(thePosition != 0)
 		theMidiCore->noteOff(60 + theProcessor->theSteps[thePosition-1]->thePitch);
 	else if(thePosition == 0)
 		theMidiCore->noteOff(60 + theProcessor->theSteps[theProcessor->theSequencerLength-1]->thePitch);
 	
 	theMidiCore->noteOn(60 + theProcessor->theSteps[thePosition]->thePitch, theProcessor->theSteps[thePosition]->theVelocity);
-	theProcessor->setSequencerPosition(thePosition);
-	thePosition = (thePosition + 1) % theProcessor->theSequencerLength;
 }
 
 

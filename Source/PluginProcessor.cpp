@@ -197,6 +197,7 @@ void SequencerAudioProcessor::changeProgramName (int index, const String& newNam
 
 void SequencerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+	theSequencer->start();
 }
 
 void SequencerAudioProcessor::releaseResources()
