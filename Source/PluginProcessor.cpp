@@ -197,7 +197,6 @@ void SequencerAudioProcessor::changeProgramName (int index, const String& newNam
 
 void SequencerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-	theSequencer->start();
 }
 
 void SequencerAudioProcessor::releaseResources()
@@ -208,9 +207,9 @@ void SequencerAudioProcessor::releaseResources()
 void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
 	AudioPlayHead::CurrentPositionInfo newTime;
-	if (getPlayHead() != nullptr && getPlayHead()->getCurrentPosition (newTime))
+	if (getPlayHead() != nullptr && getPlayHead()->getCurrentPosition (newTime) && newTime.isPlaying)
 		theSequencer->setPosition(newTime);
-	else
+	else if(!newTime.isPlaying)
 		theSequencer->stop();
 	
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)

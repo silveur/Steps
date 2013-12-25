@@ -12,6 +12,7 @@
 #define SEQUENCER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Step.h"
 class SequencerAudioProcessor;
 class MidiCore;
 
@@ -23,17 +24,19 @@ public:
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
 	void run();
-	void start(){startThread();}
-	void stop(){stopThread(200);}
+	void stop(){stopThread(500);}
 	void newStep();
-	
+	void repositionSequencer();
 private:
 	MidiCore* theMidiCore;
+	SequencerAudioProcessor* theProcessor;
 	double theTempo;
 	double thePPQPosition;
 	int thePosition;
-	int thePreviousPosition;
-	SequencerAudioProcessor* theProcessor;
+	int theThreadDelay;
+	int theSyncTime;
+	bool isPlaying;
+	bool isSyncing;
 };
 
 #endif  // SEQUENCER_H_INCLUDED

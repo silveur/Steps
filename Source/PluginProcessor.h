@@ -26,7 +26,7 @@ public:
 	int theSequencerPosition;
 	AudioPlayHead::CurrentPositionInfo lastPosInfo;
 	OwnedArray<Step> theSteps;
-	
+	OwnedArray<Step>& getSteps(){return theSteps;}
 	enum Parameters
     {
 		StepPitchs = 16,
