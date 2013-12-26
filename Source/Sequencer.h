@@ -24,8 +24,8 @@ public:
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
 	void run();
-	void stop(){stopThread(800);}
-	void start(){}
+	void stop(){stopThread(200);}
+	void start(){startThread();}
 	void newStep();
 	void repositionSequencer();
 private:
