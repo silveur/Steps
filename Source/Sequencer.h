@@ -15,27 +15,47 @@
 #include "Step.h"
 class SequencerAudioProcessor;
 class MidiCore;
-
-class Sequencer: Thread
+class NoteOnClient;
+class NoteOffClient;
+class Sequencer: public TimeSliceThread
 {
 public:
 	Sequencer(SequencerAudioProcessor* processor);
 	~Sequencer();
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
-	void run();
+//	void run();
 	void stop(){stopThread(200);}
-	void start(){startThread();}
+	void start(){}
 	void newStep();
 	void repositionSequencer();
-private:
 	MidiCore* theMidiCore;
 	SequencerAudioProcessor* theProcessor;
+	NoteOnClient* theNoteOnClient;
+	NoteOffClient* theNoteOffClient;
 	double theTempo;
 	double thePPQPosition;
 	int thePosition;
 	int theSyncTime;
 	bool isPlaying;
+};
+
+class NoteOnClient: public TimeSliceClient
+{
+public:
+	NoteOnClient(){}
+	~NoteOnClient(){}
+	int useTimeSlice();
+	Sequencer* theSequencer;
+};
+
+class NoteOffClient: public TimeSliceClient
+{
+public:
+	NoteOffClient(){}
+	~NoteOffClient(){}
+	int useTimeSlice();
+	Sequencer* theSequencer;
 };
 
 #endif  // SEQUENCER_H_INCLUDED
