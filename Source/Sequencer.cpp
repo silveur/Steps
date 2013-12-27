@@ -35,6 +35,7 @@ Sequencer::~Sequencer()
 void Sequencer::start()
 {
 	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
+	thePosition = 0;
 	setPosition(theProcessor->lastPosInfo);
 	startThread();
 }
@@ -43,47 +44,40 @@ void Sequencer::setPosition(AudioPlayHead::CurrentPositionInfo& info)
 {
 	theTempo = info.bpm;
 	thePPQPosition = info.ppqPosition;
-	int subPos = fmod(thePPQPosition, 1.0)*4;
-	thePosition = abs(subPos + ((int)thePPQPosition % 4) * 4);
 	theStepTime = 1.0 / (theTempo / 60.0) * 250;
 	repositionSequencer();
 }
 
 void Sequencer::stop()
 {
-	for(int i=0; i<getNumClients();i++)
-		removeTimeSliceClient(getClient(i));
 	stopThread(theStepTime);
 }
 
 void Sequencer::repositionSequencer()
 {
 	float mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
-
 	int syncTime = theStepTime - ((mod / 0.25) * theStepTime);
-	if(syncTime == theStepTime)
-		syncTime = 0;
-	DBG("SyncTime: " +  String(syncTime));
+	if(syncTime == theStepTime)	syncTime = 0;
 	addTimeSliceClient(theNoteOnClient, syncTime);
 }
 
 int NoteOnClient::useTimeSlice()
 {
-	DBG("Step: " + String(theSequencer->thePosition));
 	theSequencer->theMidiCore->noteOn(60 + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch, theSequencer->theProcessor->theSteps[theSequencer->thePosition]->theVelocity);
 	
 	theSequencer->addTimeSliceClient(theSequencer->theNoteOffClient,80);
-	theSequencer->nextNoteOff = theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch;
-	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
+	theSequencer->theNoteOffClient->nextNoteOff = theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch;
+	
 	theSequencer->thePosition = (theSequencer->thePosition + 1) % 16;
-	DBG("Step after sent: " + String(theSequencer->thePosition));
-	return -1;
+	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
+	
+	return theSequencer->theStepTime;
 }
 
 int NoteOffClient::useTimeSlice()
 {
-	theSequencer->theMidiCore->noteOff(60 + theSequencer->nextNoteOff);
-	return -1;
+	theSequencer->theMidiCore->noteOff(60 + nextNoteOff);
+	return theSequencer->theStepTime;
 }
 
 
