@@ -37,6 +37,7 @@ void Sequencer::start()
 	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
 	thePosition = 0;
 	setPosition(theProcessor->lastPosInfo);
+	addTimeSliceClient(theNoteOnClient, 0);
 	startThread();
 }
 
@@ -50,6 +51,7 @@ void Sequencer::setPosition(AudioPlayHead::CurrentPositionInfo& info)
 
 void Sequencer::stop()
 {
+	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
 	stopThread(theStepTime);
 }
 
@@ -58,7 +60,12 @@ void Sequencer::repositionSequencer()
 	float mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
 	int syncTime = theStepTime - ((mod / 0.25) * theStepTime);
 	if(syncTime == theStepTime)	syncTime = 0;
-	addTimeSliceClient(theNoteOnClient, syncTime);
+//	for(int i=0; i<getNumClients();i++)
+//	{
+//		if(getClient(i) == theNoteOnClient)
+//			return; 
+//	}
+//	addTimeSliceClient(theNoteOnClient, syncTime);
 }
 
 int NoteOnClient::useTimeSlice()
@@ -77,7 +84,7 @@ int NoteOnClient::useTimeSlice()
 int NoteOffClient::useTimeSlice()
 {
 	theSequencer->theMidiCore->noteOff(60 + nextNoteOff);
-	return theSequencer->theStepTime;
+	return -1;
 }
 
 
