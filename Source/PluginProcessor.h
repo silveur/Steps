@@ -24,6 +24,7 @@ public:
 	int lastUIWidth, lastUIHeight;
 	int theSequencerLength;
 	int theSequencerPosition;
+	bool isPlaying;
 	AudioPlayHead::CurrentPositionInfo lastPosInfo;
 	OwnedArray<Step> theSteps;
 	OwnedArray<Step>& getSteps(){return theSteps;}

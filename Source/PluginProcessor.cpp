@@ -18,6 +18,7 @@ SequencerAudioProcessor::SequencerAudioProcessor()
 	theSequencer = new Sequencer(this);
 	theSequencerLength =NUM_CHANNELS_MAX;
 	theSequencerPosition = 0;
+	isPlaying = false;
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
 		ValueTree StepTree("Step" + String(i));
@@ -197,7 +198,6 @@ void SequencerAudioProcessor::changeProgramName (int index, const String& newNam
 
 void SequencerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-	theSequencer->start();
 }
 
 void SequencerAudioProcessor::releaseResources()
@@ -207,12 +207,22 @@ void SequencerAudioProcessor::releaseResources()
 
 void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-	AudioPlayHead::CurrentPositionInfo newTime;
-	if (getPlayHead() != nullptr && getPlayHead()->getCurrentPosition (newTime) && newTime.isPlaying)
-		theSequencer->setPosition(newTime);
-	else if(!newTime.isPlaying)
+	getPlayHead()->getCurrentPosition (lastPosInfo);
+	if (!isPlaying && lastPosInfo.isPlaying)
+	{
+		isPlaying = true;
+		theSequencer->start();
+	}
+	else if(lastPosInfo.isPlaying && isPlaying)
+	{
+		isPlaying = true;
+		theSequencer->setPosition(lastPosInfo);
+	}
+	else if(!lastPosInfo.isPlaying)
+	{
+		isPlaying = false;
 		theSequencer->stop();
-	
+	}
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 }

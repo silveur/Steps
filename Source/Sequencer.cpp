@@ -12,6 +12,8 @@
 #include "PluginProcessor.h"
 #include "MidiCore.h"
 
+int Sequencer::theStepTime = 0;
+
 Sequencer::Sequencer(SequencerAudioProcessor* processor): TimeSliceThread("SequencerThread")
 {
 	theMidiCore = new MidiCore();
@@ -21,7 +23,6 @@ Sequencer::Sequencer(SequencerAudioProcessor* processor): TimeSliceThread("Seque
 	thePosition = 0;
 	theNoteOnClient = new NoteOnClient();
 	theNoteOffClient = new NoteOffClient();
-	addTimeSliceClient(theNoteOnClient, 5);
 	theNoteOnClient->theSequencer = this;
 	theNoteOffClient->theSequencer = this;
 }
@@ -31,60 +32,57 @@ Sequencer::~Sequencer()
 	delete theMidiCore;
 }
 
+void Sequencer::start()
+{
+	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
+	setPosition(theProcessor->lastPosInfo);
+	startThread();
+}
+
 void Sequencer::setPosition(AudioPlayHead::CurrentPositionInfo& info)
 {
 	theTempo = info.bpm;
 	thePPQPosition = info.ppqPosition;
-	isPlaying = true;
-	if(theTempo != -1)
-		startThread();
-//	if(!isThreadRunning() && theTempo != -1)
-//		startThread();
-//	repositionSequencer();
+	int subPos = fmod(thePPQPosition, 1.0)*4;
+	thePosition = abs(subPos + ((int)thePPQPosition % 4) * 4);
+	theStepTime = 1.0 / (theTempo / 60.0) * 250;
+	repositionSequencer();
 }
 
-//void Sequencer::run()
-//{
-////	while(!threadShouldExit())
-////	{
-////		wait(-1);
-////		if(threadShouldExit()) return;
-////		sleep(theSyncTime);
-////		newStep();
-////	}
-//}
+void Sequencer::stop()
+{
+	for(int i=0; i<getNumClients();i++)
+		removeTimeSliceClient(getClient(i));
+	stopThread(theStepTime);
+}
 
 void Sequencer::repositionSequencer()
 {
-//	int subPos = fmod(thePPQPosition, 1.0)*4;
-//	int newPos = subPos + ((int)thePPQPosition%4) * 4;
-//	thePosition = newPos;
-//	int timeBetweenSteps = 1.0 / (theTempo / 60.0) * 250;
-//	float mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
-//	float diff = timeBetweenSteps - ((mod / 0.25) * timeBetweenSteps);
-//	theSyncTime = diff;
-//	notify();
-}
+	float mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
 
-void Sequencer::newStep()
-{
+	int syncTime = theStepTime - ((mod / 0.25) * theStepTime);
+	if(syncTime == theStepTime)
+		syncTime = 0;
+	DBG("SyncTime: " +  String(syncTime));
+	addTimeSliceClient(theNoteOnClient, syncTime);
 }
 
 int NoteOnClient::useTimeSlice()
 {
+	DBG("Step: " + String(theSequencer->thePosition));
 	theSequencer->theMidiCore->noteOn(60 + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch, theSequencer->theProcessor->theSteps[theSequencer->thePosition]->theVelocity);
-	int stepTime = 1.0 / (theSequencer->theTempo / 60.0) * 250;
-	theSequencer->addTimeSliceClient(theSequencer->theNoteOffClient,stepTime/2);
 	
-	return stepTime;
+	theSequencer->addTimeSliceClient(theSequencer->theNoteOffClient,80);
+	theSequencer->nextNoteOff = theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch;
+	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
+	theSequencer->thePosition = (theSequencer->thePosition + 1) % 16;
+	DBG("Step after sent: " + String(theSequencer->thePosition));
+	return -1;
 }
 
 int NoteOffClient::useTimeSlice()
 {
-	theSequencer->theMidiCore->noteOff(60 + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch);
-	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
-	theSequencer->thePosition = (theSequencer->thePosition + 1) % theSequencer->theProcessor->theSequencerLength;
-	theSequencer->removeTimeSliceClient(this);
+	theSequencer->theMidiCore->noteOff(60 + theSequencer->nextNoteOff);
 	return -1;
 }
 

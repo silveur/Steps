@@ -24,9 +24,8 @@ public:
 	~Sequencer();
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
-//	void run();
-	void stop(){stopThread(200);}
-	void start(){}
+	void stop();
+	void start();
 	void newStep();
 	void repositionSequencer();
 	MidiCore* theMidiCore;
@@ -36,8 +35,8 @@ public:
 	double theTempo;
 	double thePPQPosition;
 	int thePosition;
-	int theSyncTime;
-	bool isPlaying;
+	static int theStepTime;
+	int nextNoteOff;
 };
 
 class NoteOnClient: public TimeSliceClient
