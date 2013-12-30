@@ -25,6 +25,7 @@ Sequencer::Sequencer(SequencerAudioProcessor* processor): TimeSliceThread("Seque
 	theNoteOffClient = new NoteOffClient();
 	theNoteOnClient->theSequencer = this;
 	theNoteOffClient->theSequencer = this;
+	setPriority(9);
 }
 
 Sequencer::~Sequencer()
@@ -51,38 +52,50 @@ void Sequencer::setPosition(AudioPlayHead::CurrentPositionInfo& info)
 
 void Sequencer::stop()
 {
-	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
+	for(int i=0; i<getNumClients();i++)
+	{
+		getClient(i)->useTimeSlice();
+		removeTimeSliceClient(getClient(i));
+	}
+
 	stopThread(theStepTime);
 }
 
 void Sequencer::repositionSequencer()
 {
-	float mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
-	int syncTime = theStepTime - ((mod / 0.25) * theStepTime);
-	if(syncTime == theStepTime)	syncTime = 0;
-//	for(int i=0; i<getNumClients();i++)
-//	{
-//		if(getClient(i) == theNoteOnClient)
-//			return; 
-//	}
-//	addTimeSliceClient(theNoteOnClient, syncTime);
+	double mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
+	theSyncTime = theStepTime - ((mod / 0.25) * theStepTime);
+
+	DBG("SyncTime: " + String(theSyncTime));
+	addTimeSliceClient(theNoteOnClient, theSyncTime);
 }
 
 int NoteOnClient::useTimeSlice()
 {
+	if(theSequencer->getNumClients() > 1)
+	{
+		DBG("Sync time: " + String(theSequencer->theSyncTime));
+		theSequencer->removeTimeSliceClient(theSequencer->theNoteOffClient);
+		theSequencer->theNoteOffClient->useTimeSlice();
+	}
 	theSequencer->theMidiCore->noteOn(60 + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch, theSequencer->theProcessor->theSteps[theSequencer->thePosition]->theVelocity);
 	
-	theSequencer->addTimeSliceClient(theSequencer->theNoteOffClient,80);
-	theSequencer->theNoteOffClient->nextNoteOff = theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch;
+	DBG("Note On for step " + String(theSequencer->thePosition) + ": " + String(60 + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch));
 	
+	theSequencer->addTimeSliceClient(theSequencer->theNoteOffClient,40);
+	
+	theSequencer->theNoteOffClient->nextNoteOff = theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch;
+	theSequencer->theNoteOffClient->theSequencerPosition = theSequencer->thePosition;
 	theSequencer->thePosition = (theSequencer->thePosition + 1) % 16;
 	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
 	
-	return theSequencer->theStepTime;
+	return -1;
 }
 
 int NoteOffClient::useTimeSlice()
 {
+	DBG("Note Off for step " + String(theSequencerPosition) + ": " + String(60 + nextNoteOff));
+	DBG("------------------------------");
 	theSequencer->theMidiCore->noteOff(60 + nextNoteOff);
 	return -1;
 }

@@ -36,6 +36,7 @@ public:
 	double thePPQPosition;
 	int thePosition;
 	static int theStepTime;
+	int theSyncTime;
 };
 
 class NoteOnClient: public TimeSliceClient
@@ -55,6 +56,7 @@ public:
 	int useTimeSlice();
 	Sequencer* theSequencer;
 	int nextNoteOff;
+	int theSequencerPosition;
 };
 
 #endif  // SEQUENCER_H_INCLUDED
