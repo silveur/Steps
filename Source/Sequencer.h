@@ -37,6 +37,7 @@ public:
 	int thePosition;
 	static int theStepTime;
 	int theSyncTime;
+	bool wait;
 };
 
 class NoteOnClient: public TimeSliceClient

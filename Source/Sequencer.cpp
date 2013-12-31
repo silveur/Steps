@@ -20,12 +20,12 @@ Sequencer::Sequencer(SequencerAudioProcessor* processor): TimeSliceThread("Seque
 	theMidiCore->openMidiOutput(0);
 	theProcessor = processor;
 	theTempo = -1;
+	wait = false;
 	thePosition = 0;
 	theNoteOnClient = new NoteOnClient();
 	theNoteOffClient = new NoteOffClient();
 	theNoteOnClient->theSequencer = this;
 	theNoteOffClient->theSequencer = this;
-	setPriority(9);
 }
 
 Sequencer::~Sequencer()
@@ -37,6 +37,7 @@ void Sequencer::start()
 {
 	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
 	thePosition = 0;
+	wait = false;
 	setPosition(theProcessor->lastPosInfo);
 	addTimeSliceClient(theNoteOnClient, 0);
 	startThread();
@@ -58,16 +59,24 @@ void Sequencer::stop()
 		removeTimeSliceClient(getClient(i));
 	}
 
-	stopThread(theStepTime);
+//	stopThread(theStepTime);
 }
 
 void Sequencer::repositionSequencer()
 {
 	double mod = fmod(((thePPQPosition-(int)thePPQPosition)),0.25);
 	theSyncTime = theStepTime - ((mod / 0.25) * theStepTime);
-
-	DBG("SyncTime: " + String(theSyncTime));
-	addTimeSliceClient(theNoteOnClient, theSyncTime);
+	if(theSyncTime <= 5)
+	{
+		addTimeSliceClient(theNoteOnClient, theSyncTime);
+		wait = true;
+	}
+	
+	if(!wait)
+	{
+		DBG("SyncTime: " + String(theSyncTime));
+		addTimeSliceClient(theNoteOnClient, theSyncTime);
+	}
 }
 
 int NoteOnClient::useTimeSlice()
@@ -77,6 +86,7 @@ int NoteOnClient::useTimeSlice()
 		DBG("Sync time: " + String(theSequencer->theSyncTime));
 		theSequencer->removeTimeSliceClient(theSequencer->theNoteOffClient);
 		theSequencer->theNoteOffClient->useTimeSlice();
+		return -1;
 	}
 	theSequencer->theMidiCore->noteOn(60 + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch, theSequencer->theProcessor->theSteps[theSequencer->thePosition]->theVelocity);
 	
@@ -88,7 +98,7 @@ int NoteOnClient::useTimeSlice()
 	theSequencer->theNoteOffClient->theSequencerPosition = theSequencer->thePosition;
 	theSequencer->thePosition = (theSequencer->thePosition + 1) % 16;
 	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
-	
+	theSequencer->wait = false;
 	return -1;
 }
 
