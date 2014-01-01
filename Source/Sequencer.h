@@ -25,7 +25,7 @@ public:
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
 	void stop();
-	void start();
+	void start(int noteNumber);
 	void newStep();
 	void repositionSequencer();
 	MidiCore* theMidiCore;
@@ -37,6 +37,7 @@ public:
 	int thePosition;
 	static int theStepTime;
 	int theSyncTime;
+	int theRootNote;
 	bool wait;
 };
 
@@ -57,7 +58,6 @@ public:
 	int useTimeSlice();
 	Sequencer* theSequencer;
 	int nextNoteOff;
-	int theSequencerPosition;
 };
 
 #endif  // SEQUENCER_H_INCLUDED

@@ -21,9 +21,11 @@ public:
 	
 	ValueTree& getValueTree(){return *theAudioConfig;}
 	void setSequencerPosition(int newPos);
+	void handleMidiEvent(const MidiMessage& m);
 	int lastUIWidth, lastUIHeight;
 	int theSequencerLength;
 	int theSequencerPosition;
+	int theRootNote;
 	bool isPlaying;
 	AudioPlayHead::CurrentPositionInfo lastPosInfo;
 	OwnedArray<Step> theSteps;
@@ -71,6 +73,8 @@ public:
 
 private:
 
+	MidiMessageCollector theMidiCollector;
+	
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SequencerAudioProcessor)
 };
 
