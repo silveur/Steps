@@ -34,10 +34,10 @@ Sequencer::~Sequencer()
 	delete theMidiCore;
 }
 
-void Sequencer::start(int noteNumber)
+void Sequencer::start()
 {
 	for(int i=0; i<getNumClients();i++)	removeTimeSliceClient(getClient(i));
-	theRootNote = noteNumber;
+	theRootNote = 48;
 	thePosition = 0;
 	wait = false;
 	setPosition(theProcessor->lastPosInfo);

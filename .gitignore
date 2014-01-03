@@ -21,7 +21,9 @@
 *.app
 
 Builds/
-JuceLibraryCode/
+JuceLibraryCode/JuceHeader.h
+JuceLibraryCode/modules/*
+JuceLibraryCode/ReadMe.txt
 Logic/Backups/
 modules/
 *.logic

@@ -25,7 +25,7 @@ public:
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
 	void stop();
-	void start(int noteNumber);
+	void start();
 	void newStep();
 	void repositionSequencer();
 	MidiCore* theMidiCore;

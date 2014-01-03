@@ -19,7 +19,6 @@ SequencerAudioProcessor::SequencerAudioProcessor()
 	theSequencerLength =NUM_CHANNELS_MAX;
 	theSequencerPosition = 0;
 	isPlaying = false;
-	theRootNote = 0;
 	for(int i=0;i<NUM_CHANNELS_MAX;i++)
 	{
 		ValueTree StepTree("Step" + String(i));
@@ -208,28 +207,12 @@ void SequencerAudioProcessor::releaseResources()
 }
 
 void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
-{
-	if(!midiMessages.isEmpty())
-	{
-		DBG("Midi In");
-	}
-	
-	MidiBuffer::Iterator midiIterator (midiMessages);
-	midiIterator.setNextSamplePosition (0);
-	MidiMessage m;
-
-	for(int i=0;i<buffer.getNumSamples();i++)
-    {
-        if(midiIterator.getNextEvent(m,i) == true)
-			handleMidiEvent (m);
-    }
-	
+{	
 	getPlayHead()->getCurrentPosition (lastPosInfo);
 	if (!isPlaying && lastPosInfo.isPlaying)
 	{
 		isPlaying = true;
-		if(theRootNote > 0)
-			theSequencer->start(theRootNote);
+		theSequencer->start();
 	}
 	else if(lastPosInfo.isPlaying && isPlaying)
 	{
@@ -240,7 +223,6 @@ void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 	{
 		isPlaying = false;
 		theSequencer->stop();
-		theRootNote = 0;
 	}
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
@@ -251,13 +233,6 @@ bool SequencerAudioProcessor::hasEditor() const
     return true;
 }
 
-void SequencerAudioProcessor::handleMidiEvent (const MidiMessage& midiMessage)
-{
-	if(midiMessage.isNoteOn())
-	{
-		theRootNote = midiMessage.getNoteNumber();
-	}
-}
 AudioProcessorEditor* SequencerAudioProcessor::createEditor()
 {
     return new SequencerAudioProcessorEditor (this);

@@ -24,7 +24,6 @@ void MidiCore::openMidiOutput(int index)
 
 MidiCore::~MidiCore()
 {
-	killNotes();
 	if(theMidiOutput != nullptr) delete theMidiOutput;
 }
 
