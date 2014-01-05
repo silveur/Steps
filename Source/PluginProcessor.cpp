@@ -15,7 +15,9 @@ SequencerAudioProcessor::SequencerAudioProcessor()
 {
 	theAudioConfig = new ValueTree("AudioConfig");
 	theUndoManager = new UndoManager(1000, 1);
-	theSequencer = new Sequencer(this);
+    theMidiCore = new MidiCore();
+    theMidiCore->openMidiOutput(0);
+	theSequencer = new Sequencer(this, theMidiCore);
 	theSequencerLength =NUM_CHANNELS_MAX;
 	theSequencerPosition = 0;
 	isPlaying = false;
@@ -69,6 +71,7 @@ float SequencerAudioProcessor::getParameter(int index)
 	switch (index)
 	{
 		case SequencerLength:	return theSequencerLength;
+        case MidiOutputIndex:	return theMidiOutputIndex;
 		default:				return 0.0f;
 	}
 }
@@ -92,6 +95,12 @@ void SequencerAudioProcessor::setParameter(int index, float newValue)
 		switch (index)
 		{
 			case SequencerLength:	theSequencerLength = newValue;  break;
+            case MidiOutputIndex:
+            {
+                theMidiOutputIndex = newValue;
+                theMidiCore->openMidiOutput(theMidiOutputIndex);
+                break;
+            }
 			default:												break;
 		}
 	}
@@ -114,6 +123,7 @@ const String SequencerAudioProcessor::getParameterName (int index)
     switch (index)
     {
         case SequencerLength:     return "Length";
+        case MidiOutputIndex:     return "MidiOutputIndex";
         default:					break;
     }
 	

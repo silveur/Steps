@@ -20,7 +20,7 @@ class NoteOffClient;
 class Sequencer: public TimeSliceThread
 {
 public:
-	Sequencer(SequencerAudioProcessor* processor);
+	Sequencer(SequencerAudioProcessor* processor, MidiCore* midiCore);
 	~Sequencer();
 	
 	void setPosition(AudioPlayHead::CurrentPositionInfo& info);

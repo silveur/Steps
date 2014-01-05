@@ -12,6 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Step.h"
 #include "Sequencer.h"
+#include "MidiCore.h"
 class SequencerAudioProcessor  : public AudioProcessor
 {
 public:
@@ -24,6 +25,7 @@ public:
 	int lastUIWidth, lastUIHeight;
 	int theSequencerLength;
 	int theSequencerPosition;
+    int theMidiOutputIndex;
 	bool isPlaying;
 	AudioPlayHead::CurrentPositionInfo lastPosInfo;
 	OwnedArray<Step> theSteps;
@@ -33,7 +35,8 @@ public:
 		StepPitchs = 16,
 		StepVelocities = 32,
 		StepState = 48,
-        SequencerLength,
+        SequencerLength = 49,
+        MidiOutputIndex = 50,
 		
         totalNumParams
     };
@@ -41,7 +44,8 @@ public:
 	ValueTree* theAudioConfig;
 	UndoManager* theUndoManager;
 	Sequencer* theSequencer;
-	
+	MidiCore* theMidiCore;
+    
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);

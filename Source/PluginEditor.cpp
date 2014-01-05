@@ -31,6 +31,15 @@ SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProc
 		theStateButtons[i]->addListener(this);
 		theStateButtons[i]->setToggleState((bool)theAudioConfig.getChild(i).getProperty("State"), dontSendNotification);
 	}
+    theMidiOutputList = new ComboBox("Midi Output list");
+    addAndMakeVisible(theMidiOutputList);
+    StringArray midiList = getProcessor()->theMidiCore->getMidiDevicesList();
+    for(int i=0;i<midiList.size();i++)
+    {
+        theMidiOutputList->addItem(midiList[i], i+1);
+    }
+    theMidiOutputList->setSelectedId(theAudioConfig.getProperty("MidiOutput"));
+    theMidiOutputList->addListener(this);
 	thePosition = 0;
     setSize (600, 300);
 	theAudioConfig.addListener(this);
@@ -39,6 +48,7 @@ SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProc
 
 SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
 {
+    stopTimer();
 }
 
 void SequencerAudioProcessorEditor::paint (Graphics& g)
@@ -66,6 +76,16 @@ void SequencerAudioProcessorEditor::buttonClicked(Button* button)
 	getProcessor()->setParameterNotifyingHost(NUM_CHANNELS_MAX*2 + index, (float)button->getToggleState());
 }
 
+void SequencerAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    if(comboBoxThatHasChanged == theMidiOutputList)
+    {
+        String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedId());
+        getProcessor()->setParameterNotifyingHost(50, theMidiOutputList->getSelectedId());
+        theAudioConfig.setProperty("MidiOutput", theMidiOutputList->getSelectedId(), getProcessor()->theUndoManager);
+    }
+}
+
 void SequencerAudioProcessorEditor::valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property)
 {
 	int index = treeWhosePropertyHasChanged.getParent().indexOf(treeWhosePropertyHasChanged);
@@ -80,6 +100,10 @@ void SequencerAudioProcessorEditor::valueTreePropertyChanged (ValueTree& treeWho
 	else if(String(property) == "State")
 	{
 		theStateButtons[index]->setToggleState((bool)treeWhosePropertyHasChanged.getProperty(property),dontSendNotification);
+	}
+    else if(String(property) == "MidiOutput")
+	{
+		theMidiOutputList->setSelectedId(treeWhosePropertyHasChanged.getProperty(property),dontSendNotification);
 	}
 }
 
@@ -96,6 +120,7 @@ void SequencerAudioProcessorEditor::resized()
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 30, 30);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 30, 30);
 	}
+    theMidiOutputList->setBounds(30, 30, 150, 30);
 }
 
 

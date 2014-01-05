@@ -14,10 +14,9 @@
 
 int Sequencer::theStepTime = 0;
 
-Sequencer::Sequencer(SequencerAudioProcessor* processor): TimeSliceThread("SequencerThread")
+Sequencer::Sequencer(SequencerAudioProcessor* processor, MidiCore* midiCore): TimeSliceThread("SequencerThread")
 {
-	theMidiCore = new MidiCore();
-	theMidiCore->openMidiOutput(0);
+	theMidiCore = midiCore;
 	theProcessor = processor;
 	theTempo = -1;
 	wait = false;
@@ -90,6 +89,7 @@ int NoteOnClient::useTimeSlice()
 		theSequencer->theNoteOffClient->useTimeSlice();
 		return -1;
 	}
+    if(theSequencer->theProcessor->theSteps[theSequencer->thePosition]->theState)
 	theSequencer->theMidiCore->noteOn(theSequencer->theRootNote + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch, theSequencer->theProcessor->theSteps[theSequencer->thePosition]->theVelocity);
 	
 	DBG("Note On for step " + String(theSequencer->thePosition) + ": " + String(theSequencer->theRootNote + theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch));

@@ -27,6 +27,12 @@ MidiCore::~MidiCore()
 	if(theMidiOutput != nullptr) delete theMidiOutput;
 }
 
+StringArray MidiCore::getMidiDevicesList()
+{
+    StringArray list = MidiOutput::getDevices();
+    return list;
+}
+
 void MidiCore::noteOn(int noteNumber,int velocity)
 {
     const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
