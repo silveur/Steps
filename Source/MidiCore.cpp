@@ -33,6 +33,12 @@ StringArray MidiCore::getMidiDevicesList()
     return list;
 }
 
+bool MidiCore::createVirtualMidiBus()
+{
+	MidiOutput::createNewDevice("VirtualMidi");
+	return 1;
+}
+
 void MidiCore::noteOn(int noteNumber,int velocity)
 {
     const MidiMessage midiMessage(0x90,noteNumber,velocity,0);

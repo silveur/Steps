@@ -4,7 +4,7 @@
               bundleIdentifier="com.nummermusic.Sequencer" includeBinaryInAppConfig="1"
               buildVST="0" buildAU="1" pluginName="Sequencer" pluginDesc="A handy sequencer plugin"
               pluginManufacturer="NummerMusic" pluginManufacturerCode="NM"
-              pluginCode="NM1" pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="0"
+              pluginCode="NM1" pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="1"
               pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="SequencerAU"
               pluginRTASCategory="" aaxIdentifier="com.nummermusic.Sequencer"
@@ -41,9 +41,6 @@
         <MODULEPATH id="juce_data_structures" path="Libraries/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="Libraries/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="Libraries/JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="Libraries/JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="Libraries/JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="Libraries/JUCE/modules"/>
@@ -59,14 +56,11 @@
     <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_core" showAllCode="1" useLocalCopy="0"/>
-    <MODULES id="juce_cryptography" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_events" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
     <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
-    <MODULES id="juce_opengl" showAllCode="1" useLocalCopy="0"/>
-    <MODULES id="juce_video" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
 </JUCERPROJECT>

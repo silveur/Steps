@@ -23,6 +23,7 @@ public:
 	void buttonClicked(Button* button);
 	void resized();
 	void timerCallback();
+	void refreshMidiList();
 	void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
@@ -36,8 +37,10 @@ private:
     {
         return static_cast <SequencerAudioProcessor*> (getAudioProcessor());
     }
+	ScopedPointer<TextButton> theCreateMidiPortButton;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
+	ScopedPointer<Slider> theSequencerLength;
 	OwnedArray<ToggleButton> theStateButtons;
     ScopedPointer<ComboBox> theMidiOutputList;
 	ValueTree theAudioConfig;

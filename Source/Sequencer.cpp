@@ -97,7 +97,7 @@ int NoteOnClient::useTimeSlice()
 	theSequencer->addTimeSliceClient(theSequencer->theNoteOffClient,40);
 	
 	theSequencer->theNoteOffClient->nextNoteOff = theSequencer->theProcessor->theSteps[theSequencer->thePosition]->thePitch + theSequencer->theRootNote;
-	theSequencer->thePosition = (theSequencer->thePosition + 1) % 16;
+	theSequencer->thePosition = (theSequencer->thePosition + 1) % theSequencer->theProcessor->theSequencerLength;
 	theSequencer->theProcessor->setSequencerPosition(theSequencer->thePosition);
 	theSequencer->wait = false;
 	return -1;

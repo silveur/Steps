@@ -234,7 +234,7 @@ void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 		isPlaying = false;
 		theSequencer->stop();
 	}
-    for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
+    for (int i = 0; i < getNumOutputChannels(); ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 }
 

@@ -31,15 +31,15 @@ SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProc
 		theStateButtons[i]->addListener(this);
 		theStateButtons[i]->setToggleState((bool)theAudioConfig.getChild(i).getProperty("State"), dontSendNotification);
 	}
-    theMidiOutputList = new ComboBox("Midi Output list");
-    addAndMakeVisible(theMidiOutputList);
-    StringArray midiList = getProcessor()->theMidiCore->getMidiDevicesList();
-    for(int i=0;i<midiList.size();i++)
-    {
-        theMidiOutputList->addItem(midiList[i], i+1);
-    }
-    theMidiOutputList->setSelectedId(theAudioConfig.getProperty("MidiOutput"));
-    theMidiOutputList->addListener(this);
+	addAndMakeVisible(theSequencerLength = new Slider("Length"));
+	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
+	theSequencerLength->setRange(1, 16,1);
+	theSequencerLength->setValue(theAudioConfig.getProperty("Length"));
+	theSequencerLength->addListener(this);
+	addAndMakeVisible(theCreateMidiPortButton = new TextButton("Create Virtual Midi bus"));
+	theCreateMidiPortButton->addListener(this);
+	theMidiOutputList = new ComboBox("Midi Output list");
+	refreshMidiList();
 	thePosition = 0;
     setSize (600, 300);
 	theAudioConfig.addListener(this);
@@ -49,6 +49,19 @@ SequencerAudioProcessorEditor::SequencerAudioProcessorEditor (SequencerAudioProc
 SequencerAudioProcessorEditor::~SequencerAudioProcessorEditor()
 {
     stopTimer();
+}
+
+void SequencerAudioProcessorEditor::refreshMidiList()
+{
+    addAndMakeVisible(theMidiOutputList);
+    StringArray midiList = getProcessor()->theMidiCore->getMidiDevicesList();
+	theMidiOutputList->clear();
+    for(int i=0;i<midiList.size();i++)
+    {
+        theMidiOutputList->addItem(midiList[i], i+1);
+    }
+    theMidiOutputList->setSelectedItemIndex(theAudioConfig.getProperty("MidiOutput"));
+    theMidiOutputList->addListener(this);
 }
 
 void SequencerAudioProcessorEditor::paint (Graphics& g)
@@ -69,20 +82,31 @@ void SequencerAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	{
 		getProcessor()->setParameterNotifyingHost(index + NUM_CHANNELS_MAX, slider->getValue());
 	}
+	else if(slider == theSequencerLength)
+	{
+		getProcessor()->setParameterNotifyingHost(49, slider->getValue());
+	}
 }
 void SequencerAudioProcessorEditor::buttonClicked(Button* button)
 {
-	int index = button->getName().getTrailingIntValue();
-	getProcessor()->setParameterNotifyingHost(NUM_CHANNELS_MAX*2 + index, (float)button->getToggleState());
+	if(button == theCreateMidiPortButton)
+	{
+		getProcessor()->theMidiCore->createVirtualMidiBus();
+	}
+	else
+	{
+		int index = button->getName().getTrailingIntValue();
+		getProcessor()->setParameterNotifyingHost(NUM_CHANNELS_MAX*2 + index, (float)button->getToggleState());
+	}
 }
 
 void SequencerAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
     if(comboBoxThatHasChanged == theMidiOutputList)
     {
-        String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedId());
-        getProcessor()->setParameterNotifyingHost(50, theMidiOutputList->getSelectedId());
-        theAudioConfig.setProperty("MidiOutput", theMidiOutputList->getSelectedId(), getProcessor()->theUndoManager);
+        String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
+        getProcessor()->setParameterNotifyingHost(50, theMidiOutputList->getSelectedItemIndex());
+        theAudioConfig.setProperty("MidiOutput", theMidiOutputList->getSelectedItemIndex(), getProcessor()->theUndoManager);
     }
 }
 
@@ -103,12 +127,19 @@ void SequencerAudioProcessorEditor::valueTreePropertyChanged (ValueTree& treeWho
 	}
     else if(String(property) == "MidiOutput")
 	{
-		theMidiOutputList->setSelectedId(treeWhosePropertyHasChanged.getProperty(property),dontSendNotification);
+		theMidiOutputList->setSelectedItemIndex(treeWhosePropertyHasChanged.getProperty(property),dontSendNotification);
+	}
+	else if(String(property) == "Length")
+	{
+		theSequencerLength->setValue(treeWhosePropertyHasChanged.getProperty(property),dontSendNotification);
 	}
 }
 
 void SequencerAudioProcessorEditor::timerCallback()
 {
+	int numMidi = ((StringArray)getProcessor()->theMidiCore->getMidiDevicesList()).size();
+	if(numMidi != theMidiOutputList->getNumItems())
+		refreshMidiList();
 	thePosition = getProcessor()->theSequencerPosition;
 	repaint();
 }
@@ -121,6 +152,8 @@ void SequencerAudioProcessorEditor::resized()
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 30, 30);
 	}
     theMidiOutputList->setBounds(30, 30, 150, 30);
+	theSequencerLength->setBounds(200, 30, 200, 20);
+	theCreateMidiPortButton->setBounds(theSequencerLength->getRight(), 30, 60, 15);
 }
 
 

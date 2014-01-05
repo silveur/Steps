@@ -26,6 +26,7 @@ public:
     void noteOff(int noteNumber);
     void killNotes();
 	void outputMidi(const MidiMessage& msg);
+	bool createVirtualMidiBus();
     StringArray getMidiDevicesList();
 private:
     
