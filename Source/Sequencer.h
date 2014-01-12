@@ -17,7 +17,8 @@ class SequencerAudioProcessor;
 class MidiCore;
 class NoteOnClient;
 class NoteOffClient;
-class Sequencer: public TimeSliceThread
+class NoteManager;
+class Sequencer: public Thread
 {
 public:
 	Sequencer(SequencerAudioProcessor* processor, MidiCore* midiCore);
@@ -38,7 +39,18 @@ public:
 	static int theStepTime;
 	int theSyncTime;
 	int theRootNote;
-	bool wait;
+//	bool wait;
+	void run();
+	NoteManager* theNoteManager;
+};
+
+class NoteManager: public TimeSliceThread
+{
+public:
+	NoteManager(): TimeSliceThread("NoteManager")
+	{startThread();}
+	~NoteManager()
+	{stopThread(200);}
 };
 
 class NoteOnClient: public TimeSliceClient
