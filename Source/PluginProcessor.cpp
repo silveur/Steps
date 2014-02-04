@@ -223,10 +223,11 @@ void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffe
 	{
 		isPlaying = true;
 		theSequencer->start();
+		DBG("Block size:" + String(buffer.getNumSamples()));
 	}
 	else if(lastPosInfo.isPlaying && isPlaying)
 	{
-//		DBG("Block size:" + String(buffer.getNumSamples()));
+		
 		isPlaying = true;
 		theSequencer->setPosition(lastPosInfo);
 	}
