@@ -28,4 +28,5 @@ Logic/Backups/
 modules/
 *.logic
 *.swp
+./Logic/Project\ File\ Backups/*
 

@@ -11,8 +11,8 @@
 
 */
 
-#ifndef __JUCE_APPCONFIG_UDHW7J__
-#define __JUCE_APPCONFIG_UDHW7J__
+#ifndef __JUCE_APPCONFIG_RX7RJF__
+#define __JUCE_APPCONFIG_RX7RJF__
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
@@ -96,15 +96,15 @@
 // juce_audio_processors flags:
 
 #ifndef    JUCE_PLUGINHOST_VST
- //#define JUCE_PLUGINHOST_VST
+ #define   JUCE_PLUGINHOST_VST 0
 #endif
 
 #ifndef    JUCE_PLUGINHOST_VST3
- //#define JUCE_PLUGINHOST_VST3
+ #define   JUCE_PLUGINHOST_VST3 0
 #endif
 
 #ifndef    JUCE_PLUGINHOST_AU
- //#define JUCE_PLUGINHOST_AU
+ #define   JUCE_PLUGINHOST_AU 1
 #endif
 
 //==============================================================================
@@ -164,7 +164,7 @@
 // juce_gui_extra flags:
 
 #ifndef    JUCE_WEB_BROWSER
- //#define JUCE_WEB_BROWSER
+ #define   JUCE_WEB_BROWSER 0
 #endif
 
 #ifndef    JUCE_ENABLE_LIVE_CONSTANT_EDITOR
@@ -194,16 +194,22 @@
  #define JucePlugin_Name                   "Sequencer"
 #endif
 #ifndef  JucePlugin_Desc
- #define JucePlugin_Desc                   "A handy sequencer plugin"
+ #define JucePlugin_Desc                   "sequencer"
 #endif
 #ifndef  JucePlugin_Manufacturer
- #define JucePlugin_Manufacturer           "NummerMusic"
+ #define JucePlugin_Manufacturer           "Nummer"
+#endif
+#ifndef  JucePlugin_ManufacturerWebsite
+ #define JucePlugin_ManufacturerWebsite    "www.roli.com"
+#endif
+#ifndef  JucePlugin_ManufacturerEmail
+ #define JucePlugin_ManufacturerEmail      "nummer.music@gmail.com"
 #endif
 #ifndef  JucePlugin_ManufacturerCode
- #define JucePlugin_ManufacturerCode       'NM'
+ #define JucePlugin_ManufacturerCode       'Numm'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             'NM1'
+ #define JucePlugin_PluginCode             'Plyt'
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    2
@@ -221,7 +227,7 @@
  #define JucePlugin_WantsMidiInput         1
 #endif
 #ifndef  JucePlugin_ProducesMidiOutput
- #define JucePlugin_ProducesMidiOutput     1
+ #define JucePlugin_ProducesMidiOutput     0
 #endif
 #ifndef  JucePlugin_SilenceInProducesSilenceOut
  #define JucePlugin_SilenceInProducesSilenceOut  0
@@ -251,16 +257,16 @@
  #define JucePlugin_AUSubType              JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_AUExportPrefix
- #define JucePlugin_AUExportPrefix         SequencerAU
+ #define JucePlugin_AUExportPrefix         SeqAU
 #endif
 #ifndef  JucePlugin_AUExportPrefixQuoted
- #define JucePlugin_AUExportPrefixQuoted   "SequencerAU"
+ #define JucePlugin_AUExportPrefixQuoted   "SeqAU"
 #endif
 #ifndef  JucePlugin_AUManufacturerCode
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.nummermusic.Sequencer
+ #define JucePlugin_CFBundleIdentifier     com.nummer.seq
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_SWGenerators
@@ -278,7 +284,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.nummermusic.Sequencer
+ #define JucePlugin_AAXIdentifier          com.roli.Sequencer
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -286,14 +292,14 @@
 #ifndef  JucePlugin_AAXProductId
  #define JucePlugin_AAXProductId           JucePlugin_PluginCode
 #endif
-#ifndef  JucePlugin_AAXPluginId
- #define JucePlugin_AAXPluginId            JucePlugin_PluginCode
-#endif
 #ifndef  JucePlugin_AAXCategory
  #define JucePlugin_AAXCategory            AAX_ePlugInCategory_Dynamics
 #endif
 #ifndef  JucePlugin_AAXDisableBypass
  #define JucePlugin_AAXDisableBypass       0
 #endif
+#ifndef  JucePlugin_AAXDisableMultiMono
+ #define JucePlugin_AAXDisableMultiMono    0
+#endif
 
-#endif  // __JUCE_APPCONFIG_UDHW7J__
+#endif  // __JUCE_APPCONFIG_RX7RJF__
