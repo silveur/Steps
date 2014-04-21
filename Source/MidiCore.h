@@ -23,7 +23,7 @@ public:
     
 	void openMidiOutput(int index);
     void noteOn(int noteNumber,int velocity);
-    void noteOff(int noteNumber);
+    void noteOff(int noteNumber, int delay);
     void killNotes();
 	void outputMidi(const MidiMessage& msg);
 	bool createVirtualMidiBus();

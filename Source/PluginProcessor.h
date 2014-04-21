@@ -76,7 +76,14 @@ public:
 private:
 
 	MidiMessageCollector theMidiCollector;
-	
+	double theTempo;
+	double thePPQPosition;
+	int thePosition;
+	int theStepTime;
+	int theSyncTime;
+	int theRootNote;
+	int beat;
+	int theCurrentStep;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SequencerAudioProcessor)
 };
 

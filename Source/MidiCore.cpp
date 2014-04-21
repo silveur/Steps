@@ -19,7 +19,10 @@ MidiCore::MidiCore()
 void MidiCore::openMidiOutput(int index)
 {
 	if(MidiOutput::getDevices().size() >= index)
+	{
 		theMidiOutput = MidiOutput::openDevice(index);
+		theMidiOutput->startBackgroundThread();
+	}
 }
 
 MidiCore::~MidiCore()
@@ -45,10 +48,11 @@ void MidiCore::noteOn(int noteNumber,int velocity)
     outputMidi(midiMessage);
 }
 
-void MidiCore::noteOff(int noteNumber)
+void MidiCore::noteOff(int noteNumber, int delay)
 {
     const MidiMessage midiMessage(0x80,noteNumber,127,0);
-    outputMidi(midiMessage);
+	MidiBuffer buffer(midiMessage);
+	theMidiOutput->sendBlockOfMessages(buffer, Time::getMillisecondCounter() + delay, 44100);
 }
 
 void MidiCore::killNotes()
