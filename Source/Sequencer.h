@@ -13,63 +13,30 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Step.h"
+#include "MidiCore.h"
+
 class SequencerAudioProcessor;
 class MidiCore;
-class NoteOnClient;
-class NoteOffClient;
 class NoteManager;
-class Sequencer: public Thread
+
+class Sequencer: public MidiInputCallback
 {
 public:
-	Sequencer(SequencerAudioProcessor* processor, MidiCore* midiCore);
+	Sequencer();
 	~Sequencer();
-	
-	void setPosition(AudioPlayHead::CurrentPositionInfo& info);
+	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message);
 	void stop();
 	void start();
-	void newStep();
-	void repositionSequencer();
-	MidiCore* theMidiCore;
-	SequencerAudioProcessor* theProcessor;
-	NoteOnClient* theNoteOnClient;
-	NoteOffClient* theNoteOffClient;
+	void setPosition();
 	double theTempo;
-	double thePPQPosition;
 	int thePosition;
-	static int theStepTime;
 	int theSyncTime;
 	int theRootNote;
-//	bool wait;
-	void run();
-	NoteManager* theNoteManager;
+	
+private:
+	ScopedPointer<MidiCore> theMidiCore;
+	ScopedPointer<MidiInput> theMidiInput;
 };
 
-class NoteManager: public TimeSliceThread
-{
-public:
-	NoteManager(): TimeSliceThread("NoteManager")
-	{startThread();}
-	~NoteManager()
-	{stopThread(200);}
-};
-
-class NoteOnClient: public TimeSliceClient
-{
-public:
-	NoteOnClient(){}
-	~NoteOnClient(){}
-	int useTimeSlice();
-	Sequencer* theSequencer;
-};
-
-class NoteOffClient: public TimeSliceClient
-{
-public:
-	NoteOffClient(){}
-	~NoteOffClient(){}
-	int useTimeSlice();
-	Sequencer* theSequencer;
-	int nextNoteOff;
-};
 
 #endif  // SEQUENCER_H_INCLUDED
