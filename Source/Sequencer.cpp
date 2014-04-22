@@ -113,23 +113,28 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 {
 	if (message.isMidiClock() && !isIdle)
 	{
+		DBG("PPQ count: " << thePpqCount);
 		if (thePpqCount == 0 && (thePosition %2 == 0))
 		{
 			DBG("Normal");
-			thePosition = (thePosition+1)% theLength;
-			theSequencerTree.setProperty("Position", thePosition, nullptr);
+			
 			triggerStep();
 		}
 		else if (thePpqCount == theShuffle && (thePosition %2 == 1))
 		{
 			DBG("Shuffle");
-			thePosition = (thePosition+1)% theLength;
+			thePosition = (thePosition+1) % theLength;
 			theSequencerTree.setProperty("Position", thePosition, nullptr);
 			triggerStep();
 		}
-		DBG("PPQ count: " << thePpqCount);
-		thePpqCount = (thePpqCount+1) % 6;
+
+		if (thePpqCount++ == 6)
+		{
+			thePosition = (thePosition+1) % theLength;
+			theSequencerTree.setProperty("Position", thePosition, nullptr);
+		}
 	}
+	
 	else if(message.isSongPositionPointer())
 	{
 		
