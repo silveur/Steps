@@ -48,7 +48,9 @@ private:
 	int thePosition;
 	int theSyncTime;
 	int theRootNote;
+	int theRootOctave;
 	int thePpqCount;
+	int theLength;
 	bool isIdle;
 };
 

@@ -34,16 +34,23 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
 	theSequencerLength->setRange(1, 16,1);
-	theSequencerLength->setValue(16);
+	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
-	theMidiOutputList = new ComboBox("Midi Output list");
+	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
 	updateSelectedMidiOut(str);
+	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
+	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
+	updateNotesAndOctaves();
+	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
+	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
+	theRootNoteList->addListener(this);
+	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
-    setSize (theMainScreen.getWidth()/2, theMainScreen.getHeight()/4);
+    setSize(theMainScreen.getWidth()/2, theMainScreen.getHeight()/4);
 }
 
 Interface::~Interface()
@@ -82,7 +89,10 @@ void Interface::resized()
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 30, 30);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 30, 30);
 	}
-	theMidiOutputList->setBounds(30, 30, 150, 30);
+	theSequencerLength->setBounds(200, 20, 200, 30);
+	theMidiOutputList->setBounds(30, 20, 150, 30);
+	theRootNoteList->setBounds(30, 50, 70, 20);
+	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 }
 
 void Interface::buttonClicked(Button* button)
@@ -115,6 +125,16 @@ void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
 		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
     }
+	else if(comboBoxThatHasChanged == theRootOctaveList)
+    {
+        int id = comboBoxThatHasChanged->getSelectedItemIndex();
+		theSequencerTree.setProperty("RootOctave", id, nullptr);
+    }
+	else if(comboBoxThatHasChanged == theRootNoteList)
+    {
+        int id = comboBoxThatHasChanged->getSelectedItemIndex();
+		theSequencerTree.setProperty("RootNote", id, nullptr);
+    }
 }
 
 void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
@@ -141,6 +161,27 @@ void Interface::updateSelectedMidiOut(String& midiOut)
 			theMidiOutputList->setSelectedItemIndex(i);
 			break;
 		}
+	}
+}
+
+void Interface::updateNotesAndOctaves()
+{
+	theRootNoteList->addItem("C",1);
+	theRootNoteList->addItem("C#",2);
+	theRootNoteList->addItem("D",3);
+	theRootNoteList->addItem("D#",4);
+	theRootNoteList->addItem("E",5);
+	theRootNoteList->addItem("F",6);
+	theRootNoteList->addItem("F#",7);
+	theRootNoteList->addItem("G",8);
+	theRootNoteList->addItem("G#",9);
+	theRootNoteList->addItem("A",10);
+	theRootNoteList->addItem("A#",11);
+	theRootNoteList->addItem("B",12);
+	
+	for (int i=0;i<8;i++)
+	{
+		theRootOctaveList->addItem(String(i), i+1);
 	}
 }
 

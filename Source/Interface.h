@@ -33,8 +33,11 @@ public:
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 	
 private:
+	void updateNotesAndOctaves();
 	Rectangle<int> theMainScreen;
 	ScopedPointer<ComboBox> theMidiOutputList;
+	ScopedPointer<ComboBox> theRootNoteList;
+	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<Slider> theSequencerLength;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;

@@ -39,6 +39,9 @@ Sequencer::Sequencer()
 			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
 		}
 	}
+	theLength = theSequencerTree.getProperty("Length");
+	theRootNote = theSequencerTree.getProperty("RootNote");
+	theRootOctave = theSequencerTree.getProperty("RootOctave");
 	theSequencerTree.addListener(this);
 }
 
@@ -82,12 +85,12 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 	{
 		if (thePpqCount == 0 && !isIdle)
 		{
-			thePosition = (thePosition+1)%16;
+			thePosition = (thePosition+1)% theLength;
 			if (theStepArray[thePosition]->theState)
 			{
 				Step* step = theStepArray[thePosition];
-				MidiMessage onMsg = MidiMessage::noteOn(1, step->thePitch + theRootNote, (uint8)step->theVelocity);
-				MidiMessage offMsg = MidiMessage::noteOff(1, step->thePitch + theRootNote, (uint8)step->theVelocity);
+				MidiMessage onMsg = MidiMessage::noteOn(1, step->thePitch + theRootNote * theRootOctave, (uint8)step->theVelocity);
+				MidiMessage offMsg = MidiMessage::noteOff(1, step->thePitch + theRootNote * theRootOctave, (uint8)step->theVelocity);
 				theMidiCore->outputMidi(onMsg);
 				theMidiCore->outputMidi(offMsg, 40);
 			}
@@ -95,7 +98,6 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 			DBG("New Position: " << thePosition);
 		}
 		thePpqCount = (thePpqCount+1) % 6;
-
 	}
 	else if(message.isSongPositionPointer())
 	{
@@ -121,5 +123,17 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		String midiOut = tree.getProperty(property);
 		theMidiCore->openMidiOutput(midiOut);
+	}
+	else if(String(property) == "Length")
+	{
+		theLength = tree.getProperty(property);
+	}
+	else if(String(property) == "RootOctave")
+	{
+		theRootOctave = tree.getProperty(property);
+	}
+	else if(String(property) == "RootNote")
+	{
+		theRootNote = tree.getProperty(property);
 	}
 }
