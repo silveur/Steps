@@ -51,6 +51,10 @@ public:
 		return theStepTree;
 	}
 	
+	int theVelocity;
+	int thePitch;
+	bool theState;
+	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
@@ -58,9 +62,7 @@ public:
 	
 private:
 	ValueTree theStepTree;
-	int theVelocity;
-	int thePitch;
-	bool theState;
+
 };
 
 

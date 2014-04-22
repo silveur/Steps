@@ -21,13 +21,12 @@ public:
     MidiCore(int index);
     ~MidiCore();
     
-	void openMidiOutput(int index);
     void noteOn(int noteNumber,int velocity);
     void noteOff(int noteNumber);
     void killNotes();
 	void outputMidi(const MidiMessage& msg);
 	void openMidiOutput(String& name);
-	bool createVirtualMidiBus();
+	void outputMidi(const MidiMessage &msg, int delayMs);
     StringArray getMidiDevicesList();
 private:
     

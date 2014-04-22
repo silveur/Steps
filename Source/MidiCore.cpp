@@ -16,12 +16,6 @@ MidiCore::MidiCore()
     theMidiOutput = nullptr;
 }
 
-void MidiCore::openMidiOutput(int index)
-{
-	if(MidiOutput::getDevices().size() >= index)
-		theMidiOutput = MidiOutput::openDevice(index);
-}
-
 void MidiCore::openMidiOutput(String& name)
 {
 	StringArray list = MidiOutput::getDevices();
@@ -30,6 +24,7 @@ void MidiCore::openMidiOutput(String& name)
 		if (list[i] == name)
 		{
 			theMidiOutput = MidiOutput::openDevice(i);
+			theMidiOutput->startBackgroundThread();
 			break;
 		}
 	}
@@ -44,12 +39,6 @@ StringArray MidiCore::getMidiDevicesList()
 {
     StringArray list = MidiOutput::getDevices();
     return list;
-}
-
-bool MidiCore::createVirtualMidiBus()
-{
-	MidiOutput::createNewDevice("VirtualMidi");
-	return 1;
 }
 
 void MidiCore::noteOn(int noteNumber,int velocity)
@@ -78,6 +67,15 @@ void MidiCore::outputMidi(const MidiMessage &msg)
 	if(theMidiOutput != nullptr)
 	{
 		theMidiOutput->sendMessageNow(msg);
+	}
+}
+
+void MidiCore::outputMidi(const MidiMessage &msg, int delayMs)
+{
+	if(theMidiOutput != nullptr)
+	{
+		MidiBuffer buff(msg);
+		theMidiOutput->sendBlockOfMessages(buff, Time::getMillisecondCounter() + delayMs, 44100);
 	}
 }
 

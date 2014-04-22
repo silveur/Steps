@@ -17,7 +17,7 @@ Sequencer::Sequencer()
 	theMidiInput->start();
 	theMidiCore = new MidiCore();
 	thePosition = 0;
-	theRootNote = 0;
+	theRootNote = 48;
 	ppqCount = 0;
 	theSequencerTree = ValueTree("SequencerTree");
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
@@ -52,14 +52,25 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 {
 	if (message.isMidiClock())
 	{
-		ppqCount++;
-		if (ppqCount == 6)
+		if (ppqCount == 0)
 		{
 			thePosition = (thePosition+1)%16;
+			
+			if (theStepArray[thePosition]->theState)
+			{
+				Step* step = theStepArray[thePosition];
+				MidiMessage onMsg = MidiMessage::noteOn(1, step->thePitch + theRootNote, (uint8)step->theVelocity);
+				MidiMessage offMsg = MidiMessage::noteOff(1, step->thePitch + theRootNote, (uint8)step->theVelocity);
+				theMidiCore->outputMidi(onMsg);
+				theMidiCore->outputMidi(offMsg, 40);
+			}
 			theSequencerTree.setProperty("Position", thePosition, nullptr);
 			DBG("New Position: " << thePosition);
-			ppqCount = 0;
+			
 		}
+		
+		ppqCount = (ppqCount+1) % 6;
+
 	}
 	else if(message.isSongPositionPointer())
 	{
