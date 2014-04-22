@@ -18,7 +18,7 @@ Sequencer::Sequencer()
 	theMidiCore = new MidiCore();
 	thePosition = 0;
 	theRootNote = 48;
-	ppqCount = 0;
+	thePpqCount = 0;
 	theSequencerTree = ValueTree("SequencerTree");
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 	for (int i=0; i<16; i++)
@@ -27,21 +27,47 @@ Sequencer::Sequencer()
 		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
 	}
 	theSequencerTree.addListener(this);
+	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
+	if(!thePreferenceFile.exists())	thePreferenceFile.create();
+	else
+	{
+		FileInputStream fileInputStream(thePreferenceFile);
+		ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
+		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
+		for (int i=0; i<16; i++)
+		{
+			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
+		}
+	}
 }
 
 Sequencer::~Sequencer()
 {
+	thePreferenceFile.deleteFile();
+	FileOutputStream presetToSave(thePreferenceFile);
+	theSequencerTree.writeToStream(presetToSave);
 }
 
 void Sequencer::start()
 {
-	ppqCount = 0;
+	thePpqCount = 0;
 	thePosition = -1;
+	isIdle = false;
 }
 
 void Sequencer::stop()
 {
+	thePpqCount = 0;
+	thePosition = -1;
+	theMidiCore->killNotes();
+	isIdle = true;
+}
 
+void Sequencer::carryOn()
+{
+	thePpqCount = 0;
+	thePosition = -1;
+	isIdle = false;
 }
 
 void Sequencer::setPosition(int beatPosition)
@@ -53,10 +79,9 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 {
 	if (message.isMidiClock())
 	{
-		if (ppqCount == 0)
+		if (thePpqCount == 0 && !isIdle)
 		{
 			thePosition = (thePosition+1)%16;
-			
 			if (theStepArray[thePosition]->theState)
 			{
 				Step* step = theStepArray[thePosition];
@@ -68,8 +93,7 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 			theSequencerTree.setProperty("Position", thePosition, nullptr);
 			DBG("New Position: " << thePosition);
 		}
-		
-		ppqCount = (ppqCount+1) % 6;
+		thePpqCount = (thePpqCount+1) % 6;
 
 	}
 	else if(message.isSongPositionPointer())
@@ -83,6 +107,10 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 	else if (message.isMidiStop())
 	{
 		stop();
+	}
+	else if (message.isMidiContinue())
+	{
+		carryOn();
 	}
 }
 

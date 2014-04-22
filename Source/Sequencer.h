@@ -36,15 +36,20 @@ private:
 	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message);
 	void stop();
 	void start();
+	void carryOn();
 	void setPosition(int beatPosition);
+	
 	ScopedPointer<MidiCore> theMidiCore;
 	ScopedPointer<MidiInput> theMidiInput;
 	OwnedArray<Step> theStepArray;
 	ValueTree theSequencerTree;
+	File thePreferenceFile;
+	
 	int thePosition;
 	int theSyncTime;
 	int theRootNote;
-	int ppqCount;
+	int thePpqCount;
+	bool isIdle;
 };
 
 

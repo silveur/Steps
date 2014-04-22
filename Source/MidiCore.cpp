@@ -55,7 +55,7 @@ void MidiCore::noteOff(int noteNumber)
 
 void MidiCore::killNotes()
 {
-	for(int i=0;i<16;i++)
+	for(int i=1;i<=16;i++)
 	{
 		outputMidi(MidiMessage::allNotesOff(i));
 		outputMidi(MidiMessage::allSoundOff(i));
