@@ -11,7 +11,8 @@
 Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 {
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-	thePosition = theSequencer->getPosition();
+	theSequencerTree = theSequencer->getSequencerTree();
+	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
 	{
 		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
@@ -32,8 +33,9 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	}
 	theMidiOutputList = new ComboBox("Midi Output list");
 	refreshMidiList();
+	theSequencerTree.addListener(this);
+	theMidiOutputList->addListener(this);
     setSize (theMainScreen.getWidth()/2, theMainScreen.getHeight()/4);
-	startTimer(50);
 }
 
 Interface::~Interface()
@@ -41,7 +43,7 @@ Interface::~Interface()
 	
 }
 
-void Interface::timerCallback()
+void Interface::handleAsyncUpdate()
 {
 	repaint();
 }
@@ -53,7 +55,8 @@ void Interface::refreshMidiList()
 	theMidiOutputList->clear();
     for(int i=0;i<midiList.size();i++)
     {
-        theMidiOutputList->addItem(midiList[i], i+1);
+//		if (midiList[i] != "Sequencer")
+        	theMidiOutputList->addItem(midiList[i], i+1);
     }
 	theMidiOutputList->setSelectedItemIndex(0);
 }
@@ -61,7 +64,7 @@ void Interface::refreshMidiList()
 void Interface::paint (Graphics& g)
 {
 	g.setColour(Colours::red);
-	g.drawEllipse(theStepSliders[*thePosition]->getX(), theStateButtons[*thePosition]->getBottom(), 20, 20, 2);
+	g.drawEllipse(theStepSliders[thePosition]->getX(), theStateButtons[thePosition]->getBottom(), 20, 20, 2);
 }
 
 void Interface::resized()
@@ -90,6 +93,19 @@ void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     if(comboBoxThatHasChanged == theMidiOutputList)
     {
         String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
+		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
     }
 }
+
+
+void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
+{
+	if(String(property) == "Position")
+	{
+		thePosition = tree.getProperty(property);
+		triggerAsyncUpdate();
+	}
+}
+
+
 

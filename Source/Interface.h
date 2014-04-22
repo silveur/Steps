@@ -12,7 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
 
-class Interface: public Component, Timer, SliderListener, ButtonListener
+class Interface: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
 {
 public:
     Interface(Sequencer* sequencer);
@@ -24,7 +24,12 @@ public:
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
-	void timerCallback();
+	void handleAsyncUpdate();
+	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
+	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
+	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 	
 private:
 	Rectangle<int> theMainScreen;
@@ -33,7 +38,8 @@ private:
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;
 	Sequencer* theSequencer;
-	int* thePosition;
+	ValueTree theSequencerTree;
+	int thePosition;
 
 };
 

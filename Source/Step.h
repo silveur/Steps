@@ -18,40 +18,49 @@
 class Step: public ValueTree::Listener
 {
 public:
-	Step(ValueTree& stepTree)
+	Step()
 	{
-		theStepTree = stepTree;
-			thePitch = theStepTree.getProperty("Pitch");
-		theVelocity = theStepTree.getProperty("Velocity");
-		theState = theStepTree.getProperty("State");
+		theStepTree = ValueTree("StepTree");
+		thePitch = 0; theVelocity = 127; theState = ON;
+		theStepTree.setProperty("Pitch", thePitch, nullptr);
+		theStepTree.setProperty("Velocity", theVelocity, nullptr);
+		theStepTree.setProperty("State", theState, nullptr);
 		theStepTree.addListener(this);
 	}
-	~Step()
-	{}
-	int theVelocity;
-	int thePitch;
-	bool theState;
-	ValueTree theStepTree;
 	
-	void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged, const Identifier& property)
+	~Step()	{}
+
+	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 	{
 		if(String(property) == "Pitch")
 		{
-			thePitch = treeWhosePropertyHasChanged.getProperty(property);
+			thePitch = tree.getProperty(property);
 		}
 		else if(String(property) == "Velocity")
 		{
-			theVelocity = treeWhosePropertyHasChanged.getProperty(property);
+			theVelocity = tree.getProperty(property);
 		}
 		else if(String(property) == "State")
 		{
-			theState = treeWhosePropertyHasChanged.getProperty(property);
+			theState = tree.getProperty(property);
 		}
 	}
+	
+	ValueTree& getValueTree()
+	{
+		return theStepTree;
+	}
+	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
+	
+private:
+	ValueTree theStepTree;
+	int theVelocity;
+	int thePitch;
+	bool theState;
 };
 
 

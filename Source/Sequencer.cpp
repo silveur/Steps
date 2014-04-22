@@ -16,10 +16,17 @@ Sequencer::Sequencer()
 	theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 	theMidiInput->start();
 	theMidiCore = new MidiCore();
-	theTempo = -1;
 	thePosition = 0;
 	theRootNote = 0;
-	count =0;
+	ppqCount = 0;
+	theSequencerTree = ValueTree("SequencerTree");
+	theSequencerTree.setProperty("Position", thePosition, nullptr);
+	for (int i=0; i<16; i++)
+	{
+		theStepArray.add(new Step());
+		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
+	}
+	theSequencerTree.addListener(this);
 }
 
 Sequencer::~Sequencer()
@@ -28,7 +35,7 @@ Sequencer::~Sequencer()
 
 void Sequencer::start()
 {
-
+	ppqCount = 0;
 }
 
 void Sequencer::stop()
@@ -45,17 +52,18 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 {
 	if (message.isMidiClock())
 	{
-		count++;
-		if (count == 6)
+		ppqCount++;
+		if (ppqCount == 6)
 		{
 			thePosition = (thePosition+1)%16;
+			theSequencerTree.setProperty("Position", thePosition, nullptr);
 			DBG("New Position: " << thePosition);
-			count = 0;
+			ppqCount = 0;
 		}
 	}
 	else if(message.isSongPositionPointer())
 	{
-		count =0;
+		ppqCount =0;
 		thePosition = 0;
 		int beatPosition = message.getSongPositionPointerMidiBeat();
 		setPosition(beatPosition);
@@ -68,4 +76,14 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 	{
 		stop();
 	}
+}
+
+void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
+{
+	if(String(property) == "MidiOutput")
+	{
+		String midiOut = tree.getProperty(property);
+		theMidiCore->openMidiOutput(midiOut);
+	}
+	
 }

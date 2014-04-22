@@ -22,6 +22,19 @@ void MidiCore::openMidiOutput(int index)
 		theMidiOutput = MidiOutput::openDevice(index);
 }
 
+void MidiCore::openMidiOutput(String& name)
+{
+	StringArray list = MidiOutput::getDevices();
+	for (int i=0;i<list.size();i++)
+	{
+		if (list[i] == name)
+		{
+			theMidiOutput = MidiOutput::openDevice(i);
+			break;
+		}
+	}
+}
+
 MidiCore::~MidiCore()
 {
 	if(theMidiOutput != nullptr) delete theMidiOutput;
