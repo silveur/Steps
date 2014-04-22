@@ -21,7 +21,7 @@ public:
 	Step()
 	{
 		theStepTree = ValueTree("StepTree");
-		thePitch = 0; theVelocity = 127; theState = ON;
+		thePitch = 3; theVelocity = 127; theState = ON;
 		theStepTree.setProperty("Pitch", thePitch, nullptr);
 		theStepTree.setProperty("Velocity", theVelocity, nullptr);
 		theStepTree.setProperty("State", theState, nullptr);

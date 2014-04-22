@@ -36,6 +36,7 @@ Sequencer::~Sequencer()
 void Sequencer::start()
 {
 	ppqCount = 0;
+	thePosition = -1;
 }
 
 void Sequencer::stop()
@@ -66,7 +67,6 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 			}
 			theSequencerTree.setProperty("Position", thePosition, nullptr);
 			DBG("New Position: " << thePosition);
-			
 		}
 		
 		ppqCount = (ppqCount+1) % 6;
@@ -74,10 +74,7 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 	}
 	else if(message.isSongPositionPointer())
 	{
-		ppqCount =0;
-		thePosition = 0;
-		int beatPosition = message.getSongPositionPointerMidiBeat();
-		setPosition(beatPosition);
+		
 	}
 	else if (message.isMidiStart())
 	{
