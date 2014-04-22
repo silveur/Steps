@@ -42,6 +42,7 @@ private:
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;
+	ScopedPointer<TextButton> theRandomAllButton;
 	Sequencer* theSequencer;
 	ValueTree theSequencerTree;
 	int thePosition;

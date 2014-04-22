@@ -37,6 +37,9 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
+	addAndMakeVisible(theRandomAllButton = new TextButton("Random all"));
+	theRandomAllButton->addListener(this);
+	
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
@@ -50,7 +53,7 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
-    setSize(theMainScreen.getWidth()/2, theMainScreen.getHeight()/4);
+    setSize(theMainScreen.getWidth()/2, theMainScreen.getHeight()/3);
 }
 
 Interface::~Interface()
@@ -93,12 +96,27 @@ void Interface::resized()
 	theMidiOutputList->setBounds(30, 20, 150, 30);
 	theRootNoteList->setBounds(30, 50, 70, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
+	theRandomAllButton->setBounds(theSequencerLength->getRight(), 30, 90, 20);
 }
 
 void Interface::buttonClicked(Button* button)
 {
-	int index = button->getName().getTrailingIntValue();
-	theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), nullptr);
+	if (button == theRandomAllButton)
+	{
+		for (int i=0;i<16;i++)
+		{
+			ValueTree child = theSequencerTree.getChild(i);
+			child.setProperty("Pitch", ((int)rand() % 24) - 12, nullptr);
+			child.setProperty("State", rand() % 2, nullptr);
+			child.setProperty("Velocity", ((int)rand() % 127), nullptr);
+		}
+	}
+	else
+	{
+		int index = button->getName().getTrailingIntValue();
+		theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), nullptr);
+	}
+
 }
 
 void Interface::sliderValueChanged(Slider* slider)
@@ -148,6 +166,21 @@ void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		String midiOutput = tree.getProperty("MidiOutput");
 		updateSelectedMidiOut(midiOutput);
+	}
+	else
+	{
+		for (int i=0; i<16;i++)
+		{
+			if (tree == (theSequencerTree.getChild(i)))
+			{
+				if (String(property) == "Pitch")
+					theStepSliders[i]->setValue((int)tree.getProperty(property));
+				else if (String(property) == "State")
+					theStateButtons[i]->setToggleState((bool)tree.getProperty(property), dontSendNotification);
+				else if (String(property) == "Velocity")
+					theVelocitySliders[i]->setValue((int)tree.getProperty(property));
+			}
+		}
 	}
 }
 
