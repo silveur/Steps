@@ -34,6 +34,7 @@ public:
 private:
 	Rectangle<int> theMainScreen;
 	ScopedPointer<ComboBox> theMidiOutputList;
+	ScopedPointer<Slider> theSequencerLength;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;

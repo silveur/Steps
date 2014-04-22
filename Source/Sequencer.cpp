@@ -85,5 +85,4 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 		String midiOut = tree.getProperty(property);
 		theMidiCore->openMidiOutput(midiOut);
 	}
-	
 }

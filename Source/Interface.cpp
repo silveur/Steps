@@ -18,19 +18,25 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle (Slider::LinearBarVertical);
 		theStepSliders[i]->setTextBoxIsEditable(false);
-		theStepSliders[i]->addListener (this);
 		theStepSliders[i]->setRange (-12, 12, 1);
-		theStepSliders[i]->setValue(0);
+		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
+		theStepSliders[i]->addListener (this);
 		addAndMakeVisible(theVelocitySliders.add(new Slider("Velocity" + String(i))));
 		theVelocitySliders[i]->setSliderStyle (Slider::Rotary);
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
-		theVelocitySliders[i]->addListener (this);
 		theVelocitySliders[i]->setRange (0, 127, 1);
-		theVelocitySliders[i]->setValue(127);
+		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
+		theVelocitySliders[i]->addListener (this);
 		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
+		theStateButtons[i]->setToggleState((bool)theSequencerTree.getChild(i).getProperty("State"), dontSendNotification);
 		theStateButtons[i]->addListener(this);
-		theStateButtons[i]->setToggleState(true, dontSendNotification);
 	}
+	addAndMakeVisible(theSequencerLength = new Slider("Length"));
+	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
+	theSequencerLength->setRange(1, 16,1);
+	theSequencerLength->setValue(16);
+	theSequencerLength->addListener(this);
+	
 	theMidiOutputList = new ComboBox("Midi Output list");
 	refreshMidiList();
 	theSequencerTree.addListener(this);
@@ -55,7 +61,7 @@ void Interface::refreshMidiList()
 	theMidiOutputList->clear();
     for(int i=0;i<midiList.size();i++)
     {
-//		if (midiList[i] != "Sequencer")
+		if (midiList[i] != "Sequencer")
         	theMidiOutputList->addItem(midiList[i], i+1);
     }
 	theMidiOutputList->setSelectedItemIndex(0);
@@ -80,12 +86,25 @@ void Interface::resized()
 
 void Interface::buttonClicked(Button* button)
 {
-	
+	int index = button->getName().getTrailingIntValue();
+	theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), nullptr);
 }
 
 void Interface::sliderValueChanged(Slider* slider)
 {
-	
+	int index = slider->getName().getTrailingIntValue();
+	if(slider->getName().contains("Pitch"))
+	{
+		theSequencerTree.getChild(index).setProperty("Pitch", (int)slider->getValue(), nullptr);
+	}
+	else if(slider->getName().contains("Velocity"))
+	{
+		theSequencerTree.getChild(index).setProperty("Velocity", (int)slider->getValue(), nullptr);
+	}
+	else if(slider == theSequencerLength)
+	{
+		theSequencerTree.setProperty("Length", slider->getValue(), nullptr);
+	}
 }
 
 void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
@@ -96,7 +115,6 @@ void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
     }
 }
-
 
 void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 {
