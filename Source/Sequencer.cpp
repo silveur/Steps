@@ -15,7 +15,6 @@ Sequencer::Sequencer()
 {
 	theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 	theMidiInput->start();
-	theMidiCore = new MidiCore();
 	thePosition = 0;
 	theRootNote = 48;
 	thePpqCount = 0;
@@ -26,7 +25,6 @@ Sequencer::Sequencer()
 		theStepArray.add(new Step());
 		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
 	}
-	theSequencerTree.addListener(this);
 	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
 	if(!thePreferenceFile.exists())	thePreferenceFile.create();
 	else
@@ -34,11 +32,14 @@ Sequencer::Sequencer()
 		FileInputStream fileInputStream(thePreferenceFile);
 		ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
 		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
+		String str = theSequencerTree.getProperty("MidiOutput");
+		theMidiCore = new MidiCore(str);
 		for (int i=0; i<16; i++)
 		{
 			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
 		}
 	}
+	theSequencerTree.addListener(this);
 }
 
 Sequencer::~Sequencer()

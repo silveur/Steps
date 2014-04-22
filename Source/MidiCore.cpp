@@ -11,9 +11,10 @@
 #include "MidiCore.h"
 
 
-MidiCore::MidiCore()
+MidiCore::MidiCore(String& midiOut)
 {
-    theMidiOutput = nullptr;
+	theMidiOutput = nullptr;
+	openMidiOutput(midiOut);
 }
 
 void MidiCore::openMidiOutput(String& name)
@@ -23,10 +24,16 @@ void MidiCore::openMidiOutput(String& name)
 	{
 		if (list[i] == name)
 		{
+			if (theMidiOutput != nullptr)
+				delete theMidiOutput;
 			theMidiOutput = MidiOutput::openDevice(i);
 			theMidiOutput->startBackgroundThread();
 			break;
 		}
+	}
+	if (theMidiOutput == nullptr)
+	{
+		
 	}
 }
 
@@ -43,22 +50,31 @@ StringArray MidiCore::getMidiDevicesList()
 
 void MidiCore::noteOn(int noteNumber,int velocity)
 {
-    const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
-    outputMidi(midiMessage);
+	if (theMidiOutput != nullptr)
+	{
+		const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
+		outputMidi(midiMessage);
+	}
 }
 
 void MidiCore::noteOff(int noteNumber)
 {
-    const MidiMessage midiMessage(0x80,noteNumber,127,0);
-    outputMidi(midiMessage);
+	if (theMidiOutput != nullptr)
+	{
+		const MidiMessage midiMessage(0x80,noteNumber,127,0);
+		outputMidi(midiMessage);
+	}
 }
 
 void MidiCore::killNotes()
 {
-	for(int i=1;i<=16;i++)
+	if (theMidiOutput != nullptr)
 	{
-		outputMidi(MidiMessage::allNotesOff(i));
-		outputMidi(MidiMessage::allSoundOff(i));
+		for(int i=1;i<=16;i++)
+		{
+			outputMidi(MidiMessage::allNotesOff(i));
+			outputMidi(MidiMessage::allSoundOff(i));
+		}
 	}
 }
 

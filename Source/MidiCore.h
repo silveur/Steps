@@ -17,7 +17,7 @@
 class MidiCore
 {
 public:
-    MidiCore();
+    MidiCore(String& midiOut);
     MidiCore(int index);
     ~MidiCore();
     

@@ -39,6 +39,8 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	
 	theMidiOutputList = new ComboBox("Midi Output list");
 	refreshMidiList();
+	String str = theSequencerTree.getProperty("MidiOutput");
+	updateSelectedMidiOut(str);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
     setSize (theMainScreen.getWidth()/2, theMainScreen.getHeight()/4);
@@ -64,7 +66,6 @@ void Interface::refreshMidiList()
 		if (midiList[i] != "Sequencer")
         	theMidiOutputList->addItem(midiList[i], i+1);
     }
-	theMidiOutputList->setSelectedItemIndex(0);
 }
 
 void Interface::paint (Graphics& g)
@@ -123,7 +124,24 @@ void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 		thePosition = tree.getProperty(property);
 		triggerAsyncUpdate();
 	}
+	else if(String(property) == "MidiOutput")
+	{
+		String midiOutput = tree.getProperty("MidiOutput");
+		updateSelectedMidiOut(midiOutput);
+	}
 }
 
+void Interface::updateSelectedMidiOut(String& midiOut)
+{
+	refreshMidiList();
+	for (int i=0;i<theMidiOutputList->getNumItems();i++)
+	{
+		if (theMidiOutputList->getItemText(i) == midiOut)
+		{
+			theMidiOutputList->setSelectedItemIndex(i);
+			break;
+		}
+	}
+}
 
 
