@@ -30,6 +30,7 @@ Sequencer::Sequencer()
         theSequencerTree.setProperty("Length", 16, nullptr);
         theSequencerTree.setProperty("RootNote", 0, nullptr);
         theSequencerTree.setProperty("RootOctave", 3, nullptr);
+		theSequencerTree.setProperty("Shuffle", 0, nullptr);
         thePreferenceFile.create();
     }
 	else
@@ -47,6 +48,7 @@ Sequencer::Sequencer()
 	theLength = theSequencerTree.getProperty("Length");
 	theRootNote = theSequencerTree.getProperty("RootNote");
 	theRootOctave = theSequencerTree.getProperty("RootOctave");
+	theShuffle = theSequencerTree.getProperty("Shuffle");
 	theSequencerTree.addListener(this);
     startSequencer();
 }
@@ -94,25 +96,38 @@ void Sequencer::setPosition(int beatPosition)
 {
 }
 
+void Sequencer::triggerStep()
+{
+	if (theStepArray[thePosition]->theState)
+	{
+		Step* step = theStepArray[thePosition];
+		MidiMessage onMsg = MidiMessage::noteOn(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		MidiMessage offMsg = MidiMessage::noteOff(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		theMidiCore->outputMidi(onMsg);
+		theMidiCore->outputMidi(offMsg, 40);
+	}
+}
+
 void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 								const MidiMessage& message)
 {
-	if (message.isMidiClock())
+	if (message.isMidiClock() && !isIdle)
 	{
-		if (thePpqCount == 0 && !isIdle)
+		if (thePpqCount == 0 && (thePosition %2 == 0))
 		{
+			DBG("Normal");
 			thePosition = (thePosition+1)% theLength;
-			if (theStepArray[thePosition]->theState)
-			{
-				Step* step = theStepArray[thePosition];
-				MidiMessage onMsg = MidiMessage::noteOn(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-				MidiMessage offMsg = MidiMessage::noteOff(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-				theMidiCore->outputMidi(onMsg);
-				theMidiCore->outputMidi(offMsg, 40);
-			}
 			theSequencerTree.setProperty("Position", thePosition, nullptr);
-			DBG("New Position: " << thePosition);
+			triggerStep();
 		}
+		else if (thePpqCount == theShuffle && (thePosition %2 == 1))
+		{
+			DBG("Shuffle");
+			thePosition = (thePosition+1)% theLength;
+			theSequencerTree.setProperty("Position", thePosition, nullptr);
+			triggerStep();
+		}
+		DBG("PPQ count: " << thePpqCount);
 		thePpqCount = (thePpqCount+1) % 6;
 	}
 	else if(message.isSongPositionPointer())
@@ -151,5 +166,9 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "RootNote")
 	{
 		theRootNote = tree.getProperty(property);
+	}
+	else if(String(property) == "Shuffle")
+	{
+		theShuffle = tree.getProperty(property);
 	}
 }

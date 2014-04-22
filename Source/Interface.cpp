@@ -40,6 +40,12 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	addAndMakeVisible(theRandomAllButton = new TextButton("Random all"));
 	theRandomAllButton->addListener(this);
 	
+	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
+	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theShuffleSlider->setRange(0, 6, 1);
+	theShuffleSlider->setSliderStyle(Slider::SliderStyle::Rotary);
+	theShuffleSlider->addListener(this);
+	
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
@@ -97,6 +103,7 @@ void Interface::resized()
 	theRootNoteList->setBounds(30, 50, 70, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 30, 90, 20);
+	theShuffleSlider->setBounds(200, 50, 30, 30);
 }
 
 void Interface::buttonClicked(Button* button)
@@ -133,6 +140,10 @@ void Interface::sliderValueChanged(Slider* slider)
 	else if(slider == theSequencerLength)
 	{
 		theSequencerTree.setProperty("Length", slider->getValue(), nullptr);
+	}
+	else if(slider == theShuffleSlider)
+	{
+		theSequencerTree.setProperty("Shuffle", slider->getValue(), nullptr);
 	}
 }
 
