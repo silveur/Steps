@@ -14,26 +14,31 @@
 Sequencer::Sequencer()
 {
 	theMidiInput = MidiInput::createNewDevice("Sequencer", this);
-	theMidiInput->start();
 	thePosition = 0;
 	theRootNote = 48;
 	thePpqCount = 0;
 	theSequencerTree = ValueTree("SequencerTree");
-	theSequencerTree.setProperty("Position", thePosition, nullptr);
+    theMidiCore = new MidiCore();
 	for (int i=0; i<16; i++)
 	{
 		theStepArray.add(new Step());
 		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
 	}
 	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
-	if(!thePreferenceFile.exists())	thePreferenceFile.create();
+	if(!thePreferenceFile.exists())
+    {
+        theSequencerTree.setProperty("Length", 16, nullptr);
+        theSequencerTree.setProperty("RootNote", 0, nullptr);
+        theSequencerTree.setProperty("RootOctave", 3, nullptr);
+        thePreferenceFile.create();
+    }
 	else
 	{
 		FileInputStream fileInputStream(thePreferenceFile);
 		ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
 		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
 		String str = theSequencerTree.getProperty("MidiOutput");
-		theMidiCore = new MidiCore(str);
+        theMidiCore->openMidiOutput(str);
 		for (int i=0; i<16; i++)
 		{
 			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
@@ -43,6 +48,7 @@ Sequencer::Sequencer()
 	theRootNote = theSequencerTree.getProperty("RootNote");
 	theRootOctave = theSequencerTree.getProperty("RootOctave");
 	theSequencerTree.addListener(this);
+    startSequencer();
 }
 
 Sequencer::~Sequencer()
@@ -50,6 +56,16 @@ Sequencer::~Sequencer()
 	thePreferenceFile.deleteFile();
 	FileOutputStream presetToSave(thePreferenceFile);
 	theSequencerTree.writeToStream(presetToSave);
+}
+
+void Sequencer::startSequencer()
+{
+    theMidiInput->start();
+}
+
+void Sequencer::stopSequencer()
+{
+    theMidiInput->stop();
 }
 
 void Sequencer::start()
@@ -89,8 +105,8 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 			if (theStepArray[thePosition]->theState)
 			{
 				Step* step = theStepArray[thePosition];
-				MidiMessage onMsg = MidiMessage::noteOn(1, step->thePitch + theRootNote * theRootOctave, (uint8)step->theVelocity);
-				MidiMessage offMsg = MidiMessage::noteOff(1, step->thePitch + theRootNote * theRootOctave, (uint8)step->theVelocity);
+				MidiMessage onMsg = MidiMessage::noteOn(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+				MidiMessage offMsg = MidiMessage::noteOff(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
 				theMidiCore->outputMidi(onMsg);
 				theMidiCore->outputMidi(offMsg, 40);
 			}

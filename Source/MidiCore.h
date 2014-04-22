@@ -18,7 +18,7 @@ class MidiCore
 {
 public:
     MidiCore(String& midiOut);
-    MidiCore(int index);
+    MidiCore();
     ~MidiCore();
     
     void noteOn(int noteNumber,int velocity);

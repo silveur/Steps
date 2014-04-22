@@ -10,6 +10,10 @@
 
 #include "MidiCore.h"
 
+MidiCore::MidiCore()
+{
+	theMidiOutput = nullptr;
+}
 
 MidiCore::MidiCore(String& midiOut)
 {
