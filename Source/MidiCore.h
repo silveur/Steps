@@ -17,16 +17,16 @@
 class MidiCore
 {
 public:
+    MidiCore(String& midiOut);
     MidiCore();
-    MidiCore(int index);
     ~MidiCore();
     
-	void openMidiOutput(int index);
     void noteOn(int noteNumber,int velocity);
-    void noteOff(int noteNumber, int delay);
+    void noteOff(int noteNumber);
     void killNotes();
 	void outputMidi(const MidiMessage& msg);
-	bool createVirtualMidiBus();
+	void openMidiOutput(String& name);
+	void outputMidi(const MidiMessage &msg, int delayMs);
     StringArray getMidiDevicesList();
 private:
     

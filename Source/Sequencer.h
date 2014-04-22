@@ -13,29 +13,48 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Step.h"
+#include "MidiCore.h"
+
 class SequencerAudioProcessor;
 class MidiCore;
+class NoteManager;
 
-class Sequencer
+class Sequencer: public MidiInputCallback, public ValueTree::Listener
 {
 public:
-	Sequencer(SequencerAudioProcessor* processor, MidiCore* midiCore);
+	Sequencer();
 	~Sequencer();
-	
-	void processBlock(AudioSampleBuffer& buffer, AudioPlayHead::CurrentPositionInfo& info, MidiBuffer& messages);
+	MidiCore* getMidiCore() { return theMidiCore; }
+	ValueTree& getSequencerTree() { return theSequencerTree; }
+    void startSequencer();
+    void stopSequencer();
+    
+private:
+	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
+	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
+	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
+	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message);
 	void stop();
-	void newStep();
-	void repositionSequencer();
-	MidiCore* theMidiCore;
-	SequencerAudioProcessor* theProcessor;
-	double theTempo;
-	double thePPQPosition;
+	void start();
+	void carryOn();
+	void setPosition(int beatPosition);
+	
+	ScopedPointer<MidiCore> theMidiCore;
+	ScopedPointer<MidiInput> theMidiInput;
+	OwnedArray<Step> theStepArray;
+	ValueTree theSequencerTree;
+	File thePreferenceFile;
+	
 	int thePosition;
-	static int theStepTime;
 	int theSyncTime;
 	int theRootNote;
-	int beat;
-	int step;
+	int theRootOctave;
+	int thePpqCount;
+	int theLength;
+	bool isIdle;
 };
+
 
 #endif  // SEQUENCER_H_INCLUDED

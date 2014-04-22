@@ -219,34 +219,23 @@ void SequencerAudioProcessor::releaseResources()
 void SequencerAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {	
 	getPlayHead()->getCurrentPosition (lastPosInfo);
-
-	if(lastPosInfo.isPlaying)
+	if (!isPlaying && lastPosInfo.isPlaying)
 	{
-		theTempo = lastPosInfo.bpm;
-		thePPQPosition = lastPosInfo.ppqPosition;
-		int step = (int)(thePPQPosition / 0.25) % theSequencerLength;
-		
-		if (theCurrentStep != step && step >= 0)
-		{
-			if (theSteps[step]->theState)
-			{
-				theMidiCore->noteOn(theSteps[step]->thePitch + 48, 127);
-				theMidiCore->noteOff(theSteps[step]->thePitch + 48, 30);
-			}
-		}
-		theCurrentStep = step;
-		theStepTime = 1.0 / (theTempo / 60.0) * 250;
-		
-		
-		//	theSyncTime = theStepTime - ((mod / 0.25) * theStepTime);
-		DBG("PPQ:" << thePPQPosition);
-		DBG("Step:" << step);
+		isPlaying = true;
+		theSequencer->start();
+		DBG("Block size:" + String(buffer.getNumSamples()));
 	}
-	else
+	else if(lastPosInfo.isPlaying && isPlaying)
 	{
-		theCurrentStep = -1;
+		
+		isPlaying = true;
+		theSequencer->setPosition(lastPosInfo);
 	}
-	
+	else if(!lastPosInfo.isPlaying)
+	{
+		isPlaying = false;
+		theSequencer->stop();
+	}
     for (int i = 0; i < getNumOutputChannels(); ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 }

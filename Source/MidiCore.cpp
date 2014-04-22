@@ -10,18 +10,34 @@
 
 #include "MidiCore.h"
 
-
 MidiCore::MidiCore()
 {
-    theMidiOutput = nullptr;
+	theMidiOutput = nullptr;
 }
 
-void MidiCore::openMidiOutput(int index)
+MidiCore::MidiCore(String& midiOut)
 {
-	if(MidiOutput::getDevices().size() >= index)
+	theMidiOutput = nullptr;
+	openMidiOutput(midiOut);
+}
+
+void MidiCore::openMidiOutput(String& name)
+{
+	StringArray list = MidiOutput::getDevices();
+	for (int i=0;i<list.size();i++)
 	{
-		theMidiOutput = MidiOutput::openDevice(index);
-		theMidiOutput->startBackgroundThread();
+		if (list[i] == name)
+		{
+			if (theMidiOutput != nullptr)
+				delete theMidiOutput;
+			theMidiOutput = MidiOutput::openDevice(i);
+			theMidiOutput->startBackgroundThread();
+			break;
+		}
+	}
+	if (theMidiOutput == nullptr)
+	{
+		
 	}
 }
 
@@ -36,31 +52,33 @@ StringArray MidiCore::getMidiDevicesList()
     return list;
 }
 
-bool MidiCore::createVirtualMidiBus()
-{
-	MidiOutput::createNewDevice("VirtualMidi");
-	return 1;
-}
-
 void MidiCore::noteOn(int noteNumber,int velocity)
 {
-    const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
-    outputMidi(midiMessage);
+	if (theMidiOutput != nullptr)
+	{
+		const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
+		outputMidi(midiMessage);
+	}
 }
 
-void MidiCore::noteOff(int noteNumber, int delay)
+void MidiCore::noteOff(int noteNumber)
 {
-    const MidiMessage midiMessage(0x80,noteNumber,127,0);
-	MidiBuffer buffer(midiMessage);
-	theMidiOutput->sendBlockOfMessages(buffer, Time::getMillisecondCounter() + delay, 44100);
+	if (theMidiOutput != nullptr)
+	{
+		const MidiMessage midiMessage(0x80,noteNumber,127,0);
+		outputMidi(midiMessage);
+	}
 }
 
 void MidiCore::killNotes()
 {
-	for(int i=0;i<NUM_CHANNELS_MAX;i++)
+	if (theMidiOutput != nullptr)
 	{
-		outputMidi(MidiMessage::allNotesOff(i));
-		outputMidi(MidiMessage::allSoundOff(i));
+		for(int i=1;i<=16;i++)
+		{
+			outputMidi(MidiMessage::allNotesOff(i));
+			outputMidi(MidiMessage::allSoundOff(i));
+		}
 	}
 }
 
@@ -69,6 +87,15 @@ void MidiCore::outputMidi(const MidiMessage &msg)
 	if(theMidiOutput != nullptr)
 	{
 		theMidiOutput->sendMessageNow(msg);
+	}
+}
+
+void MidiCore::outputMidi(const MidiMessage &msg, int delayMs)
+{
+	if(theMidiOutput != nullptr)
+	{
+		MidiBuffer buff(msg);
+		theMidiOutput->sendBlockOfMessages(buff, Time::getMillisecondCounter() + delayMs, 44100);
 	}
 }
 
