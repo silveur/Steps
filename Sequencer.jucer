@@ -14,6 +14,8 @@
         <FILE id="xLbBQu" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
       </GROUP>
       <GROUP id="{5BBC7915-C851-834C-303A-627B32FA7DE9}" name="Graphics">
+        <FILE id="d3S4Ej" name="MainWindow.cpp" compile="1" resource="0" file="Source/MainWindow.cpp"/>
+        <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
         <FILE id="oGkwUR" name="Interface.cpp" compile="1" resource="0" file="Source/Interface.cpp"/>
         <FILE id="HdxLVf" name="Interface.h" compile="0" resource="0" file="Source/Interface.h"/>
       </GROUP>

@@ -12,18 +12,29 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
 
-class MainContentComponent   : public Component
+class Interface: public Component, Timer, SliderListener, ButtonListener
 {
 public:
-    MainContentComponent();
-    ~MainContentComponent();
+    Interface(Sequencer* sequencer);
+    ~Interface();
 
     void paint (Graphics&);
+	void sliderValueChanged(Slider* slider);
     void resized();
-
+	void buttonClicked(Button* button);
+	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+	void refreshMidiList();
+	void timerCallback();
+	
 private:
-	ScopedPointer<Sequencer> theSequencer;
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainContentComponent)
+	Rectangle<int> theMainScreen;
+	ScopedPointer<ComboBox> theMidiOutputList;
+	OwnedArray<Slider> theStepSliders;
+	OwnedArray<Slider> theVelocitySliders;
+	OwnedArray<ToggleButton> theStateButtons;
+	Sequencer* theSequencer;
+	int* thePosition;
+
 };
 
 

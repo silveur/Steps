@@ -8,33 +8,88 @@
 
 #include "Interface.h"
 
-
-
-//==============================================================================
-MainContentComponent::MainContentComponent()
+Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 {
-	theSequencer = new Sequencer();
+	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+	thePosition = theSequencer->getPosition();
+	for(int i=0;i<16;i++)
+	{
+		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
+		theStepSliders[i]->setSliderStyle (Slider::LinearBarVertical);
+		theStepSliders[i]->setTextBoxIsEditable(false);
+		theStepSliders[i]->addListener (this);
+		theStepSliders[i]->setRange (-12, 12, 1);
+		theStepSliders[i]->setValue(0);
+		addAndMakeVisible(theVelocitySliders.add(new Slider("Velocity" + String(i))));
+		theVelocitySliders[i]->setSliderStyle (Slider::Rotary);
+		theVelocitySliders[i]->setTextBoxIsEditable(false);
+		theVelocitySliders[i]->addListener (this);
+		theVelocitySliders[i]->setRange (0, 127, 1);
+		theVelocitySliders[i]->setValue(127);
+		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
+		theStateButtons[i]->addListener(this);
+		theStateButtons[i]->setToggleState(true, dontSendNotification);
+	}
+	theMidiOutputList = new ComboBox("Midi Output list");
+	refreshMidiList();
+    setSize (theMainScreen.getWidth()/2, theMainScreen.getHeight()/4);
+	startTimer(50);
+}
+
+Interface::~Interface()
+{
 	
-    setSize (500, 400);
 }
 
-MainContentComponent::~MainContentComponent()
+void Interface::timerCallback()
+{
+	repaint();
+}
+
+void Interface::refreshMidiList()
+{
+    addAndMakeVisible(theMidiOutputList);
+    StringArray midiList = theSequencer->getMidiCore()->getMidiDevicesList();
+	theMidiOutputList->clear();
+    for(int i=0;i<midiList.size();i++)
+    {
+        theMidiOutputList->addItem(midiList[i], i+1);
+    }
+	theMidiOutputList->setSelectedItemIndex(0);
+}
+
+void Interface::paint (Graphics& g)
+{
+	g.setColour(Colours::red);
+	g.drawEllipse(theStepSliders[*thePosition]->getX(), theStateButtons[*thePosition]->getBottom(), 20, 20, 2);
+}
+
+void Interface::resized()
+{
+	for(int i=0;i<16;i++)
+	{
+		theStepSliders[i]->setBounds((getWidth()/16)*i, getHeight()/3, 20, 100);
+		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 30, 30);
+		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 30, 30);
+	}
+	theMidiOutputList->setBounds(30, 30, 150, 30);
+}
+
+void Interface::buttonClicked(Button* button)
 {
 	
 }
 
-void MainContentComponent::paint (Graphics& g)
+void Interface::sliderValueChanged(Slider* slider)
 {
-    g.fillAll (Colour (0xffeeddff));
-
-    g.setFont (Font (16.0f));
-    g.setColour (Colours::black);
-    g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
+	
 }
 
-void MainContentComponent::resized()
+void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
+    if(comboBoxThatHasChanged == theMidiOutputList)
+    {
+        String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
+    }
 }
+

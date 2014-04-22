@@ -19,6 +19,7 @@ Sequencer::Sequencer()
 	theTempo = -1;
 	thePosition = 0;
 	theRootNote = 0;
+	count =0;
 }
 
 Sequencer::~Sequencer()
@@ -35,9 +36,8 @@ void Sequencer::stop()
 
 }
 
-void Sequencer::setPosition()
+void Sequencer::setPosition(int beatPosition)
 {
-	
 }
 
 void Sequencer::handleIncomingMidiMessage (MidiInput* source,
@@ -45,11 +45,20 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 {
 	if (message.isMidiClock())
 	{
-		
+		count++;
+		if (count == 6)
+		{
+			thePosition = (thePosition+1)%16;
+			DBG("New Position: " << thePosition);
+			count = 0;
+		}
 	}
 	else if(message.isSongPositionPointer())
 	{
-		
+		count =0;
+		thePosition = 0;
+		int beatPosition = message.getSongPositionPointerMidiBeat();
+		setPosition(beatPosition);
 	}
 	else if (message.isMidiStart())
 	{

@@ -24,18 +24,21 @@ class Sequencer: public MidiInputCallback
 public:
 	Sequencer();
 	~Sequencer();
+	int* getPosition() { return &thePosition; }
+	MidiCore* getMidiCore() { return theMidiCore; }
+	
+private:
 	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message);
 	void stop();
 	void start();
-	void setPosition();
+	void setPosition(int beatPosition);
+	ScopedPointer<MidiCore> theMidiCore;
+	ScopedPointer<MidiInput> theMidiInput;
 	double theTempo;
 	int thePosition;
 	int theSyncTime;
 	int theRootNote;
-	
-private:
-	ScopedPointer<MidiCore> theMidiCore;
-	ScopedPointer<MidiInput> theMidiInput;
+	int count;
 };
 
 
