@@ -119,22 +119,19 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 	if (message.isMidiClock() && !isIdle)
 	{
 		thePpqCount = (thePpqCount+1) % 6;
-		DBG("PPQ count:" << thePpqCount);
 		if( waitForShuffle && (thePpqCount == theShuffle))
 		{
-			DBG("Shuffle");
 			triggerStep();
 			waitForShuffle = false;
 		}
 
-		if (thePpqCount == 0)
+		else if (!thePpqCount)
 		{
-			if ((thePosition +1) %2 == 0 || (theShuffle == 0))
+			if (!((thePosition +1) %2) || !theShuffle)
 			{
-				DBG("Normal");
 				triggerStep();
 			}
-			else if((thePosition + 1) %2 == 1)
+			else if((thePosition + 1) %2)
 			{
 				waitForShuffle = true;
 			}
