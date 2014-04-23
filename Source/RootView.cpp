@@ -21,7 +21,7 @@ RootView::RootView(Master* master): theMaster(master)
 	}
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
-	setSize(theMainScreen.getWidth()/2, (theMainScreen.getHeight()/16) + theMainScreen.getHeight()/2);
+	updatePositions();
 }
 
 RootView::~RootView()
@@ -36,15 +36,16 @@ void RootView::paint(Graphics& g)
 
 void RootView::updatePositions()
 {
+	setSize(theMainScreen.getWidth()/2, (theMainScreen.getHeight()/32) + (theMainScreen.getHeight()/6) * theSequencerViews.size());
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, (theHeaderView->getHeight()) + (i * (getHeight()/theSequencerViews.size())), getWidth(), getHeight()/theSequencerViews.size());
+		theSequencerViews[i]->setBounds(0, (theHeaderView->getHeight()) + (i * (getHeight()/theSequencerViews.size())), getWidth(), (theMainScreen.getHeight()/6 ) * theSequencerViews.size());
 	}
 }
 
 void RootView::resized()
 {
-	theHeaderView->setBounds(0, 0, getWidth(), getHeight()/16);
+	theHeaderView->setBounds(0, 0, getWidth(), theMainScreen.getHeight()/32);
 	updatePositions();
 }
 
