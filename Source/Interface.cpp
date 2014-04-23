@@ -42,8 +42,9 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theShuffleSlider->setRange(0, 6, 1);
+	theShuffleSlider->setRange(0, 5, 1);
 	theShuffleSlider->setSliderStyle(Slider::SliderStyle::Rotary);
+	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->addListener(this);
 	
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));

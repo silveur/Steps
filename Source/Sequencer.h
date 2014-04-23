@@ -55,6 +55,7 @@ private:
 	int theLength;
 	int theShuffle;
 	bool isIdle;
+	bool waitForShuffle;
 };
 
 

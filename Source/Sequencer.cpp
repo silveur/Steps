@@ -72,24 +72,27 @@ void Sequencer::stopSequencer()
 
 void Sequencer::start()
 {
-	thePpqCount = 0;
+	thePpqCount = -1;
 	thePosition = -1;
 	isIdle = false;
+	waitForShuffle = false;
 }
 
 void Sequencer::stop()
 {
-	thePpqCount = 0;
+	thePpqCount = -1;
 	thePosition = -1;
 	theMidiCore->killNotes();
 	isIdle = true;
+	waitForShuffle = false;
 }
 
 void Sequencer::carryOn()
 {
-	thePpqCount = 0;
+	thePpqCount = -1;
 	thePosition = -1;
 	isIdle = false;
+	waitForShuffle = false;
 }
 
 void Sequencer::setPosition(int beatPosition)
@@ -98,6 +101,7 @@ void Sequencer::setPosition(int beatPosition)
 
 void Sequencer::triggerStep()
 {
+	thePosition = (thePosition+1) % theLength;
 	if (theStepArray[thePosition]->theState)
 	{
 		Step* step = theStepArray[thePosition];
@@ -106,6 +110,7 @@ void Sequencer::triggerStep()
 		theMidiCore->outputMidi(onMsg);
 		theMidiCore->outputMidi(offMsg, 40);
 	}
+	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }
 
 void Sequencer::handleIncomingMidiMessage (MidiInput* source,
@@ -113,25 +118,26 @@ void Sequencer::handleIncomingMidiMessage (MidiInput* source,
 {
 	if (message.isMidiClock() && !isIdle)
 	{
-		DBG("PPQ count: " << thePpqCount);
-		if (thePpqCount == 0 && (thePosition %2 == 0))
-		{
-			DBG("Normal");
-			
-			triggerStep();
-		}
-		else if (thePpqCount == theShuffle && (thePosition %2 == 1))
+		thePpqCount = (thePpqCount+1) % 6;
+		DBG("PPQ count:" << thePpqCount);
+		if( waitForShuffle && (thePpqCount == theShuffle))
 		{
 			DBG("Shuffle");
-			thePosition = (thePosition+1) % theLength;
-			theSequencerTree.setProperty("Position", thePosition, nullptr);
 			triggerStep();
+			waitForShuffle = false;
 		}
 
-		if (thePpqCount++ == 6)
+		if (thePpqCount == 0)
 		{
-			thePosition = (thePosition+1) % theLength;
-			theSequencerTree.setProperty("Position", thePosition, nullptr);
+			if ((thePosition +1) %2 == 0 || (theShuffle == 0))
+			{
+				DBG("Normal");
+				triggerStep();
+			}
+			else if((thePosition + 1) %2 == 1)
+			{
+				waitForShuffle = true;
+			}
 		}
 	}
 	
