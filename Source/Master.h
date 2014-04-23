@@ -29,13 +29,11 @@ public:
             theMasterTree.copyPropertiesFrom(treeToLoad, nullptr);
             for (int i=0;i<treeToLoad.getNumChildren();i++)
             {
-                theMasterTree.addChild(treeToLoad.getChild(i), -1, nullptr);
-            }
-            for (int i=0;i<3;i++)
-            {
-                ValueTree tree = theMasterTree.getChild(i);
+                ValueTree tree = treeToLoad.getChild(i).createCopy();
+                theMasterTree.addChild(tree, -1, nullptr);
                 theSequencerArray.add(new Sequencer(tree));
             }
+
         }
         else
         {
@@ -69,8 +67,18 @@ public:
     
     Sequencer* addSequencer()
     {
-        ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
-        return theSequencerArray.add(new Sequencer(sequencerTree));
+        
+        ValueTree existingSequencerTree = theMasterTree.getChild(theMasterTree.getNumChildren());
+        if (existingSequencerTree.isValid())
+        {
+             return theSequencerArray.add(new Sequencer(existingSequencerTree));
+        }
+        else
+        {            
+            existingSequencerTree = ValueTree("Sequencer" + String(theMasterTree.getNumChildren()));
+            theMasterTree.addChild(existingSequencerTree, -1, nullptr);
+            return theSequencerArray.add(new Sequencer(existingSequencerTree));
+        }
     }
 	
 	OwnedArray<Sequencer>& getSequencerArray()
