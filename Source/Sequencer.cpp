@@ -18,26 +18,41 @@ Sequencer::Sequencer(ValueTree& sequencerTree)
 	thePpqCount = 0;
 	theMidiCore = new MidiCore();
     theSequencerTree = sequencerTree;
+    if (theSequencerTree.getNumProperties() == 0)
+        Sequencer::initSequencerTree(theSequencerTree);
 	for (int i=0; i<16; i++)
 	{
         ValueTree stepTree = sequencerTree.getChild(i);
-        if (!stepTree.isValid()) stepTree = ValueTree("Step" + String(i));
+        if (!stepTree.isValid())
+        {
+            stepTree = ValueTree("Step" + String(i));
+            Step::initStepTree(stepTree);
+        }
 		theStepArray.add(new Step(stepTree));
 		sequencerTree.addChild(stepTree, -1, nullptr);
 	}
 
     String str = theSequencerTree.getProperty("MidiOutput");
     theMidiCore->openMidiOutput(str);
-	theLength = theSequencerTree.getProperty("Length");
-	theRootNote = theSequencerTree.getProperty("RootNote");
-	theRootOctave = theSequencerTree.getProperty("RootOctave");
-	theShuffle = theSequencerTree.getProperty("Shuffle");
-	theRange = theSequencerTree.getProperty("Range");
+	theLength = theSequencerTree.getProperty("Length", 16);
+	theRootNote = theSequencerTree.getProperty("RootNote", 0);
+	theRootOctave = theSequencerTree.getProperty("RootOctave", 3);
+	theShuffle = theSequencerTree.getProperty("Shuffle", 0);
+	theRange = theSequencerTree.getProperty("Range", 1);
 	theSequencerTree.addListener(this);
 }
 
 Sequencer::~Sequencer()
 {
+}
+
+void Sequencer::initSequencerTree(ValueTree& tree)
+{
+    tree.setProperty("Length", 16, nullptr);
+	tree.setProperty("RootNote", 0, nullptr);
+	tree.setProperty("RootOctave", 3, nullptr);
+	tree.setProperty("Shuffle", 0, nullptr);
+	tree.setProperty("Range", 1, nullptr);
 }
 
 void Sequencer::start()

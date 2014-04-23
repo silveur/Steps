@@ -13,15 +13,18 @@
 
 RootView::RootView(Master* master): theMaster(master)
 {
+    theMasterTree = theMaster->getMasterTree();
 	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
 	for (int i=0; i<seqArray.size(); i++)
 	{
-		theSequencerViews.add(new SequencerView(seqArray[i]));
+        ValueTree sequenceTree = seqArray[i]->getSequencerTree();
+		theSequencerViews.add(new SequencerView(sequenceTree));
 		addAndMakeVisible(theSequencerViews[i]);
 	}
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
 	updatePositions();
+    theMasterTree.addListener(this);
 }
 
 RootView::~RootView()
@@ -51,15 +54,28 @@ void RootView::resized()
 
 void RootView::addSequencer()
 {
-	theSequencerViews.add(new SequencerView(theMaster->addSequencer()));
-	addAndMakeVisible(theSequencerViews.getLast());
-	updatePositions();
+    theMaster->addSequencer();
 }
 
 void RootView::removeSequencer()
 {
-	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
-	seqArray.removeLast();
-	theSequencerViews.removeLast();
+	theMaster->deleteSequencer();
+}
+
+void RootView::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
+{
+    
+}
+
+void RootView::valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded)
+{
+    theSequencerViews.add(new SequencerView(childWhichHasBeenAdded));
+	addAndMakeVisible(theSequencerViews.getLast());
 	updatePositions();
+}
+
+void RootView::valueTreeChildRemoved(ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved)
+{
+    theSequencerViews.removeLast();
+    updatePositions();
 }

@@ -10,12 +10,11 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Sequencer.h"
 
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
 {
 public:
-	SequencerView(Sequencer* sequencer);
+	SequencerView(ValueTree& sequencerTree);
 	~SequencerView();
 
 	void paint (Graphics&);
@@ -44,7 +43,6 @@ private:
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;
 	ScopedPointer<TextButton> theRandomAllButton;
-	Sequencer* theSequencer;
 	ValueTree theSequencerTree;
 	Image theStepImage;
 	int thePosition;

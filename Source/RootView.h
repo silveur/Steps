@@ -17,7 +17,7 @@
 
 class HeaderView;
 
-class RootView: public Component
+class RootView: public Component, public ValueTree::Listener
 {
 public:
 	RootView(Master* master);
@@ -27,12 +27,18 @@ public:
 	void addSequencer();
 	void removeSequencer();
 	void updatePositions();
-	OwnedArray<SequencerView> theSequencerViews;
+    void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded);
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved);
+	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
+	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
+    OwnedArray<SequencerView> theSequencerViews;
+    
 private:
 	Rectangle<int> theMainScreen;
-	
 	ScopedPointer<HeaderView> theHeaderView;
 	Master* theMaster;
+    ValueTree theMasterTree;
 };
 
 

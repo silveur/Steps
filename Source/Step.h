@@ -50,6 +50,14 @@ public:
 	{
 		return theStepTree;
 	}
+    
+    static void initStepTree(ValueTree& tree)
+    {
+        tree.setProperty("Pitch", 0, nullptr);
+        tree.setProperty("Velocity", 127, nullptr);
+        tree.setProperty("State", ON, nullptr);
+        tree.setProperty("Decay", 40, nullptr);
+    }
 	
 	int theVelocity;
 	int thePitch;

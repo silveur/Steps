@@ -65,19 +65,29 @@ public:
 		}
 	}
     
-    Sequencer* addSequencer()
+    void addSequencer()
     {
         
         ValueTree existingSequencerTree = theMasterTree.getChild(theMasterTree.getNumChildren());
         if (existingSequencerTree.isValid())
         {
-             return theSequencerArray.add(new Sequencer(existingSequencerTree));
+             theSequencerArray.add(new Sequencer(existingSequencerTree));
         }
         else
         {            
             existingSequencerTree = ValueTree("Sequencer" + String(theMasterTree.getNumChildren()));
+            theSequencerArray.add(new Sequencer(existingSequencerTree));
             theMasterTree.addChild(existingSequencerTree, -1, nullptr);
-            return theSequencerArray.add(new Sequencer(existingSequencerTree));
+        }
+    }
+    
+    void deleteSequencer()
+    {
+        int seqIndex = theMasterTree.getNumChildren()-1;
+        if (seqIndex > 0)
+        {
+            theMasterTree.removeChild(seqIndex, nullptr);
+            theSequencerArray.remove(seqIndex);
         }
     }
 	
@@ -93,6 +103,11 @@ public:
 		tree.setProperty("RootOctave", 3, nullptr);
 		tree.setProperty("Shuffle", 0, nullptr);
 		tree.setProperty("Range", 1, nullptr);
+    }
+    
+    ValueTree& getMasterTree()
+    {
+        return theMasterTree;
     }
 	
 private:

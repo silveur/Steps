@@ -8,9 +8,9 @@
 
 #include "SequencerView.h"
 
-SequencerView::SequencerView(Sequencer* sequencer): theSequencer(sequencer)
+SequencerView::SequencerView(ValueTree& sequencerTree)
 {
-	theSequencerTree = theSequencer->getSequencerTree();
+	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
 	{
@@ -96,7 +96,7 @@ void SequencerView::handleAsyncUpdate()
 void SequencerView::refreshMidiList()
 {
 	addAndMakeVisible(theMidiOutputList);
-	StringArray midiList = theSequencer->getMidiCore()->getMidiDevicesList();
+	StringArray midiList = MidiOutput::getDevices();
 	theMidiOutputList->clear();
 	for(int i=0;i<midiList.size();i++)
 	{
