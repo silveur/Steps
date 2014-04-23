@@ -31,6 +31,7 @@ Sequencer::Sequencer()
 		theSequencerTree.setProperty("RootNote", 0, nullptr);
 		theSequencerTree.setProperty("RootOctave", 3, nullptr);
 		theSequencerTree.setProperty("Shuffle", 0, nullptr);
+		theSequencerTree.setProperty("Range", 1, nullptr);
 		thePreferenceFile.create();
 	}
 	else
@@ -49,6 +50,7 @@ Sequencer::Sequencer()
 	theRootNote = theSequencerTree.getProperty("RootNote");
 	theRootOctave = theSequencerTree.getProperty("RootOctave");
 	theShuffle = theSequencerTree.getProperty("Shuffle");
+	theRange = theSequencerTree.getProperty("Range");
 	theSequencerTree.addListener(this);
 	startSequencer();
 }
@@ -95,18 +97,14 @@ void Sequencer::carryOn()
 	waitForShuffle = false;
 }
 
-void Sequencer::setPosition(int beatPosition)
-{
-}
-
 void Sequencer::triggerStep()
 {
 	thePosition = (thePosition+1) % theLength;
 	if (theStepArray[thePosition]->theState)
 	{
 		Step* step = theStepArray[thePosition];
-		MidiMessage onMsg = MidiMessage::noteOn(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-		MidiMessage offMsg = MidiMessage::noteOff(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		MidiMessage onMsg = MidiMessage::noteOn(1, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		MidiMessage offMsg = MidiMessage::noteOff(1, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
 		theMidiCore->outputMidi(onMsg);
 		theMidiCore->outputMidi(offMsg, 40);
 	}
@@ -178,5 +176,9 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Shuffle")
 	{
 		theShuffle = tree.getProperty(property);
+	}
+	else if(String(property) == "Range")
+	{
+		theRange = tree.getProperty(property);
 	}
 }

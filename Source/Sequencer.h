@@ -39,7 +39,6 @@ private:
 	void stop();
 	void start();
 	void carryOn();
-	void setPosition(int beatPosition);
 	void triggerStep();
 	ScopedPointer<MidiCore> theMidiCore;
 	ScopedPointer<MidiInput> theMidiInput;
@@ -53,6 +52,7 @@ private:
 	int theRootOctave;
 	int thePpqCount;
 	int theLength;
+	int theRange;
 	int theShuffle;
 	bool isIdle;
 	bool waitForShuffle;

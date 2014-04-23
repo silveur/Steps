@@ -16,14 +16,17 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	for(int i=0;i<16;i++)
 	{
 		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
-		theStepSliders[i]->setSliderStyle (Slider::LinearBarVertical);
+		theStepSliders[i]->setSliderStyle (Slider::RotaryVerticalDrag);
+		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
+		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange (-12, 12, 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
 		addAndMakeVisible(theVelocitySliders.add(new Slider("Velocity" + String(i))));
-		theVelocitySliders[i]->setSliderStyle (Slider::Rotary);
+		theVelocitySliders[i]->setSliderStyle (Slider::RotaryVerticalDrag);
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
+		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theVelocitySliders[i]->setRange (0, 127, 1);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
 		theVelocitySliders[i]->addListener (this);
@@ -46,6 +49,14 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	theShuffleSlider->setSliderStyle(Slider::SliderStyle::Rotary);
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->addListener(this);
+	
+	addAndMakeVisible(theRangeSlider = new Slider("Range"));
+	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theRangeSlider->setRange(1, 5, 1);
+	theRangeSlider->setSliderStyle(Slider::SliderStyle::Rotary);
+	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
+	theRangeSlider->addListener(this);
+	
 	
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	refreshMidiList();
@@ -95,9 +106,9 @@ void Interface::resized()
 {
 	for(int i=0;i<16;i++)
 	{
-		theStepSliders[i]->setBounds((getWidth()/16)*i, getHeight()/3, 20, 100);
-		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 30, 30);
-		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 30, 30);
+		theStepSliders[i]->setBounds((getWidth()/16)*i, getHeight()/3, 50, 50);
+		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 50, 20);
+		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 30);
 	}
 	theSequencerLength->setBounds(200, 20, 200, 30);
 	theMidiOutputList->setBounds(30, 20, 150, 30);
@@ -105,6 +116,7 @@ void Interface::resized()
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 30, 90, 20);
 	theShuffleSlider->setBounds(200, 50, 30, 30);
+	theRangeSlider->setBounds(250, 50, 30, 30);
 }
 
 void Interface::buttonClicked(Button* button)
@@ -146,6 +158,10 @@ void Interface::sliderValueChanged(Slider* slider)
 	{
 		theSequencerTree.setProperty("Shuffle", slider->getValue(), nullptr);
 	}
+	else if(slider == theRangeSlider)
+	{
+		theSequencerTree.setProperty("Range", slider->getValue(), nullptr);
+	}
 }
 
 void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
@@ -178,6 +194,10 @@ void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		String midiOutput = tree.getProperty("MidiOutput");
 		updateSelectedMidiOut(midiOutput);
+	}
+	else if(String(property) == "Range")
+	{
+		theRangeSlider->setValue(tree.getProperty(property));
 	}
 	else
 	{

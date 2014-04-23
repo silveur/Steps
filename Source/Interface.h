@@ -40,6 +40,7 @@ private:
 	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
+	ScopedPointer<Slider> theRangeSlider;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;

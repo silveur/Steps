@@ -54,6 +54,7 @@ public:
 	int theVelocity;
 	int thePitch;
 	bool theState;
+	int theDecay;
 	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
