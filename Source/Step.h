@@ -18,14 +18,14 @@
 class Step: public ValueTree::Listener
 {
 public:
-	Step()
+	Step(ValueTree& stepTree)
 	{
-		theStepTree = ValueTree("StepTree");
-		thePitch = 0; theVelocity = 127; theState = ON;
-		theStepTree.setProperty("Pitch", thePitch, nullptr);
-		theStepTree.setProperty("Velocity", theVelocity, nullptr);
-		theStepTree.setProperty("State", theState, nullptr);
-		theStepTree.addListener(this);
+        theStepTree = stepTree;
+        thePitch = theStepTree.getProperty("Pitch", 0);
+        theVelocity = theStepTree.getProperty("Velocity", 127);
+        theState = theStepTree.getProperty("State", ON);
+        theDecay = theStepTree.getProperty("Decay", 40);
+        theStepTree.addListener(this);
 	}
 	
 	~Step()	{}

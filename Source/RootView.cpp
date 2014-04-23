@@ -51,9 +51,7 @@ void RootView::resized()
 
 void RootView::addSequencer()
 {
-	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
-	seqArray.add(new Sequencer(seqArray.size()));
-	theSequencerViews.add(new SequencerView(seqArray.getLast()));
+	theSequencerViews.add(new SequencerView(theMaster->addSequencer()));
 	addAndMakeVisible(theSequencerViews.getLast());
 	updatePositions();
 }

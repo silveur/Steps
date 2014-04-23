@@ -22,7 +22,7 @@ class NoteManager;
 class Sequencer: public ValueTree::Listener
 {
 public:
-	Sequencer(int sequencerIndex);
+	Sequencer(ValueTree& sequencerTree);
 	~Sequencer();
 	MidiCore* getMidiCore() { return theMidiCore; }
 	ValueTree& getSequencerTree() { return theSequencerTree; }
@@ -41,7 +41,6 @@ private:
 	ScopedPointer<MidiCore> theMidiCore;
 	OwnedArray<Step> theStepArray;
 	ValueTree theSequencerTree;
-	File thePreferenceFile;
 	
 	int thePosition;
 	int theSyncTime;

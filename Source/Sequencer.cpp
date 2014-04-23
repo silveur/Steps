@@ -11,40 +11,23 @@
 #include "Sequencer.h"
 #include "PluginProcessor.h"
 
-Sequencer::Sequencer(int sequencerIndex)
+Sequencer::Sequencer(ValueTree& sequencerTree)
 {
 	thePosition = 0;
 	theRootNote = 48;
 	thePpqCount = 0;
-	theSequencerTree = ValueTree("SequencerTree" + String(sequencerIndex));
 	theMidiCore = new MidiCore();
+    theSequencerTree = sequencerTree;
 	for (int i=0; i<16; i++)
 	{
-		theStepArray.add(new Step());
-		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
+        ValueTree stepTree = sequencerTree.getChild(i);
+        if (!stepTree.isValid()) stepTree = ValueTree("Step" + String(i));
+		theStepArray.add(new Step(stepTree));
+		sequencerTree.addChild(stepTree, -1, nullptr);
 	}
-	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default" + String(sequencerIndex));
-	if(!thePreferenceFile.exists())
-	{
-		theSequencerTree.setProperty("Length", 16, nullptr);
-		theSequencerTree.setProperty("RootNote", 0, nullptr);
-		theSequencerTree.setProperty("RootOctave", 3, nullptr);
-		theSequencerTree.setProperty("Shuffle", 0, nullptr);
-		theSequencerTree.setProperty("Range", 1, nullptr);
-		thePreferenceFile.create();
-	}
-	else
-	{
-		FileInputStream fileInputStream(thePreferenceFile);
-		ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
-		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
-		String str = theSequencerTree.getProperty("MidiOutput");
-		theMidiCore->openMidiOutput(str);
-		for (int i=0; i<16; i++)
-		{
-			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
-		}
-	}
+
+    String str = theSequencerTree.getProperty("MidiOutput");
+    theMidiCore->openMidiOutput(str);
 	theLength = theSequencerTree.getProperty("Length");
 	theRootNote = theSequencerTree.getProperty("RootNote");
 	theRootOctave = theSequencerTree.getProperty("RootOctave");
@@ -55,9 +38,6 @@ Sequencer::Sequencer(int sequencerIndex)
 
 Sequencer::~Sequencer()
 {
-	thePreferenceFile.deleteFile();
-	FileOutputStream presetToSave(thePreferenceFile);
-	theSequencerTree.writeToStream(presetToSave);
 }
 
 void Sequencer::start()
