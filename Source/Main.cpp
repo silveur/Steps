@@ -10,24 +10,21 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainWindow.h"
-#include "Sequencer.h"
+#include "Master.h"
 
-//==============================================================================
 class SequencerApplication  : public JUCEApplication
 {
 public:
-    //==============================================================================
     SequencerApplication() {}
 
     const String getApplicationName() override       { return ProjectInfo::projectName; }
     const String getApplicationVersion() override    { return ProjectInfo::versionString; }
     bool moreThanOneInstanceAllowed() override       { return true; }
 
-    //==============================================================================
     void initialise (const String& commandLine) override
     {
-		theSequencer = new Sequencer();
-        mainWindow = new MainWindow(theSequencer);
+		theSequencerMaster = new Master();
+        mainWindow = new MainWindow(theSequencerMaster->getSequencerArray());
     }
 
     void shutdown() override
@@ -46,8 +43,7 @@ public:
 
 private:
     ScopedPointer<MainWindow> mainWindow;
-	ScopedPointer<Sequencer> theSequencer;
-
+	ScopedPointer<Master> theSequencerMaster;
 };
 
 START_JUCE_APPLICATION (SequencerApplication)

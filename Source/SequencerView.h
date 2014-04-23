@@ -12,11 +12,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
 
-class Interface: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
+class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
 {
 public:
-	Interface(Sequencer* sequencer);
-	~Interface();
+	SequencerView(Sequencer* sequencer);
+	~SequencerView();
 
 	void paint (Graphics&);
 	void sliderValueChanged(Slider* slider);
@@ -34,7 +34,6 @@ public:
 	
 private:
 	void updateNotesAndOctaves();
-	Rectangle<int> theMainScreen;
 	ScopedPointer<ComboBox> theMidiOutputList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;

@@ -11,20 +11,19 @@
 #include "Sequencer.h"
 #include "PluginProcessor.h"
 
-Sequencer::Sequencer()
+Sequencer::Sequencer(int sequencerIndex)
 {
-	theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 	thePosition = 0;
 	theRootNote = 48;
 	thePpqCount = 0;
-	theSequencerTree = ValueTree("SequencerTree");
+	theSequencerTree = ValueTree("SequencerTree" + String(sequencerIndex));
 	theMidiCore = new MidiCore();
 	for (int i=0; i<16; i++)
 	{
 		theStepArray.add(new Step());
 		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
 	}
-	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
+	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default" + String(sequencerIndex));
 	if(!thePreferenceFile.exists())
 	{
 		theSequencerTree.setProperty("Length", 16, nullptr);
@@ -52,7 +51,6 @@ Sequencer::Sequencer()
 	theShuffle = theSequencerTree.getProperty("Shuffle");
 	theRange = theSequencerTree.getProperty("Range");
 	theSequencerTree.addListener(this);
-	startSequencer();
 }
 
 Sequencer::~Sequencer()
@@ -60,16 +58,6 @@ Sequencer::~Sequencer()
 	thePreferenceFile.deleteFile();
 	FileOutputStream presetToSave(thePreferenceFile);
 	theSequencerTree.writeToStream(presetToSave);
-}
-
-void Sequencer::startSequencer()
-{
-	theMidiInput->start();
-}
-
-void Sequencer::stopSequencer()
-{
-	theMidiInput->stop();
 }
 
 void Sequencer::start()
@@ -111,8 +99,7 @@ void Sequencer::triggerStep()
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }
 
-void Sequencer::handleIncomingMidiMessage (MidiInput* source,
-								const MidiMessage& message)
+void Sequencer::handleIncomingMidiMessage (const MidiMessage& message)
 {
 	if (message.isMidiClock() && !isIdle)
 	{

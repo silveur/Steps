@@ -6,11 +6,10 @@
   ==============================================================================
 */
 
-#include "Interface.h"
+#include "SequencerView.h"
 
-Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
+SequencerView::SequencerView(Sequencer* sequencer): theSequencer(sequencer)
 {
-	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
 	theSequencerTree = theSequencer->getSequencerTree();
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
@@ -71,20 +70,20 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
-	setSize(theMainScreen.getWidth()/2, theMainScreen.getHeight()/3);
+	setSize(getWidth(), getHeight());
 }
 
-Interface::~Interface()
+SequencerView::~SequencerView()
 {
 	
 }
 
-void Interface::handleAsyncUpdate()
+void SequencerView::handleAsyncUpdate()
 {
 	repaint();
 }
 
-void Interface::refreshMidiList()
+void SequencerView::refreshMidiList()
 {
 	addAndMakeVisible(theMidiOutputList);
 	StringArray midiList = theSequencer->getMidiCore()->getMidiDevicesList();
@@ -96,30 +95,30 @@ void Interface::refreshMidiList()
 	}
 }
 
-void Interface::paint (Graphics& g)
+void SequencerView::paint (Graphics& g)
 {
 	g.setColour(Colours::red);
 	g.drawEllipse(theStepSliders[thePosition]->getX(), theStateButtons[thePosition]->getBottom(), 20, 20, 2);
 }
 
-void Interface::resized()
+void SequencerView::resized()
 {
 	for(int i=0;i<16;i++)
 	{
-		theStepSliders[i]->setBounds((getWidth()/16)*i, getHeight()/3, 50, 50);
+		theStepSliders[i]->setBounds((getWidth()/16)*i, 40, 50, 50);
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 50, 20);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 30);
 	}
-	theSequencerLength->setBounds(200, 20, 200, 30);
-	theMidiOutputList->setBounds(30, 20, 150, 30);
-	theRootNoteList->setBounds(30, 50, 70, 20);
+	theSequencerLength->setBounds(200, 0, 200, 20);
+	theMidiOutputList->setBounds(10, 0, 150, 20);
+	theRootNoteList->setBounds(10, 20, 70, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
-	theRandomAllButton->setBounds(theSequencerLength->getRight(), 30, 90, 20);
-	theShuffleSlider->setBounds(200, 50, 30, 30);
-	theRangeSlider->setBounds(250, 50, 30, 30);
+	theRandomAllButton->setBounds(theSequencerLength->getRight(), 20, 90, 20);
+	theShuffleSlider->setBounds(200, 20, 30, 20);
+	theRangeSlider->setBounds(250, 20, 30, 20);
 }
 
-void Interface::buttonClicked(Button* button)
+void SequencerView::buttonClicked(Button* button)
 {
 	if (button == theRandomAllButton)
 	{
@@ -136,10 +135,9 @@ void Interface::buttonClicked(Button* button)
 		int index = button->getName().getTrailingIntValue();
 		theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), nullptr);
 	}
-
 }
 
-void Interface::sliderValueChanged(Slider* slider)
+void SequencerView::sliderValueChanged(Slider* slider)
 {
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
@@ -164,7 +162,7 @@ void Interface::sliderValueChanged(Slider* slider)
 	}
 }
 
-void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
 	if(comboBoxThatHasChanged == theMidiOutputList)
 	{
@@ -183,7 +181,7 @@ void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	}
 }
 
-void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
+void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 {
 	if(String(property) == "Position")
 	{
@@ -216,7 +214,7 @@ void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	}
 }
 
-void Interface::updateSelectedMidiOut(String& midiOut)
+void SequencerView::updateSelectedMidiOut(String& midiOut)
 {
 	refreshMidiList();
 	for (int i=0;i<theMidiOutputList->getNumItems();i++)
@@ -229,7 +227,7 @@ void Interface::updateSelectedMidiOut(String& midiOut)
 	}
 }
 
-void Interface::updateNotesAndOctaves()
+void SequencerView::updateNotesAndOctaves()
 {
 	theRootNoteList->addItem("C",1);
 	theRootNoteList->addItem("C#",2);

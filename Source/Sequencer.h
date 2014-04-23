@@ -19,15 +19,14 @@ class SequencerAudioProcessor;
 class MidiCore;
 class NoteManager;
 
-class Sequencer: public MidiInputCallback, public ValueTree::Listener
+class Sequencer: public ValueTree::Listener
 {
 public:
-	Sequencer();
+	Sequencer(int sequencerIndex);
 	~Sequencer();
 	MidiCore* getMidiCore() { return theMidiCore; }
 	ValueTree& getSequencerTree() { return theSequencerTree; }
-	void startSequencer();
-	void stopSequencer();
+	void handleIncomingMidiMessage (const MidiMessage& message);
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
@@ -35,13 +34,11 @@ private:
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message);
 	void stop();
 	void start();
 	void carryOn();
 	void triggerStep();
 	ScopedPointer<MidiCore> theMidiCore;
-	ScopedPointer<MidiInput> theMidiInput;
 	OwnedArray<Step> theStepArray;
 	ValueTree theSequencerTree;
 	File thePreferenceFile;

@@ -12,17 +12,19 @@
 #define MAINWINDOW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Interface.h"
+#include "RootView.h"
+#include "Sequencer.h"
 
 class MainWindow    : public DocumentWindow
 {
 public:
-	MainWindow(Sequencer* sequencer)  : DocumentWindow ("MainWindow",
+	MainWindow(OwnedArray<Sequencer>& sequencer)  : DocumentWindow ("MainWindow",
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{
-		setContentOwned (new Interface(sequencer), true);
+		setContentOwned (new RootView(sequencer), true);
 		setUsingNativeTitleBar(true);
+		setResizable(true, true);
 		centreWithSize (getWidth(), getHeight());
 		setVisible (true);
 	}
