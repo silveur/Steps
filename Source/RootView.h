@@ -12,19 +12,27 @@
 #define ROOTVIEW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Sequencer.h"
+#include "Master.h"
 #include "SequencerView.h"
+
+class HeaderView;
 
 class RootView: public Component
 {
 public:
-	RootView(OwnedArray<Sequencer>& sequencerArray);
+	RootView(Master* master);
 	~RootView();
 	void resized();
-	
+	void paint(Graphics& g);
+	void addSequencer();
+	void removeSequencer();
+	void updatePositions();
+	OwnedArray<SequencerView> theSequencerViews;
 private:
 	Rectangle<int> theMainScreen;
-	OwnedArray<SequencerView> theSequencerViews;
+	
+	ScopedPointer<HeaderView> theHeaderView;
+	Master* theMaster;
 };
 
 

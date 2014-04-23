@@ -24,7 +24,7 @@ public:
     void initialise (const String& commandLine) override
     {
 		theSequencerMaster = new Master();
-        mainWindow = new MainWindow(theSequencerMaster->getSequencerArray());
+        mainWindow = new MainWindow(theSequencerMaster);
     }
 
     void shutdown() override

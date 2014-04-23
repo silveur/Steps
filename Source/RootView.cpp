@@ -9,16 +9,19 @@
 */
 
 #include "RootView.h"
+#include "HeaderView.h"
 
-RootView::RootView(OwnedArray<Sequencer>& sequencerArray)
+RootView::RootView(Master* master): theMaster(master)
 {
-	for (int i=0; i<sequencerArray.size(); i++)
+	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
+	for (int i=0; i<seqArray.size(); i++)
 	{
-		theSequencerViews.add(new SequencerView(sequencerArray[i]));
+		theSequencerViews.add(new SequencerView(seqArray[i]));
 		addAndMakeVisible(theSequencerViews[i]);
 	}
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-	setSize(theMainScreen.getWidth()/2, (sequencerArray.size() + 1) * 120);
+	addAndMakeVisible(theHeaderView = new HeaderView(this));
+	setSize(theMainScreen.getWidth()/2, (theMainScreen.getHeight()/16) + theMainScreen.getHeight()/2);
 }
 
 RootView::~RootView()
@@ -26,10 +29,38 @@ RootView::~RootView()
 	
 }
 
-void RootView::resized()
+void RootView::paint(Graphics& g)
+{
+	
+}
+
+void RootView::updatePositions()
 {
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, i*(getHeight()/theSequencerViews.size()), getWidth(), getHeight() / theSequencerViews.size());
+		theSequencerViews[i]->setBounds(0, (theHeaderView->getHeight()) + (i * (getHeight()/theSequencerViews.size())), getWidth(), getHeight()/theSequencerViews.size());
 	}
+}
+
+void RootView::resized()
+{
+	theHeaderView->setBounds(0, 0, getWidth(), getHeight()/16);
+	updatePositions();
+}
+
+void RootView::addSequencer()
+{
+	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
+	seqArray.add(new Sequencer(seqArray.size()));
+	theSequencerViews.add(new SequencerView(seqArray.getLast()));
+	addAndMakeVisible(theSequencerViews.getLast());
+	updatePositions();
+}
+
+void RootView::removeSequencer()
+{
+	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
+	seqArray.removeLast();
+	theSequencerViews.removeLast();
+	updatePositions();
 }

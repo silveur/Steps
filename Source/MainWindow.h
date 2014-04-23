@@ -13,16 +13,16 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "RootView.h"
-#include "Sequencer.h"
+#include "Master.h"
 
 class MainWindow    : public DocumentWindow
 {
 public:
-	MainWindow(OwnedArray<Sequencer>& sequencer)  : DocumentWindow ("MainWindow",
+	MainWindow(Master* master)  : DocumentWindow ("MainWindow",
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{
-		setContentOwned (new RootView(sequencer), true);
+		setContentOwned (new RootView(master), true);
 		setUsingNativeTitleBar(true);
 		setResizable(true, true);
 		centreWithSize (getWidth(), getHeight());

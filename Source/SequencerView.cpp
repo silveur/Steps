@@ -49,14 +49,15 @@ SequencerView::SequencerView(Sequencer* sequencer): theSequencer(sequencer)
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->addListener(this);
 	
+	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
+	
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
 	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theRangeSlider->setRange(1, 5, 1);
 	theRangeSlider->setSliderStyle(Slider::SliderStyle::Rotary);
 	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
 	theRangeSlider->addListener(this);
-	
-	
+
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
@@ -70,7 +71,9 @@ SequencerView::SequencerView(Sequencer* sequencer): theSequencer(sequencer)
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
+	setRepaintsOnMouseActivity(false);
 	setSize(getWidth(), getHeight());
+	repaint();
 }
 
 SequencerView::~SequencerView()
@@ -80,7 +83,14 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-	repaint();
+	if (thePosition == 0)
+	{
+		repaint(0, theStateButtons[thePosition]->getBottom(), getWidth(), 20);
+	}
+	else
+	{
+		repaint(theStepSliders[thePosition - 1]->getX(), theStateButtons[thePosition]->getBottom(), theStepSliders[0]->getWidth()*2, 20);
+	}
 }
 
 void SequencerView::refreshMidiList()
@@ -95,10 +105,11 @@ void SequencerView::refreshMidiList()
 	}
 }
 
-void SequencerView::paint (Graphics& g)
+void SequencerView::paint(Graphics& g)
 {
-	g.setColour(Colours::red);
-	g.drawEllipse(theStepSliders[thePosition]->getX(), theStateButtons[thePosition]->getBottom(), 20, 20, 2);
+	g.setColour(Colours::blue);
+	g.drawRect(0,0,getWidth(),getHeight());
+	g.drawImageAt(theStepImage, theStepSliders[thePosition]->getX(),  theStateButtons[thePosition]->getBottom());
 }
 
 void SequencerView::resized()
@@ -111,9 +122,9 @@ void SequencerView::resized()
 	}
 	theSequencerLength->setBounds(200, 0, 200, 20);
 	theMidiOutputList->setBounds(10, 0, 150, 20);
-	theRootNoteList->setBounds(10, 20, 70, 20);
+	theRootNoteList->setBounds(10, 20, 40, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
-	theRandomAllButton->setBounds(theSequencerLength->getRight(), 20, 90, 20);
+	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
 	theRangeSlider->setBounds(250, 20, 30, 20);
 }

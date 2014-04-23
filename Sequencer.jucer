@@ -15,6 +15,7 @@
         <FILE id="xLbBQu" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
       </GROUP>
       <GROUP id="{5BBC7915-C851-834C-303A-627B32FA7DE9}" name="Graphics">
+        <FILE id="tVk1yJ" name="HeaderView.h" compile="0" resource="0" file="Source/HeaderView.h"/>
         <FILE id="dRf9bq" name="RootView.cpp" compile="1" resource="0" file="Source/RootView.cpp"/>
         <FILE id="dVfxqR" name="RootView.h" compile="0" resource="0" file="Source/RootView.h"/>
         <FILE id="oGkwUR" name="SequencerView.cpp" compile="1" resource="0"
@@ -22,6 +23,10 @@
         <FILE id="HdxLVf" name="SequencerView.h" compile="0" resource="0" file="Source/SequencerView.h"/>
         <FILE id="d3S4Ej" name="MainWindow.cpp" compile="1" resource="0" file="Source/MainWindow.cpp"/>
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
+        <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images">
+          <FILE id="KfDVhB" name="button_minus.png" compile="0" resource="1"
+                file="Ressource/button_minus.png"/>
+        </GROUP>
       </GROUP>
     </GROUP>
   </MAINGROUP>

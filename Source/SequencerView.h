@@ -46,6 +46,7 @@ private:
 	ScopedPointer<TextButton> theRandomAllButton;
 	Sequencer* theSequencer;
 	ValueTree theSequencerTree;
+	Image theStepImage;
 	int thePosition;
 
 };
