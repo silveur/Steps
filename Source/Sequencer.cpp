@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    Sequencer.cpp
-    Created: 22 Dec 2013 11:52:14pm
-    Author:  silvere letellier
+	Sequencer.cpp
+	Created: 22 Dec 2013 11:52:14pm
+	Author:  silvere letellier
 
   ==============================================================================
 */
@@ -18,7 +18,7 @@ Sequencer::Sequencer()
 	theRootNote = 48;
 	thePpqCount = 0;
 	theSequencerTree = ValueTree("SequencerTree");
-    theMidiCore = new MidiCore();
+	theMidiCore = new MidiCore();
 	for (int i=0; i<16; i++)
 	{
 		theStepArray.add(new Step());
@@ -26,20 +26,20 @@ Sequencer::Sequencer()
 	}
 	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
 	if(!thePreferenceFile.exists())
-    {
-        theSequencerTree.setProperty("Length", 16, nullptr);
-        theSequencerTree.setProperty("RootNote", 0, nullptr);
-        theSequencerTree.setProperty("RootOctave", 3, nullptr);
+	{
+		theSequencerTree.setProperty("Length", 16, nullptr);
+		theSequencerTree.setProperty("RootNote", 0, nullptr);
+		theSequencerTree.setProperty("RootOctave", 3, nullptr);
 		theSequencerTree.setProperty("Shuffle", 0, nullptr);
-        thePreferenceFile.create();
-    }
+		thePreferenceFile.create();
+	}
 	else
 	{
 		FileInputStream fileInputStream(thePreferenceFile);
 		ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
 		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
 		String str = theSequencerTree.getProperty("MidiOutput");
-        theMidiCore->openMidiOutput(str);
+		theMidiCore->openMidiOutput(str);
 		for (int i=0; i<16; i++)
 		{
 			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
@@ -50,7 +50,7 @@ Sequencer::Sequencer()
 	theRootOctave = theSequencerTree.getProperty("RootOctave");
 	theShuffle = theSequencerTree.getProperty("Shuffle");
 	theSequencerTree.addListener(this);
-    startSequencer();
+	startSequencer();
 }
 
 Sequencer::~Sequencer()
@@ -62,12 +62,12 @@ Sequencer::~Sequencer()
 
 void Sequencer::startSequencer()
 {
-    theMidiInput->start();
+	theMidiInput->start();
 }
 
 void Sequencer::stopSequencer()
 {
-    theMidiInput->stop();
+	theMidiInput->stop();
 }
 
 void Sequencer::start()

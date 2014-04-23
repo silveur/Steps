@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    Sequencer.h
-    Created: 22 Dec 2013 11:52:14pm
-    Author:  silvere letellier
+	Sequencer.h
+	Created: 22 Dec 2013 11:52:14pm
+	Author:  silvere letellier
 
   ==============================================================================
 */
@@ -26,9 +26,9 @@ public:
 	~Sequencer();
 	MidiCore* getMidiCore() { return theMidiCore; }
 	ValueTree& getSequencerTree() { return theSequencerTree; }
-    void startSequencer();
-    void stopSequencer();
-    
+	void startSequencer();
+	void stopSequencer();
+	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
