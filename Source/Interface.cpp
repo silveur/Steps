@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+	This file was auto-generated!
 
   ==============================================================================
 */
@@ -40,6 +40,13 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	addAndMakeVisible(theRandomAllButton = new TextButton("Random all"));
 	theRandomAllButton->addListener(this);
 	
+	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
+	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theShuffleSlider->setRange(0, 5, 1);
+	theShuffleSlider->setSliderStyle(Slider::SliderStyle::Rotary);
+	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
+	theShuffleSlider->addListener(this);
+	
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
@@ -53,7 +60,7 @@ Interface::Interface(Sequencer* sequencer): theSequencer(sequencer)
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
-    setSize(theMainScreen.getWidth()/2, theMainScreen.getHeight()/3);
+	setSize(theMainScreen.getWidth()/2, theMainScreen.getHeight()/3);
 }
 
 Interface::~Interface()
@@ -68,14 +75,14 @@ void Interface::handleAsyncUpdate()
 
 void Interface::refreshMidiList()
 {
-    addAndMakeVisible(theMidiOutputList);
-    StringArray midiList = theSequencer->getMidiCore()->getMidiDevicesList();
+	addAndMakeVisible(theMidiOutputList);
+	StringArray midiList = theSequencer->getMidiCore()->getMidiDevicesList();
 	theMidiOutputList->clear();
-    for(int i=0;i<midiList.size();i++)
-    {
+	for(int i=0;i<midiList.size();i++)
+	{
 		if (midiList[i] != "Sequencer")
-        	theMidiOutputList->addItem(midiList[i], i+1);
-    }
+			theMidiOutputList->addItem(midiList[i], i+1);
+	}
 }
 
 void Interface::paint (Graphics& g)
@@ -97,6 +104,7 @@ void Interface::resized()
 	theRootNoteList->setBounds(30, 50, 70, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 30, 90, 20);
+	theShuffleSlider->setBounds(200, 50, 30, 30);
 }
 
 void Interface::buttonClicked(Button* button)
@@ -134,25 +142,29 @@ void Interface::sliderValueChanged(Slider* slider)
 	{
 		theSequencerTree.setProperty("Length", slider->getValue(), nullptr);
 	}
+	else if(slider == theShuffleSlider)
+	{
+		theSequencerTree.setProperty("Shuffle", slider->getValue(), nullptr);
+	}
 }
 
 void Interface::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
-    if(comboBoxThatHasChanged == theMidiOutputList)
-    {
-        String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
+	if(comboBoxThatHasChanged == theMidiOutputList)
+	{
+		String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
 		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
-    }
+	}
 	else if(comboBoxThatHasChanged == theRootOctaveList)
-    {
-        int id = comboBoxThatHasChanged->getSelectedItemIndex();
+	{
+		int id = comboBoxThatHasChanged->getSelectedItemIndex();
 		theSequencerTree.setProperty("RootOctave", id, nullptr);
-    }
+	}
 	else if(comboBoxThatHasChanged == theRootNoteList)
-    {
-        int id = comboBoxThatHasChanged->getSelectedItemIndex();
+	{
+		int id = comboBoxThatHasChanged->getSelectedItemIndex();
 		theSequencerTree.setProperty("RootNote", id, nullptr);
-    }
+	}
 }
 
 void Interface::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)

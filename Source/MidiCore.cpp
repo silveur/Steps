@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    MidiCore.cpp
-    Created: 13 Mar 2013 11:57:22pm
-    Author:  Silvere Letellier
+	MidiCore.cpp
+	Created: 13 Mar 2013 11:57:22pm
+	Author:  Silvere Letellier
 
   ==============================================================================
 */
@@ -48,8 +48,8 @@ MidiCore::~MidiCore()
 
 StringArray MidiCore::getMidiDevicesList()
 {
-    StringArray list = MidiOutput::getDevices();
-    return list;
+	StringArray list = MidiOutput::getDevices();
+	return list;
 }
 
 void MidiCore::noteOn(int noteNumber,int velocity)

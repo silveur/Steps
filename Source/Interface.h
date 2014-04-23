@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    This file was auto-generated!
+	This file was auto-generated!
 
   ==============================================================================
 */
@@ -15,12 +15,12 @@
 class Interface: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
 {
 public:
-    Interface(Sequencer* sequencer);
-    ~Interface();
+	Interface(Sequencer* sequencer);
+	~Interface();
 
-    void paint (Graphics&);
+	void paint (Graphics&);
 	void sliderValueChanged(Slider* slider);
-    void resized();
+	void resized();
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
@@ -39,6 +39,7 @@ private:
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<Slider> theSequencerLength;
+	ScopedPointer<Slider> theShuffleSlider;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;
