@@ -78,6 +78,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 	updateSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
+	addAndMakeVisible(thePresetBox = new ComboBox("Preset List"));
 	updateNotesAndOctaves();
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
@@ -86,6 +87,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	setRepaintsOnMouseActivity(false);
+	if (!getPresetFolder().exists()) getPresetFolder().createDirectory();
+	updatePresetList();
 	setSize(getWidth(), getHeight());
 }
 
@@ -135,6 +138,7 @@ void SequencerView::resized()
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
 	theStepView.setBounds(0, getHeight()-30, getWidth(), 30);
+	thePresetBox->setBounds(getWidth()-150, 0, 150, 20);
 }
 
 void SequencerView::buttonClicked(Button* button)
@@ -293,6 +297,17 @@ void SequencerView::updateNotesAndOctaves()
 	for (int i=0;i<8;i++)
 	{
 		theRootOctaveList->addItem(String(i), i+1);
+	}
+}
+
+void SequencerView::updatePresetList()
+{
+	Array<File> presetArray;
+	int numPreset = getPresetFolder().findChildFiles(presetArray, File::findFiles, true);
+	for (int i=0;i<numPreset;i++)
+	{
+		File preset = presetArray[i];
+		thePresetBox->addItem(preset.getFileName(), 1 + thePresetBox->getNumItems());
 	}
 }
 

@@ -114,7 +114,7 @@ private:
 	OwnedArray<Sequencer> theSequencerArray;
 	ScopedPointer<MidiInput> theMidiInput;
 	ValueTree theMasterTree;
-	File thePreferenceFile;
+	File thePreferenceFile;	
 };
 
 
