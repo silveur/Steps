@@ -15,7 +15,7 @@
 #include "RootView.h"
 #include "Master.h"
 
-class MainWindow    : public DocumentWindow
+class MainWindow: public DocumentWindow
 {
 public:
 	MainWindow(Master* master)  : DocumentWindow ("MainWindow",

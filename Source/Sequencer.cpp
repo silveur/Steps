@@ -17,23 +17,23 @@ Sequencer::Sequencer(ValueTree& sequencerTree)
 	theRootNote = 48;
 	thePpqCount = 0;
 	theMidiCore = new MidiCore();
-    theSequencerTree = sequencerTree;
-    if (theSequencerTree.getNumProperties() == 0)
-        Sequencer::initSequencerTree(theSequencerTree);
+	theSequencerTree = sequencerTree;
+	if (theSequencerTree.getNumProperties() == 0)
+		Sequencer::initSequencerTree(theSequencerTree);
 	for (int i=0; i<16; i++)
 	{
-        ValueTree stepTree = sequencerTree.getChild(i);
-        if (!stepTree.isValid())
-        {
-            stepTree = ValueTree("Step" + String(i));
-            Step::initStepTree(stepTree);
-        }
+		ValueTree stepTree = sequencerTree.getChild(i);
+		if (!stepTree.isValid())
+		{
+			stepTree = ValueTree("Step" + String(i));
+			Step::initStepTree(stepTree);
+		}
 		theStepArray.add(new Step(stepTree));
 		sequencerTree.addChild(stepTree, -1, nullptr);
 	}
 
-    String str = theSequencerTree.getProperty("MidiOutput");
-    theMidiCore->openMidiOutput(str);
+	String str = theSequencerTree.getProperty("MidiOutput");
+	theMidiCore->openMidiOutput(str);
 	theLength = theSequencerTree.getProperty("Length", 16);
 	theRootNote = theSequencerTree.getProperty("RootNote", 0);
 	theRootOctave = theSequencerTree.getProperty("RootOctave", 3);
@@ -48,7 +48,7 @@ Sequencer::~Sequencer()
 
 void Sequencer::initSequencerTree(ValueTree& tree)
 {
-    tree.setProperty("Length", 16, nullptr);
+	tree.setProperty("Length", 16, nullptr);
 	tree.setProperty("RootNote", 0, nullptr);
 	tree.setProperty("RootOctave", 3, nullptr);
 	tree.setProperty("Shuffle", 0, nullptr);
@@ -89,7 +89,7 @@ void Sequencer::triggerStep()
 		MidiMessage onMsg = MidiMessage::noteOn(1, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
 		MidiMessage offMsg = MidiMessage::noteOff(1, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
 		theMidiCore->outputMidi(onMsg);
-		theMidiCore->outputMidi(offMsg, 40);
+		theMidiCore->outputMidi(offMsg, step->theDecay);
 	}
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }

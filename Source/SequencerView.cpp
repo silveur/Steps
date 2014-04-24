@@ -32,6 +32,14 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
 		theStateButtons[i]->setToggleState((bool)theSequencerTree.getChild(i).getProperty("State"), dontSendNotification);
 		theStateButtons[i]->addListener(this);
+		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
+		theDecaySliders[i]->setSliderStyle (Slider::RotaryVerticalDrag);
+		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+		theDecaySliders[i]->setTextBoxIsEditable(false);
+		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
+		theDecaySliders[i]->setRange (1, 200, 1);
+		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
+		theDecaySliders[i]->addListener (this);
 	}
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
@@ -83,7 +91,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 
 SequencerView::~SequencerView()
 {
-	
 }
 
 void SequencerView::handleAsyncUpdate()
@@ -114,7 +121,8 @@ void SequencerView::resized()
 	for(int i=0;i<16;i++)
 	{
 		theStepSliders[i]->setBounds((getWidth()/16)*i, 40, 50, 50);
-		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 50, 20);
+		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 25, 20);
+		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), 25, 20);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 30);
 	}
 	theSequencerLength->setBounds(200, 0, 200, 20);
@@ -139,6 +147,7 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Pitch", ((int)rand() % 24) - 12, nullptr);
 			child.setProperty("State", rand() % 2, nullptr);
 			child.setProperty("Velocity", ((int)rand() % 127), nullptr);
+			child.setProperty("Decay", ((int)rand() % 200), nullptr);
 		}
 	}
 	else if (button == theCopyButton)
@@ -172,6 +181,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	else if(slider->getName().contains("Velocity"))
 	{
 		theSequencerTree.getChild(index).setProperty("Velocity", (int)slider->getValue(), nullptr);
+	}
+	else if(slider->getName().contains("Decay"))
+	{
+		theSequencerTree.getChild(index).setProperty("Decay", (int)slider->getValue(), nullptr);
 	}
 	else if(slider == theSequencerLength)
 	{
@@ -242,6 +255,8 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 					theStateButtons[i]->setToggleState((bool)tree.getProperty(property), dontSendNotification);
 				else if (String(property) == "Velocity")
 					theVelocitySliders[i]->setValue((int)tree.getProperty(property));
+				else if (String(property) == "Decay")
+					theDecaySliders[i]->setValue((int)tree.getProperty(property));
 			}
 		}
 	}

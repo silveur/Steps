@@ -47,6 +47,7 @@ private:
 	ScopedPointer<Slider> theRangeSlider;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
+	OwnedArray<Slider> theDecaySliders;
 	OwnedArray<ToggleButton> theStateButtons;
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;

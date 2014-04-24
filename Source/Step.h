@@ -20,12 +20,12 @@ class Step: public ValueTree::Listener
 public:
 	Step(ValueTree& stepTree)
 	{
-        theStepTree = stepTree;
-        thePitch = theStepTree.getProperty("Pitch", 0);
-        theVelocity = theStepTree.getProperty("Velocity", 127);
-        theState = theStepTree.getProperty("State", ON);
-        theDecay = theStepTree.getProperty("Decay", 40);
-        theStepTree.addListener(this);
+		theStepTree = stepTree;
+		thePitch = theStepTree.getProperty("Pitch", 0);
+		theVelocity = theStepTree.getProperty("Velocity", 127);
+		theState = theStepTree.getProperty("State", ON);
+		theDecay = theStepTree.getProperty("Decay", 40);
+		theStepTree.addListener(this);
 	}
 	
 	~Step()	{}
@@ -44,33 +44,38 @@ public:
 		{
 			theState = tree.getProperty(property);
 		}
+		else if(String(property) == "Decay")
+		{
+			theDecay = tree.getProperty(property);
+		}
 	}
 	
 	ValueTree& getValueTree()
 	{
 		return theStepTree;
 	}
-    
-    static void initStepTree(ValueTree& tree)
-    {
-        tree.setProperty("Pitch", 0, nullptr);
-        tree.setProperty("Velocity", 127, nullptr);
-        tree.setProperty("State", ON, nullptr);
-        tree.setProperty("Decay", 40, nullptr);
-    }
+	
+private:
+	static void initStepTree(ValueTree& tree)
+	{
+		tree.setProperty("Pitch", 0, nullptr);
+		tree.setProperty("Velocity", 127, nullptr);
+		tree.setProperty("State", ON, nullptr);
+		tree.setProperty("Decay", 40, nullptr);
+	}
 	
 	int theVelocity;
 	int thePitch;
-	bool theState;
 	int theDecay;
+	bool theState;
 	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	
-private:
+
 	ValueTree theStepTree;
+	friend class Sequencer;
 
 };
 
