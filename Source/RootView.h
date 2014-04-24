@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    RootView.h
-    Created: 23 Apr 2014 12:15:42pm
-    Author:  Silvere Letellier
+	RootView.h
+	Created: 23 Apr 2014 12:15:42pm
+	Author:  Silvere Letellier
 
   ==============================================================================
 */
@@ -23,22 +23,22 @@ public:
 	RootView(Master* master);
 	~RootView();
 	void resized();
-	void paint(Graphics& g);
 	void addSequencer();
 	void removeSequencer();
 	void updatePositions();
-    void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
-	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded);
-	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved);
-	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
-	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-    OwnedArray<SequencerView> theSequencerViews;
-    
+	int getNumOfSequencer();
+	
 private:
+	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child);
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child);
+	void valueTreeChildOrderChanged (ValueTree& parent){}
+	void valueTreeParentChanged (ValueTree& tree){}
+	OwnedArray<SequencerView> theSequencerViews;
 	Rectangle<int> theMainScreen;
-	ScopedPointer<HeaderView> theHeaderView;
+	HeaderView* theHeaderView;
 	Master* theMaster;
-    ValueTree theMasterTree;
+	ValueTree theMasterTree;
 };
 
 
