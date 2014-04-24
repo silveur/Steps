@@ -42,6 +42,12 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 	addAndMakeVisible(theRandomAllButton = new TextButton("Random all"));
 	theRandomAllButton->addListener(this);
 	
+	addAndMakeVisible(theCopyButton = new TextButton("Copy settings"));
+	theCopyButton->addListener(this);
+	
+	addAndMakeVisible(thePasteButton = new TextButton("Paste settings"));
+	thePasteButton->addListener(this);
+	
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theShuffleSlider->setRange(0, 5, 1);
@@ -127,6 +133,8 @@ void SequencerView::resized()
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
 	theRangeSlider->setBounds(250, 20, 30, 20);
+	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
+	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
 }
 
 void SequencerView::buttonClicked(Button* button)
@@ -139,6 +147,20 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Pitch", ((int)rand() % 24) - 12, nullptr);
 			child.setProperty("State", rand() % 2, nullptr);
 			child.setProperty("Velocity", ((int)rand() % 127), nullptr);
+		}
+	}
+	else if (button == theCopyButton)
+	{
+		getCopyTree() = theSequencerTree.createCopy();
+	}
+	else if (button == thePasteButton)
+	{
+		theSequencerTree.copyPropertiesFrom(getCopyTree(), nullptr);
+		for (int i=0; i<16; i++)
+		{
+			ValueTree sourceChild = getCopyTree().getChild(i);
+			ValueTree destinationChild = theSequencerTree.getChild(i);
+			destinationChild.copyPropertiesFrom(sourceChild, nullptr);
 		}
 	}
 	else
@@ -207,6 +229,14 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "Range")
 	{
 		theRangeSlider->setValue(tree.getProperty(property));
+	}
+	else if(String(property) == "Shuffle")
+	{
+		theShuffleSlider->setValue(tree.getProperty(property));
+	}
+	else if(String(property) == "Length")
+	{
+		theSequencerLength->setValue(tree.getProperty(property));
 	}
 	else
 	{

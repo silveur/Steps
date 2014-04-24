@@ -69,13 +69,19 @@ void RootView::valueTreePropertyChanged (ValueTree& tree, const Identifier& prop
 
 void RootView::valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded)
 {
-    theSequencerViews.add(new SequencerView(childWhichHasBeenAdded));
-	addAndMakeVisible(theSequencerViews.getLast());
-	updatePositions();
+	if (parentTree == theMasterTree)
+	{
+		theSequencerViews.add(new SequencerView(childWhichHasBeenAdded));
+		addAndMakeVisible(theSequencerViews.getLast());
+		updatePositions();
+	}
 }
 
 void RootView::valueTreeChildRemoved(ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved)
 {
-    theSequencerViews.removeLast();
-    updatePositions();
+	if (parentTree == theMasterTree)
+	{
+		theSequencerViews.removeLast();
+		updatePositions();
+	}
 }

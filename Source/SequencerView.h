@@ -30,6 +30,11 @@ public:
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
+	static ValueTree& getCopyTree()
+	{
+		static ValueTree theCopyTree;
+		return theCopyTree;
+	}
 	
 private:
 	void updateNotesAndOctaves();
@@ -43,6 +48,8 @@ private:
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<ToggleButton> theStateButtons;
 	ScopedPointer<TextButton> theRandomAllButton;
+	ScopedPointer<TextButton> theCopyButton;
+	ScopedPointer<TextButton> thePasteButton;
 	ValueTree theSequencerTree;
 	Image theStepImage;
 	int thePosition;
