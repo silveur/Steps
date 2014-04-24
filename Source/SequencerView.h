@@ -12,10 +12,12 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 
+class RootView;
+
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
 {
 public:
-	SequencerView(ValueTree& sequencerTree);
+	SequencerView(ValueTree& sequencerTree, RootView* rootView);
 	~SequencerView();
 
 	void paint(Graphics&);
@@ -27,7 +29,7 @@ public:
 	void updatePresetList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
-	
+
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;
@@ -60,8 +62,11 @@ private:
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
+	ScopedPointer<TextButton> theSaveButton;
+	ScopedPointer<TextButton> theDeleteButton;
 	StepView theStepView;
 	ValueTree theSequencerTree;
+	RootView* theRootView;
 	int thePosition;
 };
 
