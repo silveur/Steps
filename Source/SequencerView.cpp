@@ -55,7 +55,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->addListener(this);
 	
-	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
+	addAndMakeVisible(&theStepView);
 	
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
 	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -79,7 +79,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree)
 	theMidiOutputList->addListener(this);
 	setRepaintsOnMouseActivity(false);
 	setSize(getWidth(), getHeight());
-	repaint();
 }
 
 SequencerView::~SequencerView()
@@ -89,14 +88,7 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-	if (thePosition == 0)
-	{
-		repaint(0, theStateButtons[thePosition]->getBottom(), getWidth(), 20);
-	}
-	else
-	{
-		repaint(theStepSliders[thePosition - 1]->getX(), theStateButtons[thePosition]->getBottom(), theStepSliders[0]->getWidth()*2, 20);
-	}
+	theStepView.update(theStepSliders[thePosition]->getX());
 }
 
 void SequencerView::refreshMidiList()
@@ -115,7 +107,6 @@ void SequencerView::paint(Graphics& g)
 {
 	g.setColour(Colours::blue);
 	g.drawRect(0,0,getWidth(),getHeight());
-	g.drawImageAt(theStepImage, theStepSliders[thePosition]->getX(),  theStateButtons[thePosition]->getBottom());
 }
 
 void SequencerView::resized()
@@ -135,6 +126,7 @@ void SequencerView::resized()
 	theRangeSlider->setBounds(250, 20, 30, 20);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
+	theStepView.setBounds(0, getHeight()-30, getWidth(), 30);
 }
 
 void SequencerView::buttonClicked(Button* button)

@@ -10,6 +10,7 @@
 #define MAINCOMPONENT_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "StepsView.h"
 
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
 {
@@ -17,7 +18,7 @@ public:
 	SequencerView(ValueTree& sequencerTree);
 	~SequencerView();
 
-	void paint (Graphics&);
+	void paint(Graphics&);
 	void sliderValueChanged(Slider* slider);
 	void resized();
 	void buttonClicked(Button* button);
@@ -50,8 +51,9 @@ private:
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
+	StepView theStepView;
 	ValueTree theSequencerTree;
-	Image theStepImage;
+	
 	int thePosition;
 
 };

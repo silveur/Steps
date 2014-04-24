@@ -39,16 +39,20 @@ void RootView::paint(Graphics& g)
 
 void RootView::updatePositions()
 {
-	setSize(theMainScreen.getWidth()/2, (theMainScreen.getHeight()/32) + (theMainScreen.getHeight()/6) * theSequencerViews.size());
+	int sequencerHeight = theMainScreen.getHeight() / 6;
+	
+	setSize(theMainScreen.getWidth()/2, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
+	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
+
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, (theHeaderView->getHeight()) + (i * (getHeight()/theSequencerViews.size())), getWidth(), (theMainScreen.getHeight()/6 ) * theSequencerViews.size());
+		theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencerHeight), getWidth(), sequencerHeight);
 	}
 }
 
 void RootView::resized()
 {
-	theHeaderView->setBounds(0, 0, getWidth(), theMainScreen.getHeight()/32);
+	
 	updatePositions();
 }
 
