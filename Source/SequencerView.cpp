@@ -9,8 +9,12 @@
 #include "SequencerView.h"
 #include "RootView.h"
 
+extern UndoManager* theUndoManager;
+
 SequencerView::SequencerView(ValueTree& sequencerTree, RootView* rootView): theRootView(rootView)
 {
+	theUndoManager->getNumActionsInCurrentTransaction();
+
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
@@ -160,10 +164,10 @@ void SequencerView::buttonClicked(Button* button)
 		for (int i=0;i<16;i++)
 		{
 			ValueTree child = theSequencerTree.getChild(i);
-			child.setProperty("Pitch", ((int)rand() % 24) - 12, nullptr);
-			child.setProperty("State", rand() % 2, nullptr);
-			child.setProperty("Velocity", ((int)rand() % 127), nullptr);
-			child.setProperty("Decay", ((int)rand() % 200), nullptr);
+			child.setProperty("Pitch", ((int)rand() % 24) - 12, theUndoManager);
+			child.setProperty("State", rand() % 2, theUndoManager);
+			child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
+			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
 	}
 	else if (button == theCopyButton)
@@ -172,12 +176,12 @@ void SequencerView::buttonClicked(Button* button)
 	}
 	else if (button == thePasteButton)
 	{
-		theSequencerTree.copyPropertiesFrom(getCopyTree(), nullptr);
+		theSequencerTree.copyPropertiesFrom(getCopyTree(), theUndoManager);
 		for (int i=0; i<16; i++)
 		{
 			ValueTree sourceChild = getCopyTree().getChild(i);
 			ValueTree destinationChild = theSequencerTree.getChild(i);
-			destinationChild.copyPropertiesFrom(sourceChild, nullptr);
+			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}
 	}
 	else if (button == theSaveButton)
@@ -202,7 +206,7 @@ void SequencerView::buttonClicked(Button* button)
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
-		theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), nullptr);
+		theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), theUndoManager);
 	}
 }
 
@@ -211,27 +215,27 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
-		theSequencerTree.getChild(index).setProperty("Pitch", (int)slider->getValue(), nullptr);
+		theSequencerTree.getChild(index).setProperty("Pitch", (int)slider->getValue(), theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
 	{
-		theSequencerTree.getChild(index).setProperty("Velocity", (int)slider->getValue(), nullptr);
+		theSequencerTree.getChild(index).setProperty("Velocity", (int)slider->getValue(), theUndoManager);
 	}
 	else if(slider->getName().contains("Decay"))
 	{
-		theSequencerTree.getChild(index).setProperty("Decay", (int)slider->getValue(), nullptr);
+		theSequencerTree.getChild(index).setProperty("Decay", (int)slider->getValue(), theUndoManager);
 	}
 	else if(slider == theSequencerLength)
 	{
-		theSequencerTree.setProperty("Length", slider->getValue(), nullptr);
+		theSequencerTree.setProperty("Length", slider->getValue(), theUndoManager);
 	}
 	else if(slider == theShuffleSlider)
 	{
-		theSequencerTree.setProperty("Shuffle", slider->getValue(), nullptr);
+		theSequencerTree.setProperty("Shuffle", slider->getValue(), theUndoManager);
 	}
 	else if(slider == theRangeSlider)
 	{
-		theSequencerTree.setProperty("Range", slider->getValue(), nullptr);
+		theSequencerTree.setProperty("Range", slider->getValue(), theUndoManager);
 	}
 }
 
@@ -240,17 +244,17 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	if(comboBoxThatHasChanged == theMidiOutputList)
 	{
 		String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
-		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
+		theSequencerTree.setProperty("MidiOutput", midiOutString, theUndoManager);
 	}
 	else if(comboBoxThatHasChanged == theRootOctaveList)
 	{
 		int id = comboBoxThatHasChanged->getSelectedItemIndex();
-		theSequencerTree.setProperty("RootOctave", id, nullptr);
+		theSequencerTree.setProperty("RootOctave", id, theUndoManager);
 	}
 	else if(comboBoxThatHasChanged == theRootNoteList)
 	{
 		int id = comboBoxThatHasChanged->getSelectedItemIndex();
-		theSequencerTree.setProperty("RootNote", id, nullptr);
+		theSequencerTree.setProperty("RootNote", id, theUndoManager);
 	}
 	else if(comboBoxThatHasChanged == thePresetBox)
 	{
@@ -279,12 +283,12 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 			{
 				FileInputStream inputStream(presetToLoad);
 				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-				theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
+				theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
 				for (int i=0; i<16; i++)
 				{
 					ValueTree sourceChild = treeToLoad.getChild(i);
 					ValueTree destinationChild = theSequencerTree.getChild(i);
-					destinationChild.copyPropertiesFrom(sourceChild, nullptr);
+					destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 				}
 			}
 			

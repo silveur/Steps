@@ -14,6 +14,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "RootView.h"
 
+extern UndoManager* theUndoManager;
+
 class HeaderView: public Component, ButtonListener
 {
 public:
@@ -24,10 +26,14 @@ public:
 		theAddSequencerButton->addListener(this);
 		addAndMakeVisible(theRemoveSequencerButton = new TextButton("Remove Sequencer"));
 		theRemoveSequencerButton->addListener(this);
+		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
+		theUndoButton->addListener(this);
+		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
+		theRedoButton->addListener(this);
 	}
 	~HeaderView()
 	{
-		
+		theRootView = nullptr;
 	}
 	
 	void buttonClicked(Button* buttonThatWasClicked)
@@ -39,6 +45,14 @@ public:
 		else if (buttonThatWasClicked == theRemoveSequencerButton)
 		{
 			theRootView->removeSequencer();
+		}
+		else if (buttonThatWasClicked == theUndoButton)
+		{
+			theUndoManager->undo();
+		}
+		else if (buttonThatWasClicked == theRedoButton)
+		{
+			theUndoManager->redo();
 		}
 	}
 
@@ -57,11 +71,15 @@ public:
 	{
 		theAddSequencerButton->setBounds(getWidth()/8, getHeight()/4, getWidth()/10, getHeight()/2);
 		theRemoveSequencerButton->setBounds(theAddSequencerButton->getRight(), getHeight()/4, getWidth()/10, getHeight()/2);
+		theUndoButton->setBounds(theRemoveSequencerButton->getRight(), getHeight()/4, getWidth()/10, getHeight()/2);
+		theRedoButton->setBounds(theUndoButton->getRight(), getHeight()/4, getWidth()/10, getHeight()/2);
 	}
 	
 private:
 	ScopedPointer<TextButton> theAddSequencerButton;
 	ScopedPointer<TextButton> theRemoveSequencerButton;
+	ScopedPointer<TextButton> theUndoButton;
+	ScopedPointer<TextButton> theRedoButton;
 	String theMainLabel;
 	RootView* theRootView;
 };

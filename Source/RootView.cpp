@@ -30,6 +30,7 @@ RootView::RootView(Master* master): theMaster(master)
 RootView::~RootView()
 {
 	delete theHeaderView;
+	theMaster = nullptr;
 }
 
 void RootView::updatePositions()

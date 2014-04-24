@@ -12,6 +12,8 @@
 #include "MainWindow.h"
 #include "Master.h"
 
+UndoManager* theUndoManager;
+
 class SequencerApplication  : public JUCEApplication
 {
 public:
@@ -23,12 +25,15 @@ public:
 
 	void initialise (const String& commandLine) override
 	{
+		theUndoManager = new UndoManager();
 		theSequencerMaster = new Master();
 		mainWindow = new MainWindow(theSequencerMaster);
 	}
 
 	void shutdown() override
 	{
+		theUndoManager->clearUndoHistory();
+		delete theUndoManager;
 		mainWindow = nullptr;
 	}
 
