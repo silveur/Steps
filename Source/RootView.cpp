@@ -18,7 +18,7 @@ RootView::RootView(Master* master): theMaster(master)
 	for (int i=0; i<seqArray.size(); i++)
 	{
 		ValueTree sequenceTree = seqArray[i]->getSequencerTree();
-		theSequencerViews.add(new SequencerView(sequenceTree));
+		theSequencerViews.add(new SequencerView(sequenceTree, this));
 		addAndMakeVisible(theSequencerViews[i]);
 	}
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
@@ -34,13 +34,21 @@ RootView::~RootView()
 
 void RootView::updatePositions()
 {
-	int sequencerHeight = theMainScreen.getHeight() / 6;
+	int sequencerHeight = theMainScreen.getHeight() / 7;
 	
 	setSize(theMainScreen.getWidth()/2, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
 	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
 		theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencerHeight), getWidth(), sequencerHeight);
+	}
+}
+
+void RootView::updatePresetList()
+{
+	for (int i=0; i<theSequencerViews.size(); i++)
+	{
+		theSequencerViews[i]->updatePresetList();
 	}
 }
 
@@ -68,7 +76,7 @@ void RootView::valueTreeChildAdded (ValueTree& parentTree, ValueTree& child)
 {
 	if (parentTree == theMasterTree)
 	{
-		theSequencerViews.add(new SequencerView(child));
+		theSequencerViews.add(new SequencerView(child, this));
 		addAndMakeVisible(theSequencerViews.getLast());
 		updatePositions();
 	}
