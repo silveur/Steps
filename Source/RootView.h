@@ -17,7 +17,7 @@
 
 class HeaderView;
 
-class RootView: public Component, public ValueTree::Listener
+class RootView: public Component, public ValueTree::Listener, public KeyListener
 {
 public:
 	RootView(Master* master);
@@ -28,6 +28,7 @@ public:
 	void updatePositions();
 	int getNumOfSequencer();
 	void updatePresetList();
+	bool keyPressed(const KeyPress &key, Component *originatingComponent);
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}

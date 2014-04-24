@@ -94,7 +94,7 @@ void Sequencer::triggerStep()
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }
 
-void Sequencer::handleIncomingMidiMessage (const MidiMessage& message)
+void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 {
 	if (message.isMidiClock() && !isIdle)
 	{

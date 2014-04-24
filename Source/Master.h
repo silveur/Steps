@@ -91,6 +91,22 @@ public:
 		}
 	}
 	
+	void startStopDaw()
+	{
+		StringArray devices = MidiOutput::getDevices();
+		for (int i=0; i<devices.size();i++)
+		{
+			if (devices[i].contains("IAC"))
+			{
+				MidiMessage msg = MidiMessage::midiMachineControlCommand(MidiMessage::mmc_play);
+				MidiOutput* output = MidiOutput::openDevice(i);
+				output->sendMessageNow(msg);
+				DBG("Sending start messag");
+				delete output;
+			}
+		}
+	}
+	
 	OwnedArray<Sequencer>& getSequencerArray()
 	{
 		return theSequencerArray;

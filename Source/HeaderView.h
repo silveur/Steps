@@ -69,7 +69,7 @@ public:
 	
 	void resized()
 	{
-		theAddSequencerButton->setBounds(getWidth()/8, getHeight()/4, getWidth()/10, getHeight()/2);
+		theAddSequencerButton->setBounds(10, getHeight()/4, getWidth()/10, getHeight()/2);
 		theRemoveSequencerButton->setBounds(theAddSequencerButton->getRight(), getHeight()/4, getWidth()/10, getHeight()/2);
 		theUndoButton->setBounds(theRemoveSequencerButton->getRight(), getHeight()/4, getWidth()/10, getHeight()/2);
 		theRedoButton->setBounds(theUndoButton->getRight(), getHeight()/4, getWidth()/10, getHeight()/2);

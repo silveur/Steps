@@ -35,15 +35,16 @@ void MidiCore::openMidiOutput(String& name)
 			break;
 		}
 	}
-	if (theMidiOutput == nullptr)
-	{
-		
-	}
 }
 
 MidiCore::~MidiCore()
 {
-	if(theMidiOutput != nullptr) delete theMidiOutput;
+	if(theMidiOutput != nullptr)
+	{
+		killNotes();
+		theMidiOutput->stopBackgroundThread();
+		delete theMidiOutput;
+	}
 }
 
 StringArray MidiCore::getMidiDevicesList()

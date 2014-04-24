@@ -25,12 +25,22 @@ RootView::RootView(Master* master): theMaster(master)
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
 	updatePositions();
 	theMasterTree.addListener(this);
+	this->addKeyListener(this);
 }
 
 RootView::~RootView()
 {
 	delete theHeaderView;
 	theMaster = nullptr;
+}
+
+bool RootView::keyPressed(const KeyPress &key, Component *originatingComponent)
+{
+	if (key == KeyPress::spaceKey)
+	{
+		theMaster->startStopDaw();
+	}
+	return false;
 }
 
 void RootView::updatePositions()

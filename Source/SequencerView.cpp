@@ -183,6 +183,7 @@ void SequencerView::buttonClicked(Button* button)
 			ValueTree destinationChild = theSequencerTree.getChild(i);
 			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}
+		thePresetBox->setSelectedItemIndex(0); 
 	}
 	else if (button == theSaveButton)
 	{
@@ -366,11 +367,8 @@ void SequencerView::updateNotesAndOctaves()
 	theRootNoteList->addItem("A",10);
 	theRootNoteList->addItem("A#",11);
 	theRootNoteList->addItem("B",12);
-	
 	for (int i=0;i<8;i++)
-	{
 		theRootOctaveList->addItem(String(i), i+1);
-	}
 }
 
 void SequencerView::updatePresetList()
