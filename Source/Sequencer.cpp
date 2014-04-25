@@ -22,6 +22,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 	theRootOctave = 3;
 	theShuffle = 0;
 	theRange = 1;
+	theOnOffStatus = ON;
 	initSequencerTree();
 	for (int i=0; i<16; i++)
 	{
@@ -45,6 +46,7 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Shuffle", theShuffle, nullptr);
 	theSequencerTree.setProperty("Range", theRange, nullptr);
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
+	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 }
 
 void Sequencer::start()
@@ -88,7 +90,7 @@ void Sequencer::triggerStep()
 
 void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 {
-	if (message.isMidiClock() && !isIdle)
+	if (message.isMidiClock() && !isIdle && theOnOffStatus)
 	{
 		thePpqCount = (thePpqCount+1) % 6;
 		if( waitForShuffle && (thePpqCount == theShuffle))
@@ -157,5 +159,9 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Channel")
 	{
 		theChannel = tree.getProperty(property);
+	}
+	else if(String(property) == "Status")
+	{
+		theOnOffStatus = tree.getProperty(property);
 	}
 }

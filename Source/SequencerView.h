@@ -55,6 +55,7 @@ private:
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<Slider> theDecaySliders;
 	OwnedArray<ToggleButton> theStateButtons;
+	ScopedPointer<ToggleButton> theOnOffButton;
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;

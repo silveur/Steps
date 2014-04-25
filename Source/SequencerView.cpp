@@ -77,6 +77,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(&theStepView);
 	
+	addAndMakeVisible(theOnOffButton = new ToggleButton("On/Off"));
+	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
+	theOnOffButton->addListener(this);
+	
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
 	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theRangeSlider->setRange(1, 5, 1);
@@ -166,6 +170,7 @@ void SequencerView::resized()
 	thePresetBox->setBounds(getWidth()-150, 0, 150, 20);
 	theSaveButton->setBounds(thePasteButton->getRight(), 0, 60, 20);
 	theDeleteButton->setBounds(theSaveButton->getRight(), 0, 60, 20);
+	theOnOffButton->setBounds(theDeleteButton->getRight() + 20, theDeleteButton->getY(), 60, 20);
 }
 
 void SequencerView::buttonClicked(Button* button)
@@ -215,6 +220,10 @@ void SequencerView::buttonClicked(Button* button)
 			presetToSave.deleteFile();
 			theControllerView->updatePresetList();
 		}
+	}
+	else if (button == theOnOffButton)
+	{
+		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
 	else
 	{
@@ -341,6 +350,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "Channel")
 	{
 		theChannelList->setSelectedId(tree.getProperty(property));
+	}
+	else if(String(property) == "Status")
+	{
+		theOnOffButton->setToggleState(tree.getProperty(property), dontSendNotification);
 	}
 	else
 	{

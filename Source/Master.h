@@ -59,14 +59,16 @@ public:
 		return theMasterTree;
 	}
 
+private:
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child)
 	{
 		if (parentTree == theMasterTree)
 		{
 			theSequencerArray.add(new Sequencer(child));
 		}
-
+		
 	}
+	
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child)
 	{
 		if (parentTree == theMasterTree)
@@ -80,7 +82,6 @@ public:
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 
-private:
 	OwnedArray<Sequencer> theSequencerArray;
 	ScopedPointer<MidiInput> theMidiInput;
 	ValueTree theMasterTree;
