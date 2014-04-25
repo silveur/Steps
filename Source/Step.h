@@ -18,18 +18,32 @@
 class Step: public ValueTree::Listener
 {
 public:
-	Step(ValueTree& stepTree)
+	Step(ValueTree& stepTree): theStepTree(stepTree)
 	{
-		theStepTree = stepTree;
-		thePitch = theStepTree.getProperty("Pitch", 0);
-		theVelocity = theStepTree.getProperty("Velocity", 127);
-		theState = theStepTree.getProperty("State", ON);
-		theDecay = theStepTree.getProperty("Decay", 40);
+		thePitch = 0;
+		theVelocity = 127;
+		theState = ON;
+		theDecay = 40;
+		initStepTree();
 		theStepTree.addListener(this);
 	}
 	
-	~Step()	{}
+	~Step() {}
 
+	ValueTree& getValueTree()
+	{
+		return theStepTree;
+	}
+	
+private:
+	void initStepTree()
+	{
+		theStepTree.setProperty("Pitch", thePitch, nullptr);
+		theStepTree.setProperty("Velocity", theVelocity, nullptr);
+		theStepTree.setProperty("State", theState, nullptr);
+		theStepTree.setProperty("Decay", 40, nullptr);
+	}
+	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 	{
 		if(String(property) == "Pitch")
@@ -50,20 +64,6 @@ public:
 		}
 	}
 	
-	ValueTree& getValueTree()
-	{
-		return theStepTree;
-	}
-	
-private:
-	static void initStepTree(ValueTree& tree)
-	{
-		tree.setProperty("Pitch", 0, nullptr);
-		tree.setProperty("Velocity", 127, nullptr);
-		tree.setProperty("State", ON, nullptr);
-		tree.setProperty("Decay", 40, nullptr);
-	}
-	
 	int theVelocity;
 	int thePitch;
 	int theDecay;
@@ -78,7 +78,5 @@ private:
 	friend class Sequencer;
 
 };
-
-
 
 #endif  // STEP_H_INCLUDED

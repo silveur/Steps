@@ -18,11 +18,11 @@
 class MainWindow: public DocumentWindow
 {
 public:
-	MainWindow(Master* master)  : DocumentWindow ("MainWindow",
+	MainWindow(ValueTree& masterTree)  : DocumentWindow ("MainWindow",
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{
-		setContentOwned (new RootView(master), true);
+		setContentOwned (new RootView(masterTree), true);
 		setUsingNativeTitleBar(true);
 		setResizable(true, true);
 		centreWithSize (getWidth(), getHeight());

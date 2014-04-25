@@ -33,7 +33,4 @@ private:
 	MidiOutput* theMidiOutput;
 };
 
-
-
-
 #endif  // __MIDICORE_H_8D40ACBD__

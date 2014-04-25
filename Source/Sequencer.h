@@ -24,18 +24,18 @@ class Sequencer: public ValueTree::Listener
 public:
 	Sequencer(ValueTree& sequencerTree);
 	~Sequencer();
-	MidiCore* getMidiCore() { return theMidiCore; }
-	ValueTree& getSequencerTree() { return theSequencerTree; }
 	void handleIncomingMidiMessage (const MidiMessage& message);
-	static void initSequencerTree(ValueTree& tree);
+	void stop();
+	void start();
+	
 private:
+	void initSequencerTree();
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	void stop();
-	void start();
+
 	void carryOn();
 	void triggerStep();
 	ScopedPointer<MidiCore> theMidiCore;

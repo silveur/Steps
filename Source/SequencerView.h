@@ -35,11 +35,6 @@ public:
 		static ValueTree theCopyTree;
 		return theCopyTree;
 	}
-	static File getPresetFolder()
-	{
-		static File thePresetFolder = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/presets/");
-		return thePresetFolder;
-	}
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);

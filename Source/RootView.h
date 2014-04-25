@@ -17,29 +17,27 @@
 
 class HeaderView;
 
-class RootView: public Component, public ValueTree::Listener, public KeyListener
+class RootView: public Component, public ValueTree::Listener
 {
 public:
-	RootView(Master* master);
+	RootView(ValueTree& masterTree);
 	~RootView();
 	void resized();
 	void addSequencer();
 	void removeSequencer();
 	void updatePositions();
-	int getNumOfSequencer();
+	const int getNumOfSequencer() const;
 	void updatePresetList();
-	bool keyPressed(const KeyPress &key, Component *originatingComponent);
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
-	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child);
-	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child);
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child){}
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child){}
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
 	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
-	Master* theMaster;
 	ValueTree theMasterTree;
 };
 

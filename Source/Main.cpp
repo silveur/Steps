@@ -13,6 +13,7 @@
 #include "Master.h"
 
 UndoManager* theUndoManager;
+File thePresetFolder;
 
 class SequencerApplication  : public JUCEApplication
 {
@@ -27,7 +28,7 @@ public:
 	{
 		theUndoManager = new UndoManager();
 		theSequencerMaster = new Master();
-		mainWindow = new MainWindow(theSequencerMaster);
+		mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
 	}
 
 	void shutdown() override
