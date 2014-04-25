@@ -12,7 +12,7 @@
 #define MAINWINDOW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "RootView.h"
+#include "ControllerView.h"
 #include "Master.h"
 
 class MainWindow: public DocumentWindow
@@ -22,7 +22,7 @@ public:
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{
-		setContentOwned (new RootView(masterTree), true);
+		setContentOwned (new ControllerView(masterTree), true);
 		setUsingNativeTitleBar(true);
 		setResizable(true, true);
 		centreWithSize (getWidth(), getHeight());

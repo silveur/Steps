@@ -12,14 +12,14 @@
 #define HEADERVIEW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "RootView.h"
+#include "ControllerView.h"
 
 extern UndoManager* theUndoManager;
 
 class HeaderView: public Component, ButtonListener
 {
 public:
-	HeaderView(RootView* rootView): theRootView(rootView)
+	HeaderView(ControllerView* controllerView): theControllerView(controllerView)
 	{
 		theMainLabel = "Sequencer";
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
@@ -33,18 +33,18 @@ public:
 	}
 	~HeaderView()
 	{
-		theRootView = nullptr;
+		theControllerView = nullptr;
 	}
 	
 	void buttonClicked(Button* buttonThatWasClicked)
 	{
 		if (buttonThatWasClicked == theAddSequencerButton)
 		{
-			theRootView->addSequencer();
+			theControllerView->addSequencer();
 		}
 		else if (buttonThatWasClicked == theRemoveSequencerButton)
 		{
-			theRootView->removeSequencer();
+			theControllerView->removeSequencer();
 		}
 		else if (buttonThatWasClicked == theUndoButton)
 		{
@@ -63,7 +63,7 @@ public:
 		g.setFont(22);
 		g.drawText(theMainLabel, getWidth()/2.2, getHeight()/4, getWidth()/6, getHeight()/10, Justification::left, true);
 		g.setFont(14);
-		g.drawText(String("Num of Sequencers: " + String(theRootView->getNumOfSequencer())), getWidth()/1.5, getHeight()/4, getWidth()/6, getHeight()/10, Justification::left, true);
+		g.drawText(String("Num of Sequencers: " + String(theControllerView->getNumOfSequencer())), getWidth()/1.5, getHeight()/4, getWidth()/6, getHeight()/10, Justification::left, true);
 
 	}
 	
@@ -81,7 +81,7 @@ private:
 	ScopedPointer<TextButton> theUndoButton;
 	ScopedPointer<TextButton> theRedoButton;
 	String theMainLabel;
-	RootView* theRootView;
+	ControllerView* theControllerView;
 };
 
 

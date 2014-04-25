@@ -7,12 +7,12 @@
 */
 
 #include "SequencerView.h"
-#include "RootView.h"
+#include "ControllerView.h"
 
 extern UndoManager* theUndoManager;
 extern File thePresetFolder;
 
-SequencerView::SequencerView(ValueTree& sequencerTree, RootView* rootView): theRootView(rootView)
+SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView)
 {
 	theUndoManager->getNumActionsInCurrentTransaction();
 
@@ -204,7 +204,7 @@ void SequencerView::buttonClicked(Button* button)
 		if (presetToSave.exists())
 		{
 			presetToSave.deleteFile();
-			theRootView->updatePresetList();
+			theControllerView->updatePresetList();
 		}
 	}
 	else
@@ -269,7 +269,7 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 				File presetToSave(thePresetFolder.getFullPathName() + "/" + comboBoxThatHasChanged->getText() + ".seq");
 				FileOutputStream outputStream(presetToSave);
 				theSequencerTree.writeToStream(outputStream);
-				theRootView->updatePresetList();
+				theControllerView->updatePresetList();
 				for (int i=0;i<thePresetBox->getNumItems();i++)
 				{
 					if (thePresetBox->getItemText(i) == presetToSave.getFileNameWithoutExtension())

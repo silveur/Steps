@@ -8,10 +8,10 @@
   ==============================================================================
 */
 
-#include "RootView.h"
+#include "ControllerView.h"
 #include "HeaderView.h"
 
-RootView::RootView(ValueTree& masterTree): theMasterTree(masterTree)
+ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 {
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
@@ -25,15 +25,14 @@ RootView::RootView(ValueTree& masterTree): theMasterTree(masterTree)
 	theMasterTree.addListener(this);
 }
 
-RootView::~RootView()
+ControllerView::~ControllerView()
 {
 	delete theHeaderView;
 }
 
-void RootView::updatePositions()
+void ControllerView::updatePositions()
 {
 	int sequencerHeight = theMainScreen.getHeight() / 7;
-	
 	setSize(theMainScreen.getWidth()/2, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
 	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
 	for (int i=0; i<theSequencerViews.size(); i++)
@@ -42,7 +41,7 @@ void RootView::updatePositions()
 	}
 }
 
-void RootView::updatePresetList()
+void ControllerView::updatePresetList()
 {
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
@@ -50,17 +49,17 @@ void RootView::updatePresetList()
 	}
 }
 
-void RootView::resized()
+void ControllerView::resized()
 {
 	updatePositions();
 }
 
-const int RootView::getNumOfSequencer() const
+const int ControllerView::getNumOfSequencer() const
 {
 	return theMasterTree.getNumChildren();
 }
 
-void RootView::addSequencer()
+void ControllerView::addSequencer()
 {
 	ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
 	theMasterTree.addChild(sequencerTree, -1, theUndoManager);
@@ -69,7 +68,7 @@ void RootView::addSequencer()
 	updatePositions();
 }
 
-void RootView::removeSequencer()
+void ControllerView::removeSequencer()
 {
 	theMasterTree.removeChild(theMasterTree.getNumChildren()-1, theUndoManager);
 	theSequencerViews.removeLast();

@@ -17,11 +17,11 @@
 
 class HeaderView;
 
-class RootView: public Component, public ValueTree::Listener
+class ControllerView: public Component, public ValueTree::Listener
 {
 public:
-	RootView(ValueTree& masterTree);
-	~RootView();
+	ControllerView(ValueTree& masterTree);
+	~ControllerView();
 	void resized();
 	void addSequencer();
 	void removeSequencer();
