@@ -15,6 +15,8 @@
 #define OFF	false	
 #define ON	true
 
+extern UndoManager* theUndoManager;
+
 class Step: public ValueTree::Listener
 {
 public:
@@ -41,7 +43,7 @@ private:
 		theStepTree.setProperty("Pitch", thePitch, nullptr);
 		theStepTree.setProperty("Velocity", theVelocity, nullptr);
 		theStepTree.setProperty("State", theState, nullptr);
-		theStepTree.setProperty("Decay", 40, nullptr);
+		theStepTree.setProperty("Decay", theDecay, nullptr);
 	}
 	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)

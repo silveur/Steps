@@ -22,18 +22,17 @@ public:
 	Master()
 	{
 		thePresetFolder = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/presets/");
-		theDefaultPreset = File(thePresetFolder.getFullPathName() + "/default");
+		theDefaultPreset = File(thePresetFolder.getFullPathName() + "/default.seq");
 		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 		theMasterTree = ValueTree("MasterTree");
-		ValueTree tree = ValueTree("Sequencer1");
-		theSequencerArray.add(new Sequencer(tree));
-		theMasterTree.addChild(tree, -1, nullptr);
-		if (!theDefaultPreset.existsAsFile())
-		{
-			theDefaultPreset.create();
-			FileOutputStream outputStream(theDefaultPreset);
-			theMasterTree.writeToStream(outputStream);
-		}
+		ValueTree defaultTree = ValueTree("Sequencer");
+		theSequencerArray.add(new Sequencer(defaultTree));
+		theMasterTree.addChild(defaultTree, -1, nullptr);
+
+		theDefaultPreset.deleteFile();
+		FileOutputStream outputStream(theDefaultPreset);
+		defaultTree.writeToStream(outputStream);
+		
 		theMasterTree.addListener(this);
 		theMidiInput->start();
 	}
