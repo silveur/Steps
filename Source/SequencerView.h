@@ -57,8 +57,8 @@ private:
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
-	ScopedPointer<TextButton> theSaveButton;
-	ScopedPointer<TextButton> theDeleteButton;
+	ScopedPointer<TextButton> theExportButton;
+	ScopedPointer<TextButton> theImportButton;
 	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;

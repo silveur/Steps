@@ -64,12 +64,12 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(thePasteButton = new TextButton("Paste settings"));
 	thePasteButton->addListener(this);
 	
-	addAndMakeVisible(theSaveButton = new TextButton("Save"));
-	theSaveButton->addListener(this);
+	addAndMakeVisible(theExportButton = new TextButton("Export preset"));
+	theExportButton->addListener(this);
 	
-	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
-	theDeleteButton->addListener(this);
-	
+	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
+	theImportButton->addListener(this);
+
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theShuffleSlider->setRange(0, 5, 1);
@@ -166,9 +166,9 @@ void SequencerView::resized()
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
 	theStepView.setBounds(0, getHeight()-20, getWidth(), 20);
-	theSaveButton->setBounds(thePasteButton->getRight(), 0, 60, 20);
-	theDeleteButton->setBounds(theSaveButton->getRight(), 0, 60, 20);
-	theOnOffButton->setBounds(theDeleteButton->getRight() + 20, theDeleteButton->getY(), 60, 20);
+	theOnOffButton->setBounds(thePasteButton->getRight() + 20, thePasteButton->getY(), 60, 20);
+	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, 20);
+	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, 20);
 }
 
 void SequencerView::buttonClicked(Button* button)
@@ -184,10 +184,12 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
 	}
+	
 	else if (button == theCopyButton)
 	{
 		getCopyTree() = theSequencerTree.createCopy();
 	}
+	
 	else if (button == thePasteButton)
 	{
 		getCopyTree().removeProperty("MidiOutput", nullptr);
@@ -199,16 +201,45 @@ void SequencerView::buttonClicked(Button* button)
 			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}
 	}
-	else if (button == theSaveButton)
-	{
-	}
-	else if (button == theDeleteButton)
-	{
-	}
 	else if (button == theOnOffButton)
 	{
 		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
+	
+	else if (button == theImportButton)
+	{
+		FileChooser fileChooser ("Load preset file...",
+								 thePresetFolder,
+								 "*.seq");
+		if (fileChooser.browseForFileToOpen())
+		{
+			File presetToLoad = fileChooser.getResult();
+			FileInputStream inputStream(presetToLoad);
+			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+			treeToLoad.removeProperty("MidiOutput", nullptr);
+			theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
+			for (int i=0; i<16; i++)
+			{
+				ValueTree sourceChild = treeToLoad.getChild(i);
+				ValueTree destinationChild = theSequencerTree.getChild(i);
+				destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
+			}
+		}
+	}
+	
+	else if (button == theExportButton)
+	{
+		FileChooser fileChooser ("Save as...",
+								 thePresetFolder,
+								 "*.seq");
+		if (fileChooser.browseForFileToSave(false))
+		{
+			File preset = File(fileChooser.getResult().getFullPathName());
+			FileOutputStream outputStream(preset);
+			theSequencerTree.writeToStream(outputStream);
+		}
+	}
+	
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
