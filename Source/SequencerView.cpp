@@ -257,7 +257,7 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	if(comboBoxThatHasChanged == theMidiOutputList)
 	{
 		String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
-		theSequencerTree.setProperty("MidiOutput", midiOutString, theUndoManager);
+		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
 	}
 	else if(comboBoxThatHasChanged == theRootOctaveList)
 	{
@@ -302,15 +302,14 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 				FileInputStream inputStream(presetToLoad);
 				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
 				treeToLoad.removeProperty("MidiOutput", nullptr);
-				theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
+				theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
 				for (int i=0; i<16; i++)
 				{
 					ValueTree sourceChild = treeToLoad.getChild(i);
 					ValueTree destinationChild = theSequencerTree.getChild(i);
-					destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
+					destinationChild.copyPropertiesFrom(sourceChild, nullptr);
 				}
 			}
-			
 		}
 	}
 }

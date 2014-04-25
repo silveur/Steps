@@ -62,7 +62,7 @@ const int ControllerView::getNumOfSequencer() const
 void ControllerView::addSequencer()
 {
 	ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
-	theMasterTree.addChild(sequencerTree, -1, theUndoManager);
+	theMasterTree.addChild(sequencerTree, -1, nullptr);
 	theSequencerViews.add(new SequencerView(sequencerTree, this));
 	addAndMakeVisible(theSequencerViews.getLast());
 	updatePositions();
@@ -70,7 +70,7 @@ void ControllerView::addSequencer()
 
 void ControllerView::removeSequencer()
 {
-	theMasterTree.removeChild(theMasterTree.getNumChildren()-1, theUndoManager);
+	theMasterTree.removeChild(theMasterTree.getNumChildren()-1, nullptr);
 	theSequencerViews.removeLast();
 	updatePositions();
 }
