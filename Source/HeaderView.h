@@ -80,8 +80,8 @@ private:
 	ScopedPointer<TextButton> theRemoveSequencerButton;
 	ScopedPointer<TextButton> theUndoButton;
 	ScopedPointer<TextButton> theRedoButton;
-	String theMainLabel;
 	ControllerView* theControllerView;
+	String theMainLabel;
 };
 
 

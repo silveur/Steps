@@ -187,6 +187,7 @@ void SequencerView::buttonClicked(Button* button)
 	}
 	else if (button == thePasteButton)
 	{
+		getCopyTree().removeProperty("MidiOutput", nullptr);
 		theSequencerTree.copyPropertiesFrom(getCopyTree(), theUndoManager);
 		for (int i=0; i<16; i++)
 		{
@@ -300,6 +301,7 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 			{
 				FileInputStream inputStream(presetToLoad);
 				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+				treeToLoad.removeProperty("MidiOutput", nullptr);
 				theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
 				for (int i=0; i<16; i++)
 				{
@@ -362,7 +364,6 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 
 void SequencerView::updateSelectedMidiOut(String& midiOut)
 {
-	refreshMidiList();
 	for (int i=0;i<theMidiOutputList->getNumItems();i++)
 	{
 		if (theMidiOutputList->getItemText(i) == midiOut)
@@ -394,7 +395,6 @@ void SequencerView::updateNotesAndOctaves()
 void SequencerView::updatePresetList()
 {
 	String currentlySelectedItem = thePresetBox->getText();
-	DBG(currentlySelectedItem);
 	thePresetBox->clear();
 	thePresetBox->addItem("* New Preset *", 1);
 	thePresetBox->setSelectedItemIndex(0);

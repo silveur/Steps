@@ -111,7 +111,7 @@ void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 	
 	else if(message.isSongPositionPointer())
 	{
-		
+
 	}
 	else if (message.isMidiStart())
 	{
