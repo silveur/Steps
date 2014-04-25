@@ -219,7 +219,7 @@ void SequencerView::buttonClicked(Button* button)
 	else if (button == theDeleteButton)
 	{
 		File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
-		if (presetToSave.exists())
+		if (presetToSave.exists() && thePresetBox->getText() != "default")
 		{
 			presetToSave.deleteFile();
 			theControllerView->updatePresetList();

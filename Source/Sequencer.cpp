@@ -9,7 +9,6 @@
 */
 
 #include "Sequencer.h"
-#include "PluginProcessor.h"
 
 Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 {
