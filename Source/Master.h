@@ -14,49 +14,39 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
 
-class Master: public MidiInputCallback
+extern File thePresetFolder;
+
+class Master: public MidiInputCallback, ValueTree::Listener
 {
 public:
 	Master()
 	{
-		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
+		thePresetFolder = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/presets/");
+		theDefaultPreset = File(thePresetFolder.getFullPathName() + "/default");
 		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 		theMasterTree = ValueTree("MasterTree");
-		if (thePreferenceFile.exists())
+		ValueTree tree = ValueTree("Sequencer1");
+		theSequencerArray.add(new Sequencer(tree));
+		theMasterTree.addChild(tree, -1, nullptr);
+		if (!theDefaultPreset.existsAsFile())
 		{
-			FileInputStream fileInputStream(thePreferenceFile);
-			ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
-			theMasterTree.copyPropertiesFrom(treeToLoad, nullptr);
-			for (int i=0;i<treeToLoad.getNumChildren();i++)
-			{
-				ValueTree tree = treeToLoad.getChild(i).createCopy();
-				theMasterTree.addChild(tree, -1, nullptr);
-				theSequencerArray.add(new Sequencer(tree));
-			}
-
+			theDefaultPreset.create();
+			FileOutputStream outputStream(theDefaultPreset);
+			theMasterTree.writeToStream(outputStream);
 		}
-		else
-		{
-			thePreferenceFile.create();
-			for (int i=0;i<3;i++)
-			{
-				ValueTree tree = ValueTree("Sequencer" + String(i));
-				initTree(tree);
-				theSequencerArray.add(new Sequencer(tree));
-				theMasterTree.addChild(tree, -1, nullptr);
-			}
-		}
-		
+		theMasterTree.addListener(this);
 		theMidiInput->start();
 	}
+
 	~Master()
 	{
-		thePreferenceFile.deleteFile();
-		FileOutputStream presetToSave(thePreferenceFile);
-		theMasterTree.writeToStream(presetToSave);
+		for (int i=0;i<theSequencerArray.size();i++)
+		{
+			theSequencerArray[i]->stop();
+		}
 		theMidiInput->stop();
 	}
-	
+
 	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message)
 	{
 		for (int i=0;i<theSequencerArray.size();i++)
@@ -64,75 +54,38 @@ public:
 			theSequencerArray[i]->handleIncomingMidiMessage(message);
 		}
 	}
-	
-	void addSequencer()
-	{
-		
-		ValueTree existingSequencerTree = theMasterTree.getChild(theMasterTree.getNumChildren());
-		if (existingSequencerTree.isValid())
-		{
-			 theSequencerArray.add(new Sequencer(existingSequencerTree));
-		}
-		else
-		{            
-			existingSequencerTree = ValueTree("Sequencer" + String(theMasterTree.getNumChildren()));
-			theSequencerArray.add(new Sequencer(existingSequencerTree));
-			theMasterTree.addChild(existingSequencerTree, -1, nullptr);
-		}
-	}
-	
-	void deleteSequencer()
-	{
-		int seqIndex = theMasterTree.getNumChildren()-1;
-		if (seqIndex > 0)
-		{
-			theMasterTree.removeChild(seqIndex, nullptr);
-			theSequencerArray.remove(seqIndex);
-		}
-	}
-	
-	void startStopDaw()
-	{
-		StringArray devices = MidiOutput::getDevices();
-		for (int i=0; i<devices.size();i++)
-		{
-			if (devices[i].contains("IAC"))
-			{
-				MidiMessage msg = MidiMessage::midiMachineControlCommand(MidiMessage::mmc_play);
-				MidiOutput* output = MidiOutput::openDevice(i);
-				output->sendMessageNow(msg);
-				DBG("Sending start messag");
-				delete output;
-			}
-		}
-	}
-	
-	OwnedArray<Sequencer>& getSequencerArray()
-	{
-		return theSequencerArray;
-	}
-	
-	void initTree(ValueTree& tree)
-	{
-		tree.setProperty("Length", 16, nullptr);
-		tree.setProperty("RootNote", 0, nullptr);
-		tree.setProperty("RootOctave", 3, nullptr);
-		tree.setProperty("Shuffle", 0, nullptr);
-		tree.setProperty("Range", 1, nullptr);
-	}
-	
+
 	ValueTree& getMasterTree()
 	{
 		return theMasterTree;
 	}
+
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child)
+	{
+		if (parentTree == theMasterTree)
+		{
+			theSequencerArray.add(new Sequencer(child));
+		}
+
+	}
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child)
+	{
+		if (parentTree == theMasterTree)
+		{
+			int childIndex = parentTree.indexOf(child);
+			theSequencerArray.remove(childIndex);
+		}
+	}
 	
+	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
+	void valueTreeChildOrderChanged (ValueTree& parent){}
+	void valueTreeParentChanged (ValueTree& tree){}
+
 private:
 	OwnedArray<Sequencer> theSequencerArray;
 	ScopedPointer<MidiInput> theMidiInput;
 	ValueTree theMasterTree;
-	File thePreferenceFile;	
+	File theDefaultPreset;
 };
-
-
 
 #endif  // MASTER_H_INCLUDED

@@ -11,13 +11,11 @@
 #include "RootView.h"
 #include "HeaderView.h"
 
-RootView::RootView(Master* master): theMaster(master)
+RootView::RootView(ValueTree& masterTree): theMasterTree(masterTree)
 {
-	theMasterTree = theMaster->getMasterTree();
-	OwnedArray<Sequencer>& seqArray = theMaster->getSequencerArray();
-	for (int i=0; i<seqArray.size(); i++)
+	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
-		ValueTree sequenceTree = seqArray[i]->getSequencerTree();
+		ValueTree sequenceTree = theMasterTree.getChild(i);
 		theSequencerViews.add(new SequencerView(sequenceTree, this));
 		addAndMakeVisible(theSequencerViews[i]);
 	}
@@ -25,22 +23,11 @@ RootView::RootView(Master* master): theMaster(master)
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
 	updatePositions();
 	theMasterTree.addListener(this);
-	this->addKeyListener(this);
 }
 
 RootView::~RootView()
 {
 	delete theHeaderView;
-	theMaster = nullptr;
-}
-
-bool RootView::keyPressed(const KeyPress &key, Component *originatingComponent)
-{
-	if (key == KeyPress::spaceKey)
-	{
-		theMaster->startStopDaw();
-	}
-	return false;
 }
 
 void RootView::updatePositions()
@@ -68,36 +55,23 @@ void RootView::resized()
 	updatePositions();
 }
 
-int RootView::getNumOfSequencer()
+const int RootView::getNumOfSequencer() const
 {
 	return theMasterTree.getNumChildren();
 }
 
 void RootView::addSequencer()
 {
-	theMaster->addSequencer();
+	ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
+	theMasterTree.addChild(sequencerTree, -1, theUndoManager);
+	theSequencerViews.add(new SequencerView(sequencerTree, this));
+	addAndMakeVisible(theSequencerViews.getLast());
+	updatePositions();
 }
 
 void RootView::removeSequencer()
 {
-	theMaster->deleteSequencer();
-}
-
-void RootView::valueTreeChildAdded (ValueTree& parentTree, ValueTree& child)
-{
-	if (parentTree == theMasterTree)
-	{
-		theSequencerViews.add(new SequencerView(child, this));
-		addAndMakeVisible(theSequencerViews.getLast());
-		updatePositions();
-	}
-}
-
-void RootView::valueTreeChildRemoved(ValueTree& parentTree, ValueTree& child)
-{
-	if (parentTree == theMasterTree)
-	{
-		theSequencerViews.removeLast();
-		updatePositions();
-	}
+	theMasterTree.removeChild(theMasterTree.getNumChildren()-1, theUndoManager);
+	theSequencerViews.removeLast();
+	updatePositions();
 }

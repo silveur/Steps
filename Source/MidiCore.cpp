@@ -28,6 +28,7 @@ void MidiCore::openMidiOutput(String& name)
 	{
 		if (list[i] == name)
 		{
+			killNotes();
 			if (theMidiOutput != nullptr)
 				delete theMidiOutput;
 			theMidiOutput = MidiOutput::openDevice(i);
@@ -99,6 +100,3 @@ void MidiCore::outputMidi(const MidiMessage &msg, int delayMs)
 		theMidiOutput->sendBlockOfMessages(buff, Time::getMillisecondCounter() + delayMs, 44100);
 	}
 }
-
-
-

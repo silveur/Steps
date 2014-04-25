@@ -10,6 +10,7 @@
 #include "RootView.h"
 
 extern UndoManager* theUndoManager;
+extern File thePresetFolder;
 
 SequencerView::SequencerView(ValueTree& sequencerTree, RootView* rootView): theRootView(rootView)
 {
@@ -84,6 +85,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, RootView* rootView): theR
 	theRangeSlider->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
+	theMidiOutputList->setTextWhenNothingSelected("Select an midi output");
+	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
 	updateSelectedMidiOut(str);
@@ -101,7 +104,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, RootView* rootView): theR
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	setRepaintsOnMouseActivity(false);
-	if (!getPresetFolder().exists()) getPresetFolder().createDirectory();
+	
 	updatePresetList();
 	setSize(getWidth(), getHeight());
 }
@@ -189,7 +192,7 @@ void SequencerView::buttonClicked(Button* button)
 	{
 		if (thePresetBox->getText() != "* New Preset *")
 		{
-			File presetToSave(getPresetFolder().getFullPathName() + "/" + thePresetBox->getText() + ".seq");
+			File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
 			if (presetToSave.exists()) presetToSave.replaceWithData(nullptr, 0);
 			FileOutputStream outputStream(presetToSave);
 			theSequencerTree.writeToStream(outputStream);
@@ -197,7 +200,7 @@ void SequencerView::buttonClicked(Button* button)
 	}
 	else if (button == theDeleteButton)
 	{
-		File presetToSave(getPresetFolder().getFullPathName() + "/" + thePresetBox->getText() + ".seq");
+		File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
 		if (presetToSave.exists())
 		{
 			presetToSave.deleteFile();
@@ -263,7 +266,7 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		{
 			if (thePresetBox->getText() != "* New Preset *" && !thePresetBox->getText().isEmpty())
 			{
-				File presetToSave(getPresetFolder().getFullPathName() + "/" + comboBoxThatHasChanged->getText() + ".seq");
+				File presetToSave(thePresetFolder.getFullPathName() + "/" + comboBoxThatHasChanged->getText() + ".seq");
 				FileOutputStream outputStream(presetToSave);
 				theSequencerTree.writeToStream(outputStream);
 				theRootView->updatePresetList();
@@ -279,7 +282,7 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		else
 		{
 			String preset = thePresetBox->getText();
-			File presetToLoad(getPresetFolder().getFullPathName() + "/" + preset + ".seq");
+			File presetToLoad(thePresetFolder.getFullPathName() + "/" + preset + ".seq");
 			if (presetToLoad.exists())
 			{
 				FileInputStream inputStream(presetToLoad);
@@ -379,7 +382,7 @@ void SequencerView::updatePresetList()
 	thePresetBox->addItem("* New Preset *", 1);
 	thePresetBox->setSelectedItemIndex(0);
 	Array<File> presetArray;
-	int numPreset = getPresetFolder().findChildFiles(presetArray, File::findFiles, true, "*.seq");
+	int numPreset = thePresetFolder.findChildFiles(presetArray, File::findFiles, true, "*.seq");
 	for (int i=0;i<numPreset;i++)
 	{
 		File preset = presetArray[i];
