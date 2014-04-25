@@ -21,29 +21,32 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	for(int i=0;i<16;i++)
 	{
 		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
-		theStepSliders[i]->setSliderStyle (Slider::RotaryVerticalDrag);
+		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
-		theStepSliders[i]->setRange (-12, 12, 1);
+		theStepSliders[i]->setPopupDisplayEnabled(true, theControllerView);
+		theStepSliders[i]->setRange(-12, 12, 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
 		addAndMakeVisible(theVelocitySliders.add(new Slider("Velocity" + String(i))));
-		theVelocitySliders[i]->setSliderStyle (Slider::RotaryVerticalDrag);
+		theVelocitySliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
 		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-		theVelocitySliders[i]->setRange (0, 127, 1);
+		theVelocitySliders[i]->setRange(0, 127, 1);
+		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
-		theVelocitySliders[i]->addListener (this);
+		theVelocitySliders[i]->addListener(this);
 		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
 		theStateButtons[i]->setToggleState((bool)theSequencerTree.getChild(i).getProperty("State"), dontSendNotification);
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
-		theDecaySliders[i]->setSliderStyle (Slider::RotaryVerticalDrag);
+		theDecaySliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
 		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
-		theDecaySliders[i]->setRange (1, 200, 1);
+		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
+		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
 		theDecaySliders[i]->addListener (this);
 	}
@@ -71,8 +74,9 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theShuffleSlider->setRange(0, 5, 1);
-	theShuffleSlider->setSliderStyle(Slider::SliderStyle::Rotary);
+	theShuffleSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
+	theShuffleSlider->setPopupDisplayEnabled(true, theControllerView);
 	theShuffleSlider->addListener(this);
 	
 	addAndMakeVisible(&theStepView);
@@ -84,7 +88,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
 	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theRangeSlider->setRange(1, 5, 1);
-	theRangeSlider->setSliderStyle(Slider::SliderStyle::Rotary);
+	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
+	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
 	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
 	theRangeSlider->addListener(this);
 

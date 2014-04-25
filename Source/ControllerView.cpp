@@ -70,7 +70,10 @@ void ControllerView::addSequencer()
 
 void ControllerView::removeSequencer()
 {
-	theMasterTree.removeChild(theMasterTree.getNumChildren()-1, nullptr);
-	theSequencerViews.removeLast();
-	updatePositions();
+	if (theMasterTree.getNumChildren() > 1)
+	{
+		theMasterTree.removeChild(theMasterTree.getNumChildren()-1, nullptr);
+		theSequencerViews.removeLast();
+		updatePositions();
+	}
 }
