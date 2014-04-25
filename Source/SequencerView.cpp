@@ -14,8 +14,6 @@ extern File thePresetFolder;
 
 SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView)
 {
-	theUndoManager->getNumActionsInCurrentTransaction();
-
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
@@ -38,6 +36,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
 		theVelocitySliders[i]->addListener(this);
 		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
+		theStateButtons[i]->setButtonText("");
 		theStateButtons[i]->setToggleState((bool)theSequencerTree.getChild(i).getProperty("State"), dontSendNotification);
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
