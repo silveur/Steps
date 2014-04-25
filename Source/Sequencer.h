@@ -42,6 +42,7 @@ private:
 	OwnedArray<Step> theStepArray;
 	ValueTree theSequencerTree;
 	
+	int theChannel;
 	int thePosition;
 	int theSyncTime;
 	int theRootNote;

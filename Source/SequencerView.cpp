@@ -87,6 +87,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	theMidiOutputList->setTextWhenNothingSelected("Select an midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
+	
+	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
+	for (int i=1;i<=16;i++)
+		theChannelList->addItem(String(i), i);
+	theChannelList->setSelectedId(theSequencerTree.getProperty("Channel"));
+	theChannelList->addListener(this);
+	
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
 	updateSelectedMidiOut(str);
@@ -145,8 +152,9 @@ void SequencerView::resized()
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), 25, 20);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 30);
 	}
-	theSequencerLength->setBounds(200, 0, 200, 20);
 	theMidiOutputList->setBounds(10, 0, 150, 20);
+	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, 20);
+	theSequencerLength->setBounds(theChannelList->getRight(), 0, 150, 20);
 	theRootNoteList->setBounds(10, 20, 40, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
@@ -260,6 +268,11 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		int id = comboBoxThatHasChanged->getSelectedItemIndex();
 		theSequencerTree.setProperty("RootNote", id, theUndoManager);
 	}
+	else if(comboBoxThatHasChanged == theChannelList)
+	{
+		int id = comboBoxThatHasChanged->getSelectedId();
+		theSequencerTree.setProperty("Channel", id, theUndoManager);
+	}
 	else if(comboBoxThatHasChanged == thePresetBox)
 	{
 		if (thePresetBox->getSelectedItemIndex() == -1)
@@ -323,6 +336,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "Length")
 	{
 		theSequencerLength->setValue(tree.getProperty(property));
+	}
+	else if(String(property) == "Channel")
+	{
+		theChannelList->setSelectedId(tree.getProperty(property));
 	}
 	else
 	{

@@ -44,6 +44,7 @@ private:
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 	void updateNotesAndOctaves();
 	ScopedPointer<ComboBox> theMidiOutputList;
+	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<ComboBox> thePresetBox;

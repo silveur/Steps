@@ -13,23 +13,23 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-
 class MidiCore
 {
 public:
-	MidiCore(String& midiOut);
 	MidiCore();
 	~MidiCore();
 	
-	void noteOn(int noteNumber,int velocity);
+	void noteOn(int noteNumber,uint8 velocity, int channel);
 	void noteOff(int noteNumber);
 	void killNotes();
 	void outputMidi(const MidiMessage& msg);
 	void openMidiOutput(String& name);
 	void outputMidi(const MidiMessage &msg, int delayMs);
+	void setChannel(int channel);
 	StringArray getMidiDevicesList();
-private:
 	
+private:
+
 	MidiOutput* theMidiOutput;
 };
 
