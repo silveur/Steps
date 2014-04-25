@@ -27,7 +27,6 @@ public:
 	void removeSequencer();
 	void updatePositions();
 	const int getNumOfSequencer() const;
-	void updatePresetList();
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}

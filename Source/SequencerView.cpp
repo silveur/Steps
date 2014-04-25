@@ -107,10 +107,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	updateSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
-	addAndMakeVisible(thePresetBox = new ComboBox("Preset List"));
-	thePresetBox->setEditableText(true);
-	thePresetBox->addListener(this);
-	
+
 	updateNotesAndOctaves();
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
@@ -119,8 +116,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	setRepaintsOnMouseActivity(false);
-	
-	updatePresetList();
 	setSize(getWidth(), getHeight());
 }
 
@@ -171,7 +166,6 @@ void SequencerView::resized()
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
 	theStepView.setBounds(0, getHeight()-20, getWidth(), 20);
-	thePresetBox->setBounds(getWidth()-150, 0, 150, 20);
 	theSaveButton->setBounds(thePasteButton->getRight(), 0, 60, 20);
 	theDeleteButton->setBounds(theSaveButton->getRight(), 0, 60, 20);
 	theOnOffButton->setBounds(theDeleteButton->getRight() + 20, theDeleteButton->getY(), 60, 20);
@@ -204,26 +198,12 @@ void SequencerView::buttonClicked(Button* button)
 			ValueTree destinationChild = theSequencerTree.getChild(i);
 			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}
-		thePresetBox->setSelectedItemIndex(0); 
 	}
 	else if (button == theSaveButton)
 	{
-		if (thePresetBox->getText() != "* New Preset *")
-		{
-			File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
-			if (presetToSave.exists()) presetToSave.replaceWithData(nullptr, 0);
-			FileOutputStream outputStream(presetToSave);
-			theSequencerTree.writeToStream(outputStream);
-		}
 	}
 	else if (button == theDeleteButton)
 	{
-		File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
-		if (presetToSave.exists() && thePresetBox->getText() != "default")
-		{
-			presetToSave.deleteFile();
-			theControllerView->updatePresetList();
-		}
 	}
 	else if (button == theOnOffButton)
 	{
@@ -286,44 +266,6 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
-	}
-	else if(comboBoxThatHasChanged == thePresetBox)
-	{
-		if (thePresetBox->getSelectedItemIndex() == -1)
-		{
-			if (thePresetBox->getText() != "* New Preset *" && !thePresetBox->getText().isEmpty())
-			{
-				File presetToSave(thePresetFolder.getFullPathName() + "/" + comboBoxThatHasChanged->getText() + ".seq");
-				FileOutputStream outputStream(presetToSave);
-				theSequencerTree.writeToStream(outputStream);
-				theControllerView->updatePresetList();
-				for (int i=0;i<thePresetBox->getNumItems();i++)
-				{
-					if (thePresetBox->getItemText(i) == presetToSave.getFileNameWithoutExtension())
-					{
-						thePresetBox->setSelectedItemIndex(i);
-					}
-				}
-			}
-		}
-		else
-		{
-			String preset = thePresetBox->getText();
-			File presetToLoad(thePresetFolder.getFullPathName() + "/" + preset + ".seq");
-			if (presetToLoad.exists())
-			{
-				FileInputStream inputStream(presetToLoad);
-				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-				treeToLoad.removeProperty("MidiOutput", nullptr);
-				theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
-				for (int i=0; i<16; i++)
-				{
-					ValueTree sourceChild = treeToLoad.getChild(i);
-					ValueTree destinationChild = theSequencerTree.getChild(i);
-					destinationChild.copyPropertiesFrom(sourceChild, nullptr);
-				}
-			}
-		}
 	}
 }
 
@@ -408,23 +350,5 @@ void SequencerView::updateNotesAndOctaves()
 		theRootOctaveList->addItem(String(i), i+1);
 }
 
-void SequencerView::updatePresetList()
-{
-	String currentlySelectedItem = thePresetBox->getText();
-	thePresetBox->clear();
-	thePresetBox->addItem("* New Preset *", 1);
-	thePresetBox->setSelectedItemIndex(0);
-	Array<File> presetArray;
-	int numPreset = thePresetFolder.findChildFiles(presetArray, File::findFiles, true, "*.seq");
-	for (int i=0;i<numPreset;i++)
-	{
-		File preset = presetArray[i];
-		thePresetBox->addItem(preset.getFileNameWithoutExtension(), 1 + thePresetBox->getNumItems());
-		if (preset.getFileNameWithoutExtension() == currentlySelectedItem)
-		{
-			thePresetBox->setSelectedId(i);
-		}
-	}
-}
 
 

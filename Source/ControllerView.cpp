@@ -32,20 +32,12 @@ ControllerView::~ControllerView()
 
 void ControllerView::updatePositions()
 {
-	int sequencerHeight = theMainScreen.getHeight() / 7;
-	setSize(theMainScreen.getWidth()/2, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
+	int sequencerHeight = theMainScreen.getHeight() / 5;
+	setSize(theMainScreen.getWidth()/1.1, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
 	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
 		theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencerHeight), getWidth(), sequencerHeight);
-	}
-}
-
-void ControllerView::updatePresetList()
-{
-	for (int i=0; i<theSequencerViews.size(); i++)
-	{
-		theSequencerViews[i]->updatePresetList();
 	}
 }
 

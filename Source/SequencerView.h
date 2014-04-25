@@ -26,7 +26,6 @@ public:
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
-	void updatePresetList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
 
@@ -47,7 +46,6 @@ private:
 	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
-	ScopedPointer<ComboBox> thePresetBox;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
