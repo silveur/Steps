@@ -67,11 +67,10 @@ public:
 			if (fileChooser.browseForFileToOpen())
 			{
 				ValueTree masterTree = theControllerView->getMasterTree();
-				for (int i=0;i<masterTree.getNumChildren();i++)
+				while (masterTree.getNumChildren())
 				{
 					theControllerView->removeSequencer();
 				}
-				
 				File presetToLoad = fileChooser.getResult();
 				FileInputStream inputStream(presetToLoad);
 				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
