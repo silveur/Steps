@@ -33,8 +33,14 @@ ControllerView::~ControllerView()
 void ControllerView::updatePositions()
 {
 	int sequencerHeight = theMainScreen.getHeight() / 5;
-	setSize(theMainScreen.getWidth()/1.1, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
 	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
+	if (theSequencerViews.size() == 0)
+	{
+//		setSize(theMainScreen.getWidth()/1.1, sequencerHeight / 4);
+	}
+	else
+		setSize(theMainScreen.getWidth()/1.1, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
+	
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
 		theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencerHeight), getWidth(), sequencerHeight);
@@ -51,21 +57,49 @@ const int ControllerView::getNumOfSequencer() const
 	return theMasterTree.getNumChildren();
 }
 
-void ControllerView::addSequencer()
+void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 {
-	ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
-	theMasterTree.addChild(sequencerTree, -1, nullptr);
-	theSequencerViews.add(new SequencerView(sequencerTree, this));
-	addAndMakeVisible(theSequencerViews.getLast());
-	updatePositions();
+	if(sequencerTreeToAdd.isValid())
+	{
+		ValueTree copiedTree = sequencerTreeToAdd.createCopy();
+
+		theMasterTree.addChild(copiedTree, -1, nullptr);
+		theSequencerViews.add(new SequencerView(copiedTree, this));
+		addAndMakeVisible(theSequencerViews.getLast());
+		updatePositions();
+	}
+	else
+	{
+		ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
+		theMasterTree.addChild(sequencerTree, -1, nullptr);
+		theSequencerViews.add(new SequencerView(sequencerTree, this));
+		addAndMakeVisible(theSequencerViews.getLast());
+		updatePositions();
+	}
 }
 
 void ControllerView::removeSequencer()
 {
-	if (theMasterTree.getNumChildren() > 1)
+	int index = theMasterTree.getNumChildren()-1;
+	theMasterTree.removeChild(index, nullptr);
+	theSequencerViews.remove(index);
+	updatePositions();
+}
+
+void ControllerView::valueTreeChildAdded (ValueTree& parentTree, ValueTree& child)
+{
+	if (parentTree == theMasterTree)
 	{
-		theMasterTree.removeChild(theMasterTree.getNumChildren()-1, nullptr);
-		theSequencerViews.removeLast();
-		updatePositions();
+//		theSequencerViews.add(new SequencerView(child, this));
+//		addAndMakeVisible(theSequencerViews.getLast());
 	}
 }
+
+void ControllerView::valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child)
+{
+	if (parentTree == theMasterTree)
+	{
+//		theSequencerViews.remove(parentTree.indexOf(child));
+	}
+}
+

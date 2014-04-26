@@ -29,6 +29,7 @@ public:
 	void start();
 	
 private:
+	void loadFromTree();
 	void initSequencerTree();
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}

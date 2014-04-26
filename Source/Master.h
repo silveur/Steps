@@ -74,8 +74,7 @@ private:
 	{
 		if (parentTree == theMasterTree)
 		{
-			int childIndex = parentTree.indexOf(child);
-			theSequencerArray.remove(childIndex);
+			theSequencerArray.removeLast();
 		}
 	}
 	

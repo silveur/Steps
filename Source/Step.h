@@ -22,12 +22,19 @@ class Step: public ValueTree::Listener
 public:
 	Step(ValueTree& stepTree): theStepTree(stepTree)
 	{
-		thePitch = 0;
-		theVelocity = 127;
-		theState = ON;
-		theDecay = 40;
-		initStepTree();
-		theStepTree.addListener(this);
+		if (theStepTree.getNumProperties() > 0)
+		{
+			loadFromTree();
+		}
+		else
+		{
+			thePitch = 0;
+			theVelocity = 127;
+			theState = ON;
+			theDecay = 40;
+			initStepTree();
+			theStepTree.addListener(this);
+		}
 	}
 	
 	~Step() {}
@@ -44,6 +51,14 @@ private:
 		theStepTree.setProperty("Velocity", theVelocity, nullptr);
 		theStepTree.setProperty("State", theState, nullptr);
 		theStepTree.setProperty("Decay", theDecay, nullptr);
+	}
+	
+	void loadFromTree()
+	{
+		thePitch = theStepTree.getProperty("Pitch");
+		theVelocity = theStepTree.getProperty("Velocity");
+		theState = theStepTree.getProperty("State");
+		theDecay = theStepTree.getProperty("Decay");
 	}
 	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)

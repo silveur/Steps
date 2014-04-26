@@ -13,22 +13,29 @@
 Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 {
 	theMidiCore = new MidiCore();
-	theChannel = 1;
-	thePosition = 0;
-	thePpqCount = 0;
-	theLength = 16;
-	theRootNote = 0;
-	theRootOctave = 3;
-	theShuffle = 0;
-	theRange = 1;
-	theOnOffStatus = ON;
-	initSequencerTree();
-	for (int i=0; i<16; i++)
+	if (theSequencerTree.getNumProperties() > 0)
 	{
-		ValueTree stepTree = sequencerTree.getChild(i);
-		stepTree = ValueTree("Step" + String(i));
-		theStepArray.add(new Step(stepTree));
-		sequencerTree.addChild(stepTree, -1, nullptr);
+		loadFromTree();
+	}
+	else
+	{
+		theChannel = 1;
+		thePosition = 0;
+		thePpqCount = 0;
+		theLength = 16;
+		theRootNote = 0;
+		theRootOctave = 3;
+		theShuffle = 0;
+		theRange = 1;
+		theOnOffStatus = ON;
+		initSequencerTree();
+		for (int i=0; i<16; i++)
+		{
+			ValueTree stepTree = sequencerTree.getChild(i);
+			stepTree = ValueTree("Step" + String(i));
+			theStepArray.add(new Step(stepTree));
+			sequencerTree.addChild(stepTree, -1, nullptr);
+		}
 	}
 	theSequencerTree.addListener(this);
 }
@@ -46,6 +53,23 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Range", theRange, nullptr);
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
+}
+
+void Sequencer::loadFromTree()
+{
+	theLength = theSequencerTree.getProperty("Length");
+	theRootNote = theSequencerTree.getProperty("RootNote");
+	theRootOctave = theSequencerTree.getProperty("RootOctave");
+	theShuffle = theSequencerTree.getProperty("Shuffle");
+	theRange = theSequencerTree.getProperty("Range");
+	theChannel = theSequencerTree.getProperty("Channel");
+	theOnOffStatus = theSequencerTree.getProperty("Status");
+	
+	for (int i=0; i<16; i++)
+	{
+		ValueTree stepTree = theSequencerTree.getChild(i);
+		theStepArray.add(new Step(stepTree));
+	}
 }
 
 void Sequencer::start()

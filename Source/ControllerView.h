@@ -23,15 +23,16 @@ public:
 	ControllerView(ValueTree& masterTree);
 	~ControllerView();
 	void resized();
-	void addSequencer();
+	void addSequencer(ValueTree& sequencerTreeToAdd);
 	void removeSequencer();
 	void updatePositions();
 	const int getNumOfSequencer() const;
+	ValueTree& getMasterTree() { return theMasterTree; }
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
-	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child){}
-	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child){}
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child);
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child);
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
