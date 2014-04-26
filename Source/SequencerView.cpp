@@ -32,6 +32,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
 		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theVelocitySliders[i]->setRange(0, 127, 1);
+		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
 		theVelocitySliders[i]->addListener(this);
@@ -44,6 +45,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
 		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
+		theDecaySliders[i]->setTextValueSuffix(" ms Decay");
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
@@ -52,6 +54,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
 	theSequencerLength->setRange(1, 16,1);
+	theSequencerLength->setTextValueSuffix(" steps");
 	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
@@ -73,6 +76,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theShuffleSlider->setRange(0, 5, 1);
+	theShuffleSlider->setTextValueSuffix(" Shuffle");
 	theShuffleSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->setPopupDisplayEnabled(true, theControllerView);
@@ -81,24 +85,26 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
 	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theOffsetSlider->setRange(0, 15, 1);
+	theOffsetSlider->setTextValueSuffix(" Offset");
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
 	theOffsetSlider->addListener(this);
+	
+	addAndMakeVisible(theRangeSlider = new Slider("Range"));
+	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theRangeSlider->setRange(1, 5, 1);
+	theRangeSlider->setTextValueSuffix(" Range");
+	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
+	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
+	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
+	theRangeSlider->addListener(this);
 	
 	addAndMakeVisible(&theStepView);
 	
 	addAndMakeVisible(theOnOffButton = new ToggleButton("On/Off"));
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
 	theOnOffButton->addListener(this);
-	
-	addAndMakeVisible(theRangeSlider = new Slider("Range"));
-	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theRangeSlider->setRange(1, 5, 1);
-	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
-	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
-	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
-	theRangeSlider->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	theMidiOutputList->setTextWhenNothingSelected("Select an midi output");
@@ -170,7 +176,7 @@ void SequencerView::resized()
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
-	theRangeSlider->setBounds(250, 20, 30, 20);
+	theRangeSlider->setBounds(theShuffleSlider->getRight(), 20, 30, 20);
 	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, 20);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
