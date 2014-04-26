@@ -52,6 +52,7 @@ private:
 	int theLength;
 	int theRange;
 	int theShuffle;
+	int theOffset;
 	bool theOnOffStatus;
 	bool isIdle;
 	bool waitForShuffle;

@@ -49,6 +49,7 @@ private:
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
+	ScopedPointer<Slider> theOffsetSlider;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<Slider> theDecaySliders;

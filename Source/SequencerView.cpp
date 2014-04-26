@@ -78,6 +78,14 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theShuffleSlider->setPopupDisplayEnabled(true, theControllerView);
 	theShuffleSlider->addListener(this);
 	
+	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
+	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theOffsetSlider->setRange(0, 15, 1);
+	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
+	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
+	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
+	theOffsetSlider->addListener(this);
+	
 	addAndMakeVisible(&theStepView);
 	
 	addAndMakeVisible(theOnOffButton = new ToggleButton("On/Off"));
@@ -163,6 +171,7 @@ void SequencerView::resized()
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
 	theRangeSlider->setBounds(250, 20, 30, 20);
+	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, 20);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
 	theStepView.setBounds(0, getHeight()-20, getWidth(), 20);
@@ -274,6 +283,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	{
 		theSequencerTree.setProperty("Range", slider->getValue(), theUndoManager);
 	}
+	else if(slider == theOffsetSlider)
+	{
+		theSequencerTree.setProperty("Offset", slider->getValue(), theUndoManager);
+	}
 }
 
 void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
@@ -331,6 +344,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "Status")
 	{
 		theOnOffButton->setToggleState(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "Offset")
+	{
+		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
 	}
 	else
 	{

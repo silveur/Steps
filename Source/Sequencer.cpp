@@ -27,6 +27,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theRootOctave = 3;
 		theShuffle = 0;
 		theRange = 1;
+		theOffset = 0;
 		theOnOffStatus = ON;
 		initSequencerTree();
 		for (int i=0; i<16; i++)
@@ -53,6 +54,7 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Range", theRange, nullptr);
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
+	theSequencerTree.setProperty("Offset", theOffset, nullptr);
 }
 
 void Sequencer::loadFromTree()
@@ -64,6 +66,7 @@ void Sequencer::loadFromTree()
 	theRange = theSequencerTree.getProperty("Range");
 	theChannel = theSequencerTree.getProperty("Channel");
 	theOnOffStatus = theSequencerTree.getProperty("Status");
+	theOffset = theSequencerTree.getProperty("Offset");
 	
 	for (int i=0; i<16; i++)
 	{
@@ -75,7 +78,7 @@ void Sequencer::loadFromTree()
 void Sequencer::start()
 {
 	thePpqCount = -1;
-	thePosition = -1;
+	thePosition = -1 + theOffset;
 	isIdle = false;
 	waitForShuffle = false;
 }
@@ -162,6 +165,10 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Length")
 	{
 		theLength = tree.getProperty(property);
+	}
+	else if(String(property) == "Offset")
+	{
+		theOffset = tree.getProperty(property);
 	}
 	else if(String(property) == "RootOctave")
 	{
