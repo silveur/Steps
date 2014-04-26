@@ -187,4 +187,9 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		theOnOffStatus = tree.getProperty(property);
 	}
+	else if(String(property) == "KickBack")
+	{
+		thePosition = -1;
+		tree.setProperty(property, 0, nullptr);
+	}
 }

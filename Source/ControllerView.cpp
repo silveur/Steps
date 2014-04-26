@@ -52,6 +52,14 @@ void ControllerView::resized()
 	updatePositions();
 }
 
+void ControllerView::kickBack()
+{
+	for (int i=0; i<theMasterTree.getNumChildren(); i++)
+	{
+		theMasterTree.getChild(i).setProperty("KickBack", 1, nullptr);
+	}
+}
+
 const int ControllerView::getNumOfSequencer() const
 {
 	return theMasterTree.getNumChildren();
@@ -85,21 +93,3 @@ void ControllerView::removeSequencer()
 	theSequencerViews.remove(index);
 	updatePositions();
 }
-
-void ControllerView::valueTreeChildAdded (ValueTree& parentTree, ValueTree& child)
-{
-	if (parentTree == theMasterTree)
-	{
-//		theSequencerViews.add(new SequencerView(child, this));
-//		addAndMakeVisible(theSequencerViews.getLast());
-	}
-}
-
-void ControllerView::valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child)
-{
-	if (parentTree == theMasterTree)
-	{
-//		theSequencerViews.remove(parentTree.indexOf(child));
-	}
-}
-

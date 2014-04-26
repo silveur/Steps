@@ -34,6 +34,8 @@ public:
 		theExportAllButton->addListener(this);
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
 		theImportAllButton->addListener(this);
+		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
+		theKickBackButton->addListener(this);
 	}
 	~HeaderView()
 	{
@@ -58,6 +60,10 @@ public:
 		else if (buttonThatWasClicked == theRedoButton)
 		{
 			theUndoManager->redo();
+		}
+		else if (buttonThatWasClicked == theKickBackButton)
+		{
+			theControllerView->kickBack();
 		}
 		else if (buttonThatWasClicked == theImportAllButton)
 		{
@@ -118,6 +124,7 @@ public:
 		theRedoButton->setBounds(theUndoButton->getRight(), getHeight()/4, getWidth()/18, getHeight()/2);
 		theExportAllButton->setBounds(theRedoButton->getRight(), theRedoButton->getY(), getWidth()/16, getHeight()/2);
 		theImportAllButton->setBounds(theExportAllButton->getRight(), theExportAllButton->getY(), getWidth()/16, getHeight()/2);
+		theKickBackButton->setBounds(theImportAllButton->getRight(), theImportAllButton->getY(), getWidth()/16, getHeight()/2);
 	}
 	
 private:
@@ -127,6 +134,7 @@ private:
 	ScopedPointer<TextButton> theRedoButton;
 	ScopedPointer<TextButton> theExportAllButton;
 	ScopedPointer<TextButton> theImportAllButton;
+	ScopedPointer<TextButton> theKickBackButton;
 	ControllerView* theControllerView;
 	String theMainLabel;
 };
