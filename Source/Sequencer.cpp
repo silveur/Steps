@@ -13,22 +13,30 @@
 Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 {
 	theMidiCore = new MidiCore();
-	theChannel = 1;
-	thePosition = 0;
-	thePpqCount = 0;
-	theLength = 16;
-	theRootNote = 0;
-	theRootOctave = 3;
-	theShuffle = 0;
-	theRange = 1;
-	theOnOffStatus = ON;
-	initSequencerTree();
-	for (int i=0; i<16; i++)
+	if (theSequencerTree.getNumProperties() > 0)
 	{
-		ValueTree stepTree = sequencerTree.getChild(i);
-		stepTree = ValueTree("Step" + String(i));
-		theStepArray.add(new Step(stepTree));
-		sequencerTree.addChild(stepTree, -1, nullptr);
+		loadFromTree();
+	}
+	else
+	{
+		theChannel = 1;
+		thePosition = 0;
+		thePpqCount = 0;
+		theLength = 16;
+		theRootNote = 0;
+		theRootOctave = 3;
+		theShuffle = 0;
+		theRange = 1;
+		theOffset = 0;
+		theOnOffStatus = ON;
+		initSequencerTree();
+		for (int i=0; i<16; i++)
+		{
+			ValueTree stepTree = sequencerTree.getChild(i);
+			stepTree = ValueTree("Step" + String(i));
+			theStepArray.add(new Step(stepTree));
+			sequencerTree.addChild(stepTree, -1, nullptr);
+		}
 	}
 	theSequencerTree.addListener(this);
 }
@@ -46,12 +54,31 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Range", theRange, nullptr);
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
+	theSequencerTree.setProperty("Offset", theOffset, nullptr);
+}
+
+void Sequencer::loadFromTree()
+{
+	theLength = theSequencerTree.getProperty("Length");
+	theRootNote = theSequencerTree.getProperty("RootNote");
+	theRootOctave = theSequencerTree.getProperty("RootOctave");
+	theShuffle = theSequencerTree.getProperty("Shuffle");
+	theRange = theSequencerTree.getProperty("Range");
+	theChannel = theSequencerTree.getProperty("Channel");
+	theOnOffStatus = theSequencerTree.getProperty("Status");
+	theOffset = theSequencerTree.getProperty("Offset");
+	
+	for (int i=0; i<16; i++)
+	{
+		ValueTree stepTree = theSequencerTree.getChild(i);
+		theStepArray.add(new Step(stepTree));
+	}
 }
 
 void Sequencer::start()
 {
 	thePpqCount = -1;
-	thePosition = -1;
+	thePosition = -1 + theOffset;
 	isIdle = false;
 	waitForShuffle = false;
 }
@@ -76,7 +103,9 @@ void Sequencer::carryOn()
 void Sequencer::triggerStep()
 {
 	thePosition = (thePosition+1) % theLength;
-	if (theStepArray[thePosition]->theState)
+	if (theStepArray[thePosition]->theState == JUMP)
+		thePosition = (thePosition+1) % theLength;
+	if (theStepArray[thePosition]->theState == ON)
 	{
 		Step* step = theStepArray[thePosition];
 		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
@@ -139,6 +168,10 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		theLength = tree.getProperty(property);
 	}
+	else if(String(property) == "Offset")
+	{
+		theOffset = tree.getProperty(property);
+	}
 	else if(String(property) == "RootOctave")
 	{
 		theRootOctave = tree.getProperty(property);
@@ -162,5 +195,10 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Status")
 	{
 		theOnOffStatus = tree.getProperty(property);
+	}
+	else if(String(property) == "KickBack")
+	{
+		thePosition = -1;
+		tree.setProperty(property, 0, nullptr);
 	}
 }

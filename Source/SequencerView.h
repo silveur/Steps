@@ -26,7 +26,6 @@ public:
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
-	void updatePresetList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
 
@@ -34,6 +33,11 @@ public:
 	{
 		static ValueTree theCopyTree;
 		return theCopyTree;
+	}
+	
+	const char * getTextForEnum( int enumVal )
+	{
+		return StateStrings[enumVal];
 	}
 	
 private:
@@ -47,20 +51,20 @@ private:
 	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
-	ScopedPointer<ComboBox> thePresetBox;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
+	ScopedPointer<Slider> theOffsetSlider;
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<Slider> theDecaySliders;
-	OwnedArray<ToggleButton> theStateButtons;
+	OwnedArray<TextButton> theStateButtons;
 	ScopedPointer<ToggleButton> theOnOffButton;
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
-	ScopedPointer<TextButton> theSaveButton;
-	ScopedPointer<TextButton> theDeleteButton;
+	ScopedPointer<TextButton> theExportButton;
+	ScopedPointer<TextButton> theImportButton;
 	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;

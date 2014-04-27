@@ -23,6 +23,7 @@ public:
 	{
 		thePresetFolder = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/presets/");
 		theDefaultPreset = File(thePresetFolder.getFullPathName() + "/default.seq");
+		if (!thePresetFolder.exists()) thePresetFolder.createDirectory();
 		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 		theMasterTree = ValueTree("MasterTree");
 		ValueTree defaultTree = ValueTree("Sequencer");
@@ -73,8 +74,7 @@ private:
 	{
 		if (parentTree == theMasterTree)
 		{
-			int childIndex = parentTree.indexOf(child);
-			theSequencerArray.remove(childIndex);
+			theSequencerArray.removeLast();
 		}
 	}
 	

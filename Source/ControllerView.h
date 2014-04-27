@@ -23,11 +23,12 @@ public:
 	ControllerView(ValueTree& masterTree);
 	~ControllerView();
 	void resized();
-	void addSequencer();
+	void kickBack();
+	void addSequencer(ValueTree& sequencerTreeToAdd);
 	void removeSequencer();
 	void updatePositions();
 	const int getNumOfSequencer() const;
-	void updatePresetList();
+	ValueTree& getMasterTree() { return theMasterTree; }
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}

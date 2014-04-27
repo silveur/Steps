@@ -29,6 +29,7 @@ public:
 	void start();
 	
 private:
+	void loadFromTree();
 	void initSequencerTree();
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
@@ -51,6 +52,7 @@ private:
 	int theLength;
 	int theRange;
 	int theShuffle;
+	int theOffset;
 	bool theOnOffStatus;
 	bool isIdle;
 	bool waitForShuffle;

@@ -32,18 +32,21 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
 		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theVelocitySliders[i]->setRange(0, 127, 1);
+		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
 		theVelocitySliders[i]->addListener(this);
-		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
-		theStateButtons[i]->setButtonText("");
-		theStateButtons[i]->setToggleState((bool)theSequencerTree.getChild(i).getProperty("State"), dontSendNotification);
+		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
+		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
+		theStateButtons[i]->setButtonText(getTextForEnum(state));
+		
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
 		theDecaySliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
 		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
+		theDecaySliders[i]->setTextValueSuffix(" ms Decay");
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
@@ -52,6 +55,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
 	theSequencerLength->setRange(1, 16,1);
+	theSequencerLength->setTextValueSuffix(" steps");
 	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
@@ -64,33 +68,44 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(thePasteButton = new TextButton("Paste settings"));
 	thePasteButton->addListener(this);
 	
-	addAndMakeVisible(theSaveButton = new TextButton("Save"));
-	theSaveButton->addListener(this);
+	addAndMakeVisible(theExportButton = new TextButton("Export preset"));
+	theExportButton->addListener(this);
 	
-	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
-	theDeleteButton->addListener(this);
-	
+	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
+	theImportButton->addListener(this);
+
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theShuffleSlider->setRange(0, 5, 1);
+	theShuffleSlider->setTextValueSuffix(" Shuffle");
 	theShuffleSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->setPopupDisplayEnabled(true, theControllerView);
 	theShuffleSlider->addListener(this);
+	
+	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
+	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theOffsetSlider->setRange(0, 15, 1);
+	theOffsetSlider->setTextValueSuffix(" Offset");
+	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
+	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
+	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
+	theOffsetSlider->addListener(this);
+	
+	addAndMakeVisible(theRangeSlider = new Slider("Range"));
+	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+	theRangeSlider->setRange(1, 5, 1);
+	theRangeSlider->setTextValueSuffix(" Range");
+	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
+	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
+	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
+	theRangeSlider->addListener(this);
 	
 	addAndMakeVisible(&theStepView);
 	
 	addAndMakeVisible(theOnOffButton = new ToggleButton("On/Off"));
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
 	theOnOffButton->addListener(this);
-	
-	addAndMakeVisible(theRangeSlider = new Slider("Range"));
-	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theRangeSlider->setRange(1, 5, 1);
-	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
-	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
-	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
-	theRangeSlider->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	theMidiOutputList->setTextWhenNothingSelected("Select an midi output");
@@ -107,10 +122,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	updateSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
-	addAndMakeVisible(thePresetBox = new ComboBox("Preset List"));
-	thePresetBox->setEditableText(true);
-	thePresetBox->addListener(this);
-	
+
 	updateNotesAndOctaves();
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
@@ -119,8 +131,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	setRepaintsOnMouseActivity(false);
-	
-	updatePresetList();
 	setSize(getWidth(), getHeight());
 }
 
@@ -167,14 +177,14 @@ void SequencerView::resized()
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
-	theRangeSlider->setBounds(250, 20, 30, 20);
+	theRangeSlider->setBounds(theShuffleSlider->getRight(), 20, 30, 20);
+	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, 20);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
 	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
 	theStepView.setBounds(0, getHeight()-20, getWidth(), 20);
-	thePresetBox->setBounds(getWidth()-150, 0, 150, 20);
-	theSaveButton->setBounds(thePasteButton->getRight(), 0, 60, 20);
-	theDeleteButton->setBounds(theSaveButton->getRight(), 0, 60, 20);
-	theOnOffButton->setBounds(theDeleteButton->getRight() + 20, theDeleteButton->getY(), 60, 20);
+	theOnOffButton->setBounds(thePasteButton->getRight() + 20, thePasteButton->getY(), 60, 20);
+	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, 20);
+	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, 20);
 }
 
 void SequencerView::buttonClicked(Button* button)
@@ -190,10 +200,12 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
 	}
+	
 	else if (button == theCopyButton)
 	{
 		getCopyTree() = theSequencerTree.createCopy();
 	}
+	
 	else if (button == thePasteButton)
 	{
 		getCopyTree().removeProperty("MidiOutput", nullptr);
@@ -204,35 +216,61 @@ void SequencerView::buttonClicked(Button* button)
 			ValueTree destinationChild = theSequencerTree.getChild(i);
 			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}
-		thePresetBox->setSelectedItemIndex(0); 
-	}
-	else if (button == theSaveButton)
-	{
-		if (thePresetBox->getText() != "* New Preset *")
-		{
-			File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
-			if (presetToSave.exists()) presetToSave.replaceWithData(nullptr, 0);
-			FileOutputStream outputStream(presetToSave);
-			theSequencerTree.writeToStream(outputStream);
-		}
-	}
-	else if (button == theDeleteButton)
-	{
-		File presetToSave(thePresetFolder.getFullPathName() + "/" + thePresetBox->getText() + ".seq");
-		if (presetToSave.exists() && thePresetBox->getText() != "default")
-		{
-			presetToSave.deleteFile();
-			theControllerView->updatePresetList();
-		}
 	}
 	else if (button == theOnOffButton)
 	{
 		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
+	
+	else if (button == theImportButton)
+	{
+		FileChooser fileChooser ("Load preset file...",
+								 thePresetFolder,
+								 "*.seq");
+		if (fileChooser.browseForFileToOpen())
+		{
+			File presetToLoad = fileChooser.getResult();
+			FileInputStream inputStream(presetToLoad);
+			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+			treeToLoad.removeProperty("MidiOutput", nullptr);
+			theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
+			for (int i=0; i<16; i++)
+			{
+				ValueTree sourceChild = treeToLoad.getChild(i);
+				ValueTree destinationChild = theSequencerTree.getChild(i);
+				destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
+			}
+		}
+	}
+	
+	else if (button == theExportButton)
+	{
+		FileChooser fileChooser ("Save as...",
+								 thePresetFolder,
+								 "*.seq");
+		if (fileChooser.browseForFileToSave(false))
+		{
+			File preset = File(fileChooser.getResult().getFullPathName());
+			FileOutputStream outputStream(preset);
+			theSequencerTree.writeToStream(outputStream);
+		}
+	}
+	
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
-		theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), theUndoManager);
+		ModifierKeys key =  ModifierKeys::getCurrentModifiersRealtime();
+		int currentState = theSequencerTree.getChild(index).getProperty("State");
+		if (key.isCtrlDown())
+		{
+			currentState = JUMP;
+		}
+		else
+		{
+			currentState = !theSequencerTree.getChild(index).getProperty("State");
+		}
+		
+		theSequencerTree.getChild(index).setProperty("State", currentState, theUndoManager);
 	}
 }
 
@@ -263,6 +301,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	{
 		theSequencerTree.setProperty("Range", slider->getValue(), theUndoManager);
 	}
+	else if(slider == theOffsetSlider)
+	{
+		theSequencerTree.setProperty("Offset", slider->getValue(), theUndoManager);
+	}
 }
 
 void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
@@ -286,44 +328,6 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
-	}
-	else if(comboBoxThatHasChanged == thePresetBox)
-	{
-		if (thePresetBox->getSelectedItemIndex() == -1)
-		{
-			if (thePresetBox->getText() != "* New Preset *" && !thePresetBox->getText().isEmpty())
-			{
-				File presetToSave(thePresetFolder.getFullPathName() + "/" + comboBoxThatHasChanged->getText() + ".seq");
-				FileOutputStream outputStream(presetToSave);
-				theSequencerTree.writeToStream(outputStream);
-				theControllerView->updatePresetList();
-				for (int i=0;i<thePresetBox->getNumItems();i++)
-				{
-					if (thePresetBox->getItemText(i) == presetToSave.getFileNameWithoutExtension())
-					{
-						thePresetBox->setSelectedItemIndex(i);
-					}
-				}
-			}
-		}
-		else
-		{
-			String preset = thePresetBox->getText();
-			File presetToLoad(thePresetFolder.getFullPathName() + "/" + preset + ".seq");
-			if (presetToLoad.exists())
-			{
-				FileInputStream inputStream(presetToLoad);
-				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-				treeToLoad.removeProperty("MidiOutput", nullptr);
-				theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
-				for (int i=0; i<16; i++)
-				{
-					ValueTree sourceChild = treeToLoad.getChild(i);
-					ValueTree destinationChild = theSequencerTree.getChild(i);
-					destinationChild.copyPropertiesFrom(sourceChild, nullptr);
-				}
-			}
-		}
 	}
 }
 
@@ -359,6 +363,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		theOnOffButton->setToggleState(tree.getProperty(property), dontSendNotification);
 	}
+	else if(String(property) == "Offset")
+	{
+		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
+	}
 	else
 	{
 		for (int i=0; i<16;i++)
@@ -368,7 +376,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 				if (String(property) == "Pitch")
 					theStepSliders[i]->setValue((int)tree.getProperty(property));
 				else if (String(property) == "State")
-					theStateButtons[i]->setToggleState((bool)tree.getProperty(property), dontSendNotification);
+				{
+					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
+					theStateButtons[i]->setButtonText(getTextForEnum(state));
+				}
 				else if (String(property) == "Velocity")
 					theVelocitySliders[i]->setValue((int)tree.getProperty(property));
 				else if (String(property) == "Decay")
@@ -408,23 +419,5 @@ void SequencerView::updateNotesAndOctaves()
 		theRootOctaveList->addItem(String(i), i+1);
 }
 
-void SequencerView::updatePresetList()
-{
-	String currentlySelectedItem = thePresetBox->getText();
-	thePresetBox->clear();
-	thePresetBox->addItem("* New Preset *", 1);
-	thePresetBox->setSelectedItemIndex(0);
-	Array<File> presetArray;
-	int numPreset = thePresetFolder.findChildFiles(presetArray, File::findFiles, true, "*.seq");
-	for (int i=0;i<numPreset;i++)
-	{
-		File preset = presetArray[i];
-		thePresetBox->addItem(preset.getFileNameWithoutExtension(), 1 + thePresetBox->getNumItems());
-		if (preset.getFileNameWithoutExtension() == currentlySelectedItem)
-		{
-			thePresetBox->setSelectedId(i);
-		}
-	}
-}
 
 
