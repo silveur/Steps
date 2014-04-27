@@ -168,7 +168,7 @@ void SequencerView::resized()
 		theStepSliders[i]->setBounds((getWidth()/16)*i, 40, 50, 50);
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 25, 20);
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), 25, 20);
-		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 30);
+		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 20);
 	}
 	theMidiOutputList->setBounds(10, 0, 150, 20);
 	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, 20);
@@ -261,7 +261,7 @@ void SequencerView::buttonClicked(Button* button)
 		int index = button->getName().getTrailingIntValue();
 		ModifierKeys key =  ModifierKeys::getCurrentModifiersRealtime();
 		int currentState = theSequencerTree.getChild(index).getProperty("State");
-		if (key.isCtrlDown())
+		if (key.isAltDown())
 		{
 			currentState = JUMP;
 		}
