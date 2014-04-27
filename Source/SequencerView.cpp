@@ -18,7 +18,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
 	{
-		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
+		addAndMakeVisible(theStepSliders.add(new SeqSlider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
@@ -122,7 +122,11 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	updateSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
-
+	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
+	theScaleList->addItem("No scaling", 1);
+	theScaleList->addItem("Major", 2);
+	theScaleList->setSelectedId(1);
+	theScales.add(new Scale("C", "Major"));
 	updateNotesAndOctaves();
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
@@ -130,6 +134,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
+	theScaleList->addListener(this);
 	setRepaintsOnMouseActivity(false);
 	setSize(getWidth(), getHeight());
 }
@@ -175,6 +180,7 @@ void SequencerView::resized()
 	theSequencerLength->setBounds(theChannelList->getRight(), 0, 150, 20);
 	theRootNoteList->setBounds(10, 20, 40, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
+	theScaleList->setBounds(theRootOctaveList->getRight(), theRootOctaveList->getY(), theRootOctaveList->getWidth() * 2, theRootOctaveList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
 	theRangeSlider->setBounds(theShuffleSlider->getRight(), 20, 30, 20);
@@ -276,10 +282,30 @@ void SequencerView::buttonClicked(Button* button)
 
 void SequencerView::sliderValueChanged(Slider* slider)
 {
+	const int notes[7] = {0, 2, 4, 5, 7, 9, 11};
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
-		theSequencerTree.getChild(index).setProperty("Pitch", (int)slider->getValue(), theUndoManager);
+		String suffix;
+//		DBG("Slider value:" << slider->getValue());
+		for(int i=0;i<theScales[0]->getNotes().size();i++)
+		{
+//			DBG("Scale note at index:" << i << "value:" << theScales[0]->getNotes()[i]);
+			if (slider->getValue() == notes[i])
+			{
+				
+				suffix = "Major";
+				break;
+			}
+			else
+			{
+				suffix = "";
+			}
+		}
+		DBG("Suffix:" << suffix);
+		slider->setTextValueSuffix(suffix);
+	
+		theSequencerTree.getChild(index).setProperty("Pitch", slider->getValue(), theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
 	{
@@ -328,6 +354,25 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
+	}
+	else if(comboBoxThatHasChanged == theScaleList)
+	{
+		int id = comboBoxThatHasChanged->getSelectedId();
+		theSequencerTree.setProperty("Scale", id, theUndoManager);
+		if (id == 1)
+		{
+			for (int i =0;i<16;i++)
+			{
+				theStepSliders[i]->clearScale();
+			}
+		}
+		else
+		{
+			for (int i =0;i<16;i++)
+			{
+				theStepSliders[i]->registerScale(theScales[id - 2]);
+			}
+		}
 	}
 }
 

@@ -11,6 +11,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
+#include "Slider.h"
+#include "Scales.h"
 
 class ControllerView;
 
@@ -51,11 +53,12 @@ private:
 	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
+	ScopedPointer<ComboBox> theScaleList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
 	ScopedPointer<Slider> theOffsetSlider;
-	OwnedArray<Slider> theStepSliders;
+	OwnedArray<SeqSlider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<Slider> theDecaySliders;
 	OwnedArray<TextButton> theStateButtons;
@@ -65,6 +68,7 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
+	OwnedArray<Scale> theScales;
 	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
