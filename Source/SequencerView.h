@@ -35,6 +35,11 @@ public:
 		return theCopyTree;
 	}
 	
+	const char * getTextForEnum( int enumVal )
+	{
+		return StateStrings[enumVal];
+	}
+	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
@@ -53,7 +58,7 @@ private:
 	OwnedArray<Slider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<Slider> theDecaySliders;
-	OwnedArray<ToggleButton> theStateButtons;
+	OwnedArray<TextButton> theStateButtons;
 	ScopedPointer<ToggleButton> theOnOffButton;
 	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theCopyButton;

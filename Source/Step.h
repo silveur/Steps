@@ -12,8 +12,6 @@
 #define STEP_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#define OFF	false	
-#define ON	true
 
 extern UndoManager* theUndoManager;
 
@@ -49,7 +47,7 @@ private:
 	{
 		theStepTree.setProperty("Pitch", thePitch, nullptr);
 		theStepTree.setProperty("Velocity", theVelocity, nullptr);
-		theStepTree.setProperty("State", theState, nullptr);
+		theStepTree.setProperty("State", ON, nullptr);
 		theStepTree.setProperty("Decay", theDecay, nullptr);
 	}
 	
@@ -57,7 +55,7 @@ private:
 	{
 		thePitch = theStepTree.getProperty("Pitch");
 		theVelocity = theStepTree.getProperty("Velocity");
-		theState = theStepTree.getProperty("State");
+		theState = (StepStates)(int)theStepTree.getProperty("State");
 		theDecay = theStepTree.getProperty("Decay");
 	}
 	
@@ -73,7 +71,7 @@ private:
 		}
 		else if(String(property) == "State")
 		{
-			theState = tree.getProperty(property);
+			theState = (StepStates)(int)tree.getProperty(property);
 		}
 		else if(String(property) == "Decay")
 		{
@@ -84,7 +82,7 @@ private:
 	int theVelocity;
 	int thePitch;
 	int theDecay;
-	bool theState;
+	StepStates theState;
 	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}

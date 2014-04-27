@@ -103,7 +103,9 @@ void Sequencer::carryOn()
 void Sequencer::triggerStep()
 {
 	thePosition = (thePosition+1) % theLength;
-	if (theStepArray[thePosition]->theState)
+	if (theStepArray[thePosition]->theState == JUMP)
+		thePosition = (thePosition+1) % theLength;
+	if (theStepArray[thePosition]->theState == ON)
 	{
 		Step* step = theStepArray[thePosition];
 		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);

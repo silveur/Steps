@@ -36,9 +36,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
 		theVelocitySliders[i]->addListener(this);
-		addAndMakeVisible(theStateButtons.add(new ToggleButton("State" + String(i))));
-		theStateButtons[i]->setButtonText("");
-		theStateButtons[i]->setToggleState((bool)theSequencerTree.getChild(i).getProperty("State"), dontSendNotification);
+		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
+		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
+		theStateButtons[i]->setButtonText(getTextForEnum(state));
+		
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
 		theDecaySliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
@@ -258,7 +259,18 @@ void SequencerView::buttonClicked(Button* button)
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
-		theSequencerTree.getChild(index).setProperty("State", (bool)button->getToggleState(), theUndoManager);
+		ModifierKeys key =  ModifierKeys::getCurrentModifiersRealtime();
+		int currentState = theSequencerTree.getChild(index).getProperty("State");
+		if (key.isCtrlDown())
+		{
+			currentState = JUMP;
+		}
+		else
+		{
+			currentState = !theSequencerTree.getChild(index).getProperty("State");
+		}
+		
+		theSequencerTree.getChild(index).setProperty("State", currentState, theUndoManager);
 	}
 }
 
@@ -364,7 +376,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 				if (String(property) == "Pitch")
 					theStepSliders[i]->setValue((int)tree.getProperty(property));
 				else if (String(property) == "State")
-					theStateButtons[i]->setToggleState((bool)tree.getProperty(property), dontSendNotification);
+				{
+					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
+					theStateButtons[i]->setButtonText(getTextForEnum(state));
+				}
 				else if (String(property) == "Velocity")
 					theVelocitySliders[i]->setValue((int)tree.getProperty(property));
 				else if (String(property) == "Decay")
