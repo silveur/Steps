@@ -310,9 +310,9 @@ String SequencerView::isOnScale(int value)
 		int* notes = theCurrentScale->getNotes().getRawDataPointer();
 		for(int j=0;j<theCurrentScale->getNotes().size();j++)
 		{
-			if ((int)value % 12 > 0)
+			if (value >= 0)
 			{
-				if (value == notes[j + rootNote])
+				if ((int)value % 12 == notes[j + rootNote])
 				{
 					returnedString = theCurrentScale->getName();
 					break;
@@ -320,7 +320,7 @@ String SequencerView::isOnScale(int value)
 			}
 			else if(value < 0)
 			{
-				if ((12 - abs(value)) == notes[j + rootNote] && (12 - abs(value)) != 0)
+				if ((12 - abs(value)) == notes[j + rootNote])
 				{
 					returnedString = theCurrentScale->getName();
 					break;
@@ -336,8 +336,8 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
-		 double value = slider->getValue();
-		String bubbleMessage = String(value) + isOnScale(value);
+		double value = slider->getValue();
+		String bubbleMessage = String(value) + " " + isOnScale(value);
 		showBubbleMessage(slider, bubbleMessage);
 		theSequencerTree.getChild(index).setProperty("Pitch", value, theUndoManager);
 	}
