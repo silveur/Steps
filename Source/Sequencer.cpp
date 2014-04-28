@@ -55,6 +55,7 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
+	theSequencerTree.setProperty("Scale", 1, nullptr);
 }
 
 void Sequencer::loadFromTree()

@@ -13,6 +13,7 @@
 
 ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 {
+	LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		ValueTree sequenceTree = theMasterTree.getChild(i);
@@ -39,7 +40,7 @@ void ControllerView::updatePositions()
 //		setSize(theMainScreen.getWidth()/1.1, 100);
 	}
 	else
-		setSize(theMainScreen.getWidth()/1.1, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
+		setSize(theMainScreen.getWidth()/2, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
 	
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{

@@ -11,6 +11,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
+#include "Scales.h"
 
 class ControllerView;
 
@@ -28,7 +29,7 @@ public:
 	void refreshMidiList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
-
+	void showBubbleMessage(Component* targetComponent, const String& textToShow);
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;
@@ -47,10 +48,13 @@ private:
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 	void updateNotesAndOctaves();
+	void loadScales();
+	String isOnScale(int value);
 	ScopedPointer<ComboBox> theMidiOutputList;
 	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
+	ScopedPointer<ComboBox> theScaleList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
@@ -65,6 +69,9 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
+	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
+	Scale* theCurrentScale;
+	OwnedArray<Scale> theScales;
 	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;

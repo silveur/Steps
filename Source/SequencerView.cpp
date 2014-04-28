@@ -23,7 +23,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
-		theStepSliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theStepSliders[i]->setRange(-12, 12, 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
@@ -73,6 +72,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
 	theImportButton->addListener(this);
+	
+	theCurrentBubbleMessage = new BubbleMessageComponent();
 
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -122,20 +123,23 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	updateSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
-
+	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
+	loadScales();
 	updateNotesAndOctaves();
+	theCurrentScale = nullptr;
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
 	theRootNoteList->addListener(this);
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
-	setRepaintsOnMouseActivity(false);
+	theScaleList->addListener(this);
 	setSize(getWidth(), getHeight());
 }
 
 SequencerView::~SequencerView()
 {
+	theCurrentScale = nullptr;
 }
 
 void SequencerView::handleAsyncUpdate()
@@ -157,8 +161,6 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::paint(Graphics& g)
 {
-	g.setColour(Colours::blue);
-	g.drawRect(0,0,getWidth(),getHeight());
 }
 
 void SequencerView::resized()
@@ -175,6 +177,7 @@ void SequencerView::resized()
 	theSequencerLength->setBounds(theChannelList->getRight(), 0, 150, 20);
 	theRootNoteList->setBounds(10, 20, 40, 20);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
+	theScaleList->setBounds(theRootOctaveList->getRight(), theRootOctaveList->getY(), theRootOctaveList->getWidth() * 2, theRootOctaveList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
 	theShuffleSlider->setBounds(200, 20, 30, 20);
 	theRangeSlider->setBounds(theShuffleSlider->getRight(), 20, 30, 20);
@@ -200,12 +203,10 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
 	}
-	
 	else if (button == theCopyButton)
 	{
 		getCopyTree() = theSequencerTree.createCopy();
 	}
-	
 	else if (button == thePasteButton)
 	{
 		getCopyTree().removeProperty("MidiOutput", nullptr);
@@ -221,12 +222,9 @@ void SequencerView::buttonClicked(Button* button)
 	{
 		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
-	
 	else if (button == theImportButton)
 	{
-		FileChooser fileChooser ("Load preset file...",
-								 thePresetFolder,
-								 "*.seq");
+		FileChooser fileChooser ("Load preset file...", thePresetFolder, "*.seq");
 		if (fileChooser.browseForFileToOpen())
 		{
 			File presetToLoad = fileChooser.getResult();
@@ -242,12 +240,9 @@ void SequencerView::buttonClicked(Button* button)
 			}
 		}
 	}
-	
 	else if (button == theExportButton)
 	{
-		FileChooser fileChooser ("Save as...",
-								 thePresetFolder,
-								 "*.seq");
+		FileChooser fileChooser ("Save as...", thePresetFolder, "*.seq");
 		if (fileChooser.browseForFileToSave(false))
 		{
 			File preset = File(fileChooser.getResult().getFullPathName());
@@ -255,7 +250,6 @@ void SequencerView::buttonClicked(Button* button)
 			theSequencerTree.writeToStream(outputStream);
 		}
 	}
-	
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
@@ -274,12 +268,60 @@ void SequencerView::buttonClicked(Button* button)
 	}
 }
 
+void SequencerView::showBubbleMessage(Component *targetComponent, const String &textToShow)
+{
+	if (Desktop::canUseSemiTransparentWindows())
+	{
+		theCurrentBubbleMessage->setAlwaysOnTop (true);
+		theCurrentBubbleMessage->addToDesktop (0);
+	}
+	else
+	{
+		targetComponent->getTopLevelComponent()->addChildComponent (theCurrentBubbleMessage);
+	}
+	AttributedString text(textToShow);
+	text.setJustification(Justification::centred);
+	theCurrentBubbleMessage->showAt(targetComponent, text, 800, true, false);
+}
+
+String SequencerView::isOnScale(int value)
+{
+	String returnedString;
+	if (theCurrentScale != nullptr)
+	{
+		int* notes = theCurrentScale->getNotes().getRawDataPointer();
+		for(int j=0;j<theCurrentScale->getNotes().size();j++)
+		{
+			if (value >= 0)
+			{
+				if ((int)value % 12 == notes[j])
+				{
+					returnedString = theCurrentScale->getName();
+					break;
+				}
+			}
+			else if(value < 0)
+			{
+				if ((12 - abs(value)) == notes[j])
+				{
+					returnedString = theCurrentScale->getName();
+					break;
+				}
+			}
+		}
+	}
+	return returnedString;
+}
+
 void SequencerView::sliderValueChanged(Slider* slider)
 {
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
-		theSequencerTree.getChild(index).setProperty("Pitch", (int)slider->getValue(), theUndoManager);
+		double value = slider->getValue();
+		String bubbleMessage = String(value) + " " + isOnScale(value);
+		showBubbleMessage(slider, bubbleMessage);
+		theSequencerTree.getChild(index).setProperty("Pitch", value, theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
 	{
@@ -329,6 +371,15 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
 	}
+	else if(comboBoxThatHasChanged == theScaleList)
+	{
+		int id = comboBoxThatHasChanged->getSelectedId();
+		if (id >= 2)
+			theCurrentScale = theScales[id-2];
+		else
+			theCurrentScale = nullptr;
+		theSequencerTree.setProperty("Scale", id, theUndoManager);
+	}
 }
 
 void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
@@ -367,6 +418,23 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
 	}
+	else if(String(property) == "RootNote")
+	{
+		theRootNoteList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "RootOctave")
+	{
+		theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "Scale")
+	{
+		int id = tree.getProperty(property);
+		if (id >= 2)
+			theCurrentScale = theScales[id-2];
+		else
+			theCurrentScale = nullptr;
+		theScaleList->setSelectedId(id, dontSendNotification);
+	}
 	else
 	{
 		for (int i=0; i<16;i++)
@@ -374,7 +442,9 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 			if (tree == (theSequencerTree.getChild(i)))
 			{
 				if (String(property) == "Pitch")
+				{
 					theStepSliders[i]->setValue((int)tree.getProperty(property));
+				}
 				else if (String(property) == "State")
 				{
 					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
@@ -417,6 +487,21 @@ void SequencerView::updateNotesAndOctaves()
 	theRootNoteList->addItem("B",12);
 	for (int i=0;i<8;i++)
 		theRootOctaveList->addItem(String(i), i+1);
+}
+
+void SequencerView::loadScales()
+{
+	theScaleList->addItem("No scaling", 1);
+	theScaleList->addItem("Major", 2);
+	theScaleList->addItem("Minor", 3);
+	theScaleList->addItem("Pentatonic Major", 4);
+	theScaleList->addItem("Pentatonic Minor", 5);
+	theScaleList->setSelectedId(theSequencerTree.getProperty("Scale"));
+
+	for (int i=1;i<theScaleList->getNumItems();i++)
+	{
+		theScales.add(new Scale(theScaleList->getItemText(i)));
+	}
 }
 
 
