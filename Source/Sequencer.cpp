@@ -109,8 +109,8 @@ void Sequencer::triggerStep()
 	if (theStepArray[thePosition]->theState == ON)
 	{
 		Step* step = theStepArray[thePosition];
-		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-		MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (theRange*step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
 		theMidiCore->outputMidi(onMsg);
 		theMidiCore->outputMidi(offMsg, step->theDecay);
 	}

@@ -15,13 +15,12 @@
 
 class ControllerView;
 
-class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener
+class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener, public Timer
 {
 public:
 	SequencerView(ValueTree& sequencerTree, ControllerView* rootView);
 	~SequencerView();
 
-	void paint(Graphics&);
 	void sliderValueChanged(Slider* slider);
 	void resized();
 	void buttonClicked(Button* button);
@@ -39,6 +38,11 @@ public:
 	const char * getTextForEnum( int enumVal )
 	{
 		return StateStrings[enumVal];
+	}
+	
+	void timerCallback()
+	{
+		showPopUp = true;
 	}
 	
 private:
@@ -76,6 +80,7 @@ private:
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
 	int thePosition;
+	bool showPopUp;
 };
 
 

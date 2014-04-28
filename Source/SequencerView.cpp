@@ -12,7 +12,7 @@
 extern UndoManager* theUndoManager;
 extern File thePresetFolder;
 
-SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView)
+SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView), showPopUp(true)
 {
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
@@ -23,7 +23,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
-		theStepSliders[i]->setRange(-12, 12, 1);
+		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
 		addAndMakeVisible(theVelocitySliders.add(new Slider("Velocity" + String(i))));
@@ -95,7 +95,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
 	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theRangeSlider->setRange(1, 5, 1);
+	theRangeSlider->setRange(1, 3, 1);
 	theRangeSlider->setTextValueSuffix(" Range");
 	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
@@ -159,10 +159,6 @@ void SequencerView::refreshMidiList()
 	}
 }
 
-void SequencerView::paint(Graphics& g)
-{
-}
-
 void SequencerView::resized()
 {
 	for(int i=0;i<16;i++)
@@ -190,23 +186,32 @@ void SequencerView::resized()
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, 20);
 }
 
+int randomise(int min, int max)
+{
+	return ((int)rand() % (max + abs(min))) - abs(min);
+}
+
 void SequencerView::buttonClicked(Button* button)
 {
 	if (button == theRandomAllButton)
 	{
+		showPopUp = false;
 		for (int i=0;i<16;i++)
 		{
 			ValueTree child = theSequencerTree.getChild(i);
-			int pitch = ((int)rand() % 24) - 12;
+			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
+			int max = (int)theSequencerTree.getProperty("Range") * 12;
+			int pitch = randomise(min , max);
 			while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
 		   {
-			   pitch = ((int)rand() % 24) - 12;
+			   pitch = randomise(min, max);
 		   }
 			child.setProperty("Pitch", pitch, theUndoManager);
 			child.setProperty("State", rand() % 2, theUndoManager);
 			child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
+		startTimer(100);
 	}
 	else if (button == theCopyButton)
 	{
@@ -307,7 +312,7 @@ String SequencerView::isOnScale(int value)
 			}
 			else if(value < 0)
 			{
-				if ((12 - abs(value)) == notes[j])
+				if ((12 - (abs(value) % 12)) == notes[j])
 				{
 					returnedString = theCurrentScale->getName();
 					break;
@@ -325,7 +330,8 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	{
 		double value = slider->getValue();
 		String bubbleMessage = String(value) + " " + isOnScale(value);
-		showBubbleMessage(slider, bubbleMessage);
+		if (showPopUp)
+			showBubbleMessage(slider, bubbleMessage);
 		theSequencerTree.getChild(index).setProperty("Pitch", value, theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
@@ -401,6 +407,12 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else if(String(property) == "Range")
 	{
+		int range = 12 * (int)theSequencerTree.getProperty("Range");
+		for(int i=0;i<16;i++)
+		{
+			theStepSliders[i]->setRange(0 - range, range, 1);
+			theStepSliders[i]->repaint();
+		}
 		theRangeSlider->setValue(tree.getProperty(property));
 	}
 	else if(String(property) == "Shuffle")
