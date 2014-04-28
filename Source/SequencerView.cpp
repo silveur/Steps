@@ -183,7 +183,6 @@ void SequencerView::resized()
 	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), 60, heigthDiv);
 	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, heigthDiv);
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, heigthDiv);
-	
 	for(int i=0;i<16;i++)
 	{
 		theStepSliders[i]->setBounds(theMidiOutputList->getX() + (getWidth()/16)*i, theRootNoteList->getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
@@ -258,6 +257,7 @@ void SequencerView::buttonClicked(Button* button)
 		FileChooser fileChooser ("Load preset file...", thePresetFolder, "*.seq");
 		if (fileChooser.browseForFileToOpen())
 		{
+			showPopUp = false;
 			File presetToLoad = fileChooser.getResult();
 			FileInputStream inputStream(presetToLoad);
 			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);

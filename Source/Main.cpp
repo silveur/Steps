@@ -29,6 +29,7 @@ public:
 		theUndoManager = new UndoManager();
 		theSequencerMaster = new Master();
 		mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
+		theUndoManager->clearUndoHistory();
 	}
 
 	void shutdown() override
