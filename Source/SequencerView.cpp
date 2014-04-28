@@ -161,29 +161,32 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	for(int i=0;i<16;i++)
-	{
-		theStepSliders[i]->setBounds((getWidth()/16)*i, 40, 50, 50);
-		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), 25, 20);
-		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), 25, 20);
-		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, 20);
-	}
-	theMidiOutputList->setBounds(10, 0, 150, 20);
-	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, 20);
-	theSequencerLength->setBounds(theChannelList->getRight(), 0, 150, 20);
-	theRootNoteList->setBounds(10, 20, 40, 20);
+	int heigthDiv = getHeight() / 8;
+
+	theMidiOutputList->setBounds(10, 10, 150, heigthDiv);
+	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, heigthDiv);
+	theSequencerLength->setBounds(theChannelList->getRight(), theMidiOutputList->getY(), 150, heigthDiv);
+	theRootNoteList->setBounds(10, theMidiOutputList->getBottom(), 40, heigthDiv);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theScaleList->setBounds(theRootOctaveList->getRight(), theRootOctaveList->getY(), theRootOctaveList->getWidth() * 2, theRootOctaveList->getHeight());
-	theRandomAllButton->setBounds(theSequencerLength->getRight(), 0, 90, 20);
-	theShuffleSlider->setBounds(200, 20, 30, 20);
-	theRangeSlider->setBounds(theShuffleSlider->getRight(), 20, 30, 20);
-	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, 20);
-	theCopyButton->setBounds(theRandomAllButton->getRight(), 0, 60, 20);
-	thePasteButton->setBounds(theCopyButton->getRight(), 0, 60, 20);
-	theStepView.setBounds(0, getHeight()-20, getWidth(), 20);
-	theOnOffButton->setBounds(thePasteButton->getRight() + 20, thePasteButton->getY(), 60, 20);
-	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, 20);
-	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, 20);
+	theRandomAllButton->setBounds(theSequencerLength->getRight(), theMidiOutputList->getY(), 90, heigthDiv);
+	theShuffleSlider->setBounds(200, theMidiOutputList->getBottom(), 30, heigthDiv);
+	theRangeSlider->setBounds(theShuffleSlider->getRight(), theMidiOutputList->getBottom(), 30, heigthDiv);
+	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, heigthDiv);
+	theCopyButton->setBounds(theRandomAllButton->getRight(), theMidiOutputList->getY(), 60, heigthDiv);
+	thePasteButton->setBounds(theCopyButton->getRight(), theMidiOutputList->getY(), 60, heigthDiv);
+	theStepView.setBounds(0, getHeight()-20, getWidth(), heigthDiv);
+	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), 60, heigthDiv);
+	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, heigthDiv);
+	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, heigthDiv);
+	
+	for(int i=0;i<16;i++)
+	{
+		theStepSliders[i]->setBounds(theMidiOutputList->getX() + (getWidth()/16)*i, theRootNoteList->getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
+		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
+		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
+		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), 50, heigthDiv);
+	}
 }
 
 int randomise(int min, int max)
@@ -220,6 +223,7 @@ void SequencerView::buttonClicked(Button* button)
 	else if (button == thePasteButton)
 	{
 		getCopyTree().removeProperty("MidiOutput", nullptr);
+		if (!getCopyTree().isValid()) return;
 		theSequencerTree.copyPropertiesFrom(getCopyTree(), theUndoManager);
 		for (int i=0; i<16; i++)
 		{

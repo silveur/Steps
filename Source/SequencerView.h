@@ -34,7 +34,6 @@ public:
 		static ValueTree theCopyTree;
 		return theCopyTree;
 	}
-	
 	const char * getTextForEnum( int enumVal )
 	{
 		return StateStrings[enumVal];

@@ -33,7 +33,7 @@ ControllerView::~ControllerView()
 
 void ControllerView::updatePositions()
 {
-	int sequencerHeight = theMainScreen.getHeight() / 5;
+	int sequencerHeight = theMainScreen.getHeight() / 6;
 	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
 	if (theSequencerViews.size() == 0)
 	{

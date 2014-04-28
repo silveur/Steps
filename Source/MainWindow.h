@@ -18,7 +18,7 @@
 class MainWindow: public DocumentWindow
 {
 public:
-	MainWindow(ValueTree& masterTree)  : DocumentWindow ("MainWindow",
+	MainWindow(ValueTree& masterTree)  : DocumentWindow ("Sequencer",
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{
