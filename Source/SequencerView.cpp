@@ -197,7 +197,12 @@ void SequencerView::buttonClicked(Button* button)
 		for (int i=0;i<16;i++)
 		{
 			ValueTree child = theSequencerTree.getChild(i);
-			child.setProperty("Pitch", ((int)rand() % 24) - 12, theUndoManager);
+			int pitch = ((int)rand() % 24) - 12;
+			while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
+		   {
+			   pitch = ((int)rand() % 24) - 12;
+		   }
+			child.setProperty("Pitch", pitch, theUndoManager);
 			child.setProperty("State", rand() % 2, theUndoManager);
 			child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
