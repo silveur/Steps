@@ -109,8 +109,6 @@ public:
 	{
 		g.setColour(Colours::black);
 		g.drawRect(getBounds());
-		g.setFont(16);
-		g.drawText(String("Num of Sequencers: " + String(theControllerView->getNumOfSequencer())), getWidth()/1.5, theAddSequencerButton->getY(), getWidth()/6, getHeight()/8, Justification::left, true);
 	}
 	
 	void resized()
