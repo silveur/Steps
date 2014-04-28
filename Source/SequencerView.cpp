@@ -140,7 +140,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	theScaleList->addListener(this);
-	setRepaintsOnMouseActivity(false);
 	setSize(getWidth(), getHeight());
 }
 
@@ -168,8 +167,6 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::paint(Graphics& g)
 {
-	g.setColour(Colours::blue);
-	g.drawRect(0,0,getWidth(),getHeight());
 }
 
 void SequencerView::resized()
@@ -212,12 +209,10 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
 	}
-	
 	else if (button == theCopyButton)
 	{
 		getCopyTree() = theSequencerTree.createCopy();
 	}
-	
 	else if (button == thePasteButton)
 	{
 		getCopyTree().removeProperty("MidiOutput", nullptr);
@@ -233,12 +228,9 @@ void SequencerView::buttonClicked(Button* button)
 	{
 		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
-	
 	else if (button == theImportButton)
 	{
-		FileChooser fileChooser ("Load preset file...",
-								 thePresetFolder,
-								 "*.seq");
+		FileChooser fileChooser ("Load preset file...", thePresetFolder, "*.seq");
 		if (fileChooser.browseForFileToOpen())
 		{
 			File presetToLoad = fileChooser.getResult();
@@ -254,12 +246,9 @@ void SequencerView::buttonClicked(Button* button)
 			}
 		}
 	}
-	
 	else if (button == theExportButton)
 	{
-		FileChooser fileChooser ("Save as...",
-								 thePresetFolder,
-								 "*.seq");
+		FileChooser fileChooser ("Save as...", thePresetFolder, "*.seq");
 		if (fileChooser.browseForFileToSave(false))
 		{
 			File preset = File(fileChooser.getResult().getFullPathName());
@@ -267,7 +256,6 @@ void SequencerView::buttonClicked(Button* button)
 			theSequencerTree.writeToStream(outputStream);
 		}
 	}
-	
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
@@ -304,7 +292,7 @@ void SequencerView::showBubbleMessage(Component *targetComponent, const String &
 
 String SequencerView::isOnScale(int value)
 {
-	String returnedString; int rootNote = theSequencerTree.getProperty("RootNote");
+	String returnedString;
 	if (theCurrentScale != nullptr)
 	{
 		int* notes = theCurrentScale->getNotes().getRawDataPointer();
@@ -312,7 +300,7 @@ String SequencerView::isOnScale(int value)
 		{
 			if (value >= 0)
 			{
-				if ((int)value % 12 == notes[j + rootNote])
+				if ((int)value % 12 == notes[j])
 				{
 					returnedString = theCurrentScale->getName();
 					break;
@@ -320,7 +308,7 @@ String SequencerView::isOnScale(int value)
 			}
 			else if(value < 0)
 			{
-				if ((12 - abs(value)) == notes[j + rootNote])
+				if ((12 - abs(value)) == notes[j])
 				{
 					returnedString = theCurrentScale->getName();
 					break;
@@ -435,6 +423,23 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "Offset")
 	{
 		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "RootNote")
+	{
+		theRootNoteList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "RootOctave")
+	{
+		theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "Scale")
+	{
+		int id = tree.getProperty(property);
+		if (id >= 2)
+			theCurrentScale = theScales[id-2];
+		else
+			theCurrentScale = nullptr;
+		theScaleList->setSelectedId(id, dontSendNotification);
 	}
 	else
 	{
