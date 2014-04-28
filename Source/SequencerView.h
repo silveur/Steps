@@ -68,6 +68,7 @@ private:
 	OwnedArray<TextButton> theStateButtons;
 	ScopedPointer<ToggleButton> theOnOffButton;
 	ScopedPointer<TextButton> theRandomAllButton;
+	ScopedPointer<TextButton> theResetAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;

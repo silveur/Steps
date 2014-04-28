@@ -61,6 +61,9 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theRandomAllButton = new TextButton("Random all"));
 	theRandomAllButton->addListener(this);
 	
+	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
+	theResetAllButton->addListener(this);
+	
 	addAndMakeVisible(theCopyButton = new TextButton("Copy settings"));
 	theCopyButton->addListener(this);
 	
@@ -170,6 +173,7 @@ void SequencerView::resized()
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theScaleList->setBounds(theRootOctaveList->getRight(), theRootOctaveList->getY(), theRootOctaveList->getWidth() * 2, theRootOctaveList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), theMidiOutputList->getY(), 90, heigthDiv);
+	theResetAllButton->setBounds(theRandomAllButton->getX(), theRandomAllButton->getBottom(), theRandomAllButton->getWidth(), heigthDiv);
 	theShuffleSlider->setBounds(200, theMidiOutputList->getBottom(), 30, heigthDiv);
 	theRangeSlider->setBounds(theShuffleSlider->getRight(), theMidiOutputList->getBottom(), 30, heigthDiv);
 	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, heigthDiv);
@@ -196,9 +200,9 @@ int randomise(int min, int max)
 
 void SequencerView::buttonClicked(Button* button)
 {
+	showPopUp = false;
 	if (button == theRandomAllButton)
 	{
-		showPopUp = false;
 		for (int i=0;i<16;i++)
 		{
 			ValueTree child = theSequencerTree.getChild(i);
@@ -214,7 +218,6 @@ void SequencerView::buttonClicked(Button* button)
 			child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
 			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 		}
-		startTimer(100);
 	}
 	else if (button == theCopyButton)
 	{
@@ -228,6 +231,20 @@ void SequencerView::buttonClicked(Button* button)
 		for (int i=0; i<16; i++)
 		{
 			ValueTree sourceChild = getCopyTree().getChild(i);
+			ValueTree destinationChild = theSequencerTree.getChild(i);
+			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
+		}
+	}
+	else if (button == theResetAllButton)
+	{
+		File presetToLoad = File(thePresetFolder.getFullPathName() + "/default.seq");
+		FileInputStream inputStream(presetToLoad);
+		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+		treeToLoad.removeProperty("MidiOutput", nullptr);
+		theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
+		for (int i=0; i<16; i++)
+		{
+			ValueTree sourceChild = treeToLoad.getChild(i);
 			ValueTree destinationChild = theSequencerTree.getChild(i);
 			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}
@@ -280,6 +297,7 @@ void SequencerView::buttonClicked(Button* button)
 		
 		theSequencerTree.getChild(index).setProperty("State", currentState, theUndoManager);
 	}
+	startTimer(100);
 }
 
 void SequencerView::showBubbleMessage(Component *targetComponent, const String &textToShow)
