@@ -70,7 +70,7 @@ private:
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
 	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
-	ScopedPointer<Scale> theCurrentScale;
+	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
 	StepView theStepView;
 	ValueTree theSequencerTree;

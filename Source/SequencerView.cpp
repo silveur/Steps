@@ -127,6 +127,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theScaleList->addItem("No scaling", 1);
 	theScaleList->addItem("Major", 2);
 	theScaleList->addItem("Minor", 3);
+	theScaleList->addItem("Pentatonic Major", 4);
+	theScaleList->addItem("Pentatonic Minor", 5);
 	theScaleList->setSelectedId(1);
 	updateNotesAndOctaves();
 	loadScales();
@@ -144,6 +146,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 
 SequencerView::~SequencerView()
 {
+	theCurrentScale = nullptr;
 }
 
 void SequencerView::handleAsyncUpdate()
@@ -307,7 +310,7 @@ String SequencerView::isOnScale(int value)
 		int* notes = theCurrentScale->getNotes().getRawDataPointer();
 		for(int j=0;j<theCurrentScale->getNotes().size();j++)
 		{
-			if (value > 0)
+			if ((int)value % 12 > 0)
 			{
 				if (value == notes[j + rootNote])
 				{
@@ -391,6 +394,8 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		int id = comboBoxThatHasChanged->getSelectedId();
 		if (id >= 2)
 			theCurrentScale = theScales[id-2];
+		else
+			theCurrentScale = nullptr;
 		theSequencerTree.setProperty("Scale", id, theUndoManager);
 	}
 }
@@ -487,8 +492,10 @@ void SequencerView::updateNotesAndOctaves()
 
 void SequencerView::loadScales()
 {
-	theScales.add(new Scale("Major"));
-	theScales.add(new Scale("Minor"));
+	for (int i=1;i<theScaleList->getNumItems();i++)
+	{
+		theScales.add(new Scale(theScaleList->getItemText(i)));
+	}
 }
 
 

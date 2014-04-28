@@ -14,6 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Master.h"
 #include "SequencerView.h"
+#include "LookAndFeel.h"
 
 class HeaderView;
 
@@ -37,6 +38,7 @@ private:
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
+	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
 	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
 	ValueTree theMasterTree;

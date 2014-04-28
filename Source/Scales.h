@@ -26,6 +26,16 @@ public:
 			const int minor[7] ={0, 2, 3, 5, 7, 9, 11};
 			theNotes = Array<int>(minor, 7);
 		}
+		else if (name == "Pentatonic Major")
+		{
+			const int minor[6] ={0, 2, 5, 7, 9, 12};
+			theNotes = Array<int>(minor, 6);
+		}
+		else if (name == "Pentatonic Minor")
+		{
+			const int minor[6] ={0, 3, 5, 7, 10, 12};
+			theNotes = Array<int>(minor, 6);
+		}
 	}
 	
 	~Scale()

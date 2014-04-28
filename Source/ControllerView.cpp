@@ -10,11 +10,10 @@
 
 #include "ControllerView.h"
 #include "HeaderView.h"
-#include "LookAndFeel.h"
 
 ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 {
-	LookAndFeel::setDefaultLookAndFeel(new SeqLookAndFeel());
+	LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		ValueTree sequenceTree = theMasterTree.getChild(i);
