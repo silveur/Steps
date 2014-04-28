@@ -18,12 +18,11 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<16;i++)
 	{
-		addAndMakeVisible(theStepSliders.add(new SeqSlider("Pitch" + String(i))));
+		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
-		theStepSliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theStepSliders[i]->setRange(-12, 12, 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
@@ -73,6 +72,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
 	theImportButton->addListener(this);
+	
+	theCurrentBubbleMessage = new BubbleMessageComponent();
 
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -280,31 +281,44 @@ void SequencerView::buttonClicked(Button* button)
 	}
 }
 
+void SequencerView::showBubbleMessage(Component *targetComponent, const String &textToShow)
+{
+	if (Desktop::canUseSemiTransparentWindows())
+	{
+		theCurrentBubbleMessage->setAlwaysOnTop (true);
+		theCurrentBubbleMessage->addToDesktop (0);
+	}
+	else
+	{
+		targetComponent->getTopLevelComponent()->addChildComponent (theCurrentBubbleMessage);
+	}
+	AttributedString text(textToShow);
+	text.setJustification(Justification::centred);
+	theCurrentBubbleMessage->showAt(targetComponent, text, 800, true, false);
+
+}
+
 void SequencerView::sliderValueChanged(Slider* slider)
 {
-	const int notes[7] = {0, 2, 4, 5, 7, 9, 11};
+	
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
-		String suffix;
-		for(int i=0;i<theScales[0]->getNotes().size();i++)
+		String bubbleMessage;
+		const int notes[7] = {0, 2, 4, 5, 7, 9, 11};
+		for(int j=0;j<theScales[0]->getNotes().size();j++)
 		{
-			if (slider->getValue() == notes[i])
+			if (slider->getValue() == notes[j])
 			{
-				suffix = "Major";
+				bubbleMessage = String(slider->getValue()) + " Major";
 				break;
 			}
 			else
 			{
-				suffix = String();
+				bubbleMessage = String(slider->getValue());
 			}
 		}
-		DBG("Suffix:" << suffix);
-		slider->setTextValueSuffix(suffix);
-		Component* pop = slider->getCurrentPopupDisplay();
-		pop->setName(suffix);
-		DBG("Slider suffix:" << slider->getTextValueSuffix());
-
+		showBubbleMessage(slider, bubbleMessage);
 		theSequencerTree.getChild(index).setProperty("Pitch", slider->getValue(), theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
@@ -359,20 +373,6 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Scale", id, theUndoManager);
-		if (id == 1)
-		{
-			for (int i =0;i<16;i++)
-			{
-				theStepSliders[i]->clearScale();
-			}
-		}
-		else
-		{
-			for (int i =0;i<16;i++)
-			{
-				theStepSliders[i]->registerScale(theScales[id - 2]);
-			}
-		}
 	}
 }
 
@@ -419,7 +419,9 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 			if (tree == (theSequencerTree.getChild(i)))
 			{
 				if (String(property) == "Pitch")
+				{
 					theStepSliders[i]->setValue((int)tree.getProperty(property));
+				}
 				else if (String(property) == "State")
 				{
 					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
