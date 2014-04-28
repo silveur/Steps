@@ -287,24 +287,24 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	if(slider->getName().contains("Pitch"))
 	{
 		String suffix;
-//		DBG("Slider value:" << slider->getValue());
 		for(int i=0;i<theScales[0]->getNotes().size();i++)
 		{
-//			DBG("Scale note at index:" << i << "value:" << theScales[0]->getNotes()[i]);
 			if (slider->getValue() == notes[i])
 			{
-				
 				suffix = "Major";
 				break;
 			}
 			else
 			{
-				suffix = "";
+				suffix = String();
 			}
 		}
 		DBG("Suffix:" << suffix);
 		slider->setTextValueSuffix(suffix);
-	
+		Component* pop = slider->getCurrentPopupDisplay();
+		pop->setName(suffix);
+		DBG("Slider suffix:" << slider->getTextValueSuffix());
+
 		theSequencerTree.getChild(index).setProperty("Pitch", slider->getValue(), theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
