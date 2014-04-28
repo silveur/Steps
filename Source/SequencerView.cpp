@@ -124,14 +124,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
 	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
-	theScaleList->addItem("No scaling", 1);
-	theScaleList->addItem("Major", 2);
-	theScaleList->addItem("Minor", 3);
-	theScaleList->addItem("Pentatonic Major", 4);
-	theScaleList->addItem("Pentatonic Minor", 5);
-	theScaleList->setSelectedId(1);
-	updateNotesAndOctaves();
 	loadScales();
+	updateNotesAndOctaves();
 	theCurrentScale = nullptr;
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
@@ -497,6 +491,13 @@ void SequencerView::updateNotesAndOctaves()
 
 void SequencerView::loadScales()
 {
+	theScaleList->addItem("No scaling", 1);
+	theScaleList->addItem("Major", 2);
+	theScaleList->addItem("Minor", 3);
+	theScaleList->addItem("Pentatonic Major", 4);
+	theScaleList->addItem("Pentatonic Minor", 5);
+	theScaleList->setSelectedId(theSequencerTree.getProperty("Scale"));
+
 	for (int i=1;i<theScaleList->getNumItems();i++)
 	{
 		theScales.add(new Scale(theScaleList->getItemText(i)));
