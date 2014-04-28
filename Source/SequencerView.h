@@ -48,6 +48,8 @@ private:
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 	void updateNotesAndOctaves();
+	void loadScales();
+	String isOnScale(int value);
 	ScopedPointer<ComboBox> theMidiOutputList;
 	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
@@ -68,6 +70,7 @@ private:
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
 	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
+	ScopedPointer<Scale> theCurrentScale;
 	OwnedArray<Scale> theScales;
 	StepView theStepView;
 	ValueTree theSequencerTree;

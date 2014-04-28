@@ -126,9 +126,11 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
 	theScaleList->addItem("No scaling", 1);
 	theScaleList->addItem("Major", 2);
+	theScaleList->addItem("Minor", 3);
 	theScaleList->setSelectedId(1);
-	theScales.add(new Scale("C", "Major"));
 	updateNotesAndOctaves();
+	loadScales();
+	theCurrentScale = nullptr;
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
 	theRootNoteList->addListener(this);
@@ -295,31 +297,46 @@ void SequencerView::showBubbleMessage(Component *targetComponent, const String &
 	AttributedString text(textToShow);
 	text.setJustification(Justification::centred);
 	theCurrentBubbleMessage->showAt(targetComponent, text, 800, true, false);
+}
 
+String SequencerView::isOnScale(int value)
+{
+	String returnedString; int rootNote = theSequencerTree.getProperty("RootNote");
+	if (theCurrentScale != nullptr)
+	{
+		int* notes = theCurrentScale->getNotes().getRawDataPointer();
+		for(int j=0;j<theCurrentScale->getNotes().size();j++)
+		{
+			if (value > 0)
+			{
+				if (value == notes[j + rootNote])
+				{
+					returnedString = theCurrentScale->getName();
+					break;
+				}
+			}
+			else if(value < 0)
+			{
+				if ((12 - abs(value)) == notes[j + rootNote] && (12 - abs(value)) != 0)
+				{
+					returnedString = theCurrentScale->getName();
+					break;
+				}
+			}
+		}
+	}
+	return returnedString;
 }
 
 void SequencerView::sliderValueChanged(Slider* slider)
 {
-	
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
-		String bubbleMessage;
-		const int notes[7] = {0, 2, 4, 5, 7, 9, 11};
-		for(int j=0;j<theScales[0]->getNotes().size();j++)
-		{
-			if (slider->getValue() == notes[j])
-			{
-				bubbleMessage = String(slider->getValue()) + " Major";
-				break;
-			}
-			else
-			{
-				bubbleMessage = String(slider->getValue());
-			}
-		}
+		 double value = slider->getValue();
+		String bubbleMessage = String(value) + isOnScale(value);
 		showBubbleMessage(slider, bubbleMessage);
-		theSequencerTree.getChild(index).setProperty("Pitch", slider->getValue(), theUndoManager);
+		theSequencerTree.getChild(index).setProperty("Pitch", value, theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))
 	{
@@ -372,6 +389,8 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	else if(comboBoxThatHasChanged == theScaleList)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
+		if (id >= 2)
+			theCurrentScale = theScales[id-2];
 		theSequencerTree.setProperty("Scale", id, theUndoManager);
 	}
 }
@@ -464,6 +483,12 @@ void SequencerView::updateNotesAndOctaves()
 	theRootNoteList->addItem("B",12);
 	for (int i=0;i<8;i++)
 		theRootOctaveList->addItem(String(i), i+1);
+}
+
+void SequencerView::loadScales()
+{
+	theScales.add(new Scale("Major"));
+	theScales.add(new Scale("Minor"));
 }
 
 

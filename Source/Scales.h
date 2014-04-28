@@ -14,15 +14,17 @@
 class Scale
 {
 public:
-	Scale(const String& root, const String& name): theScaleName(name)
+	Scale(const String& name): theScaleName(name)
 	{
-		if (root == "C")
+		if (name == "Major")
 		{
-			if (name == "Major")
-			{
-				const int notes[7] = {0, 2, 4, 5, 7, 9, 11};
-				theNotes = Array<int>(notes, 7);
-			}
+			const int major[7] ={0, 2, 4, 5, 7, 9, 11};
+			theNotes = Array<int>(major, 7);
+		}
+		else if (name == "Minor")
+		{
+			const int minor[7] ={0, 2, 3, 5, 7, 9, 11};
+			theNotes = Array<int>(minor, 7);
 		}
 	}
 	
@@ -34,6 +36,11 @@ public:
 	Array<int>& getNotes()
 	{
 		return theNotes;
+	}
+	
+	String& getName()
+	{
+		return theScaleName;
 	}
 	
 private:
