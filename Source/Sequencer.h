@@ -56,6 +56,7 @@ private:
 	bool theOnOffStatus;
 	bool isIdle;
 	bool waitForShuffle;
+	Chains theChain;
 };
 
 

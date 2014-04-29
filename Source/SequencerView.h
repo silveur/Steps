@@ -29,6 +29,7 @@ public:
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
 	void showBubbleMessage(Component* targetComponent, const String& textToShow);
+	void updateChainBox();
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;
@@ -58,6 +59,7 @@ private:
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<ComboBox> theScaleList;
+	ScopedPointer<ComboBox> theChainList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;

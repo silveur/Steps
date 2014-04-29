@@ -24,6 +24,14 @@ enum StepStates
 	JUMP
 };
 
+enum Chains
+{
+	SINGLE,
+	DOUBLE,
+	TRIPLE,
+	QUADRUPLE
+};
+
 static const char * StateStrings[] = { "OFF", "ON", "JUMP" };
 
 // [END_USER_CODE_SECTION]

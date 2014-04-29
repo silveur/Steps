@@ -40,7 +40,7 @@ void ControllerView::updatePositions()
 //		setSize(theMainScreen.getWidth()/1.1, 100);
 	}
 	else
-		setSize(theMainScreen.getWidth()/1.6, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
+		setSize(theMainScreen.getWidth()/1.5, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
 	
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
@@ -71,7 +71,6 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 	if(sequencerTreeToAdd.isValid())
 	{
 		ValueTree copiedTree = sequencerTreeToAdd.createCopy();
-
 		theMasterTree.addChild(copiedTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(copiedTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
@@ -81,6 +80,8 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 	{
 		ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
 		theMasterTree.addChild(sequencerTree, -1, nullptr);
+		int index = theMasterTree.indexOf(sequencerTree);
+		if (index > 0) theSequencerViews[index-1]->updateChainBox();
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
 		updatePositions();

@@ -112,8 +112,14 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOnOffButton->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
-	theMidiOutputList->setTextWhenNothingSelected("Select an midi output");
+	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
+	
+	addAndMakeVisible(theChainList = new ComboBox("Chain"));
+	theChainList->addItem("Single", 1);
+	theChainList->addItem("Dual", 2);
+	theChainList->setSelectedItemIndex(theSequencerTree.getProperty("Chain"));
+	theChainList->addListener(this);
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	for (int i=1;i<=16;i++)
@@ -184,6 +190,7 @@ void SequencerView::resized()
 	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), 60, heigthDiv);
 	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, heigthDiv);
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, heigthDiv);
+	theChainList->setBounds(theExportButton->getRight(), theExportButton->getY(), widthDiv * 2, heigthDiv);
 	for(int i=0;i<16;i++)
 	{
 		theStepSliders[i]->setBounds(theMidiOutputList->getX() + (getWidth()/16)*i, theRootNoteList->getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
@@ -405,6 +412,11 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
 	}
+	else if(comboBoxThatHasChanged == theChainList)
+	{
+		int id = comboBoxThatHasChanged->getSelectedItemIndex();
+		theSequencerTree.setProperty("Chain", id, theUndoManager);
+	}
 	else if(comboBoxThatHasChanged == theScaleList)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
@@ -465,6 +477,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "RootOctave")
 	{
 		theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "Chain")
+	{
+		theChainList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "Scale")
 	{
@@ -541,6 +557,17 @@ void SequencerView::loadScales()
 	for (int i=1;i<theScaleList->getNumItems();i++)
 	{
 		theScales.add(new Scale(theScaleList->getItemText(i)));
+	}
+}
+
+void SequencerView::updateChainBox()
+{
+	ValueTree parent = theSequencerTree.getParent();
+	int sequencerIndex = parent.indexOf(theSequencerTree);
+	int numSeqToChain = parent.getNumChildren() - sequencerIndex;
+	if (parent.getChild(sequencerIndex+1).isValid())
+	{
+		DBG("Sequencer to chain:" << numSeqToChain);
 	}
 }
 
