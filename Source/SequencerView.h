@@ -23,6 +23,7 @@ public:
 
 	void sliderValueChanged(Slider* slider);
 	void resized();
+	void paint(Graphics& g);
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
@@ -30,16 +31,12 @@ public:
 	void updateSelectedMidiOut(String& midiOut);
 	void showBubbleMessage(Component* targetComponent, const String& textToShow);
 	void updateChainBox();
+	const char * getTextForEnum(int enumVal);
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;
 		return theCopyTree;
 	}
-	const char * getTextForEnum( int enumVal )
-	{
-		return StateStrings[enumVal];
-	}
-	
 	void timerCallback()
 	{
 		showPopUp = true;
@@ -81,6 +78,7 @@ private:
 	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
+	Image theStepImage;
 	int thePosition;
 	bool showPopUp;
 };

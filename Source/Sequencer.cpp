@@ -22,7 +22,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theChannel = 1;
 		thePosition = 0;
 		thePpqCount = 0;
-		theLength = 16;
+		theLength = 32;
 		theRootNote = 0;
 		theRootOctave = 3;
 		theShuffle = 0;
@@ -31,7 +31,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theOnOffStatus = ON;
 		theChain = SINGLE;
 		initSequencerTree();
-		for (int i=0; i<16; i++)
+		for (int i=0; i<32; i++)
 		{
 			ValueTree stepTree = sequencerTree.getChild(i);
 			stepTree = ValueTree("Step" + String(i));
@@ -72,7 +72,7 @@ void Sequencer::loadFromTree()
 	theOffset = theSequencerTree.getProperty("Offset");
 	theChain = (Chains)(int)theSequencerTree.getProperty("Chain");
 	
-	for (int i=0; i<16; i++)
+	for (int i=0; i<32; i++)
 	{
 		ValueTree stepTree = theSequencerTree.getChild(i);
 		theStepArray.add(new Step(stepTree));

@@ -33,19 +33,25 @@ ControllerView::~ControllerView()
 
 void ControllerView::updatePositions()
 {
-	int sequencerHeight = theMainScreen.getHeight() / 5;
-	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
-	if (theSequencerViews.size() == 0)
-	{
-//		setSize(theMainScreen.getWidth()/1.1, 100);
-	}
-	else
-		setSize(theMainScreen.getWidth()/1.5, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
-	
+	int sequencer16Height = theMainScreen.getHeight() / 4;
+	int sequencer32Height = theMainScreen.getHeight() / 3;
+	int totalHeigth = 0;
+	int sequencerWidth = theMainScreen.getWidth() / 1.5;
+	theHeaderView->setBounds(0, 0, sequencerWidth, theMainScreen.getHeight() / 24);
+	totalHeigth += theHeaderView->getHeight();
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencerHeight), getWidth(), sequencerHeight);
+		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
+		{
+			theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencer32Height), sequencerWidth, sequencer32Height);
+		}
+		else if ((int)theMasterTree.getChild(i).getProperty("Length") < 17)
+		{
+			theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencer16Height), sequencerWidth, sequencer16Height);
+		}
+		totalHeigth += theSequencerViews[i]->getHeight();
 	}
+	setSize(sequencerWidth, totalHeigth);
 }
 
 void ControllerView::resized()
@@ -80,9 +86,9 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 	{
 		ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
 		theMasterTree.addChild(sequencerTree, -1, nullptr);
-		int index = theMasterTree.indexOf(sequencerTree);
-		if (index > 0) theSequencerViews[index-1]->updateChainBox();
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
+		for (int i=0; i<theMasterTree.getNumChildren(); i++)
+		{ theSequencerViews[i]->updateChainBox(); }
 		addAndMakeVisible(theSequencerViews.getLast());
 		updatePositions();
 	}
