@@ -14,6 +14,7 @@ extern File thePresetFolder;
 
 SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView), showPopUp(true)
 {
+	showPopUp = false;
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<theSequencerTree.getNumChildren();i++)
@@ -143,6 +144,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theScaleList->addListener(this);
 	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
+	startTimer(200);
 }
 
 SequencerView::~SequencerView()
@@ -331,7 +333,7 @@ void SequencerView::showBubbleMessage(Component *targetComponent, const String &
 	}
 	AttributedString text(textToShow);
 	text.setJustification(Justification::centred);
-	theCurrentBubbleMessage->showAt(targetComponent, text, 800, true, false);
+	theCurrentBubbleMessage->showAt(targetComponent, text, 500, true, false);
 }
 
 String SequencerView::isOnScale(int value)

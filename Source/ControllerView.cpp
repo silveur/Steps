@@ -51,7 +51,7 @@ void ControllerView::updatePositions()
 		}
 		totalHeigth += theSequencerViews[i]->getHeight();
 	}
-	if (getWidth() != sequencerWidth && getHeight() != totalHeigth)
+	if (theMasterTree.getNumChildren() != 0)
 		setSize(sequencerWidth, totalHeigth);
 }
 

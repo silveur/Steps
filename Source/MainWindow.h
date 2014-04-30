@@ -13,7 +13,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
-#include "Master.h"
 
 class MainWindow: public DocumentWindow
 {
@@ -24,14 +23,13 @@ public:
 	{
 		setContentOwned (new ControllerView(masterTree), true);
 		setUsingNativeTitleBar(true);
-		setResizable(false, false);
+		setResizable(true, false);
 		centreWithSize (getWidth(), getHeight());
 		setVisible (true);
 	}
-	
+
 	void closeButtonPressed()
-	{
-		
+	{		
 		JUCEApplication::getInstance()->systemRequestedQuit();
 	}
 	
