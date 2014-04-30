@@ -295,6 +295,7 @@ void SequencerView::buttonClicked(Button* button)
 		if (fileChooser.browseForFileToSave(false))
 		{
 			File preset = File(fileChooser.getResult().getFullPathName());
+			if (preset.exists()) preset.deleteFile();
 			FileOutputStream outputStream(preset);
 			theSequencerTree.writeToStream(outputStream);
 		}

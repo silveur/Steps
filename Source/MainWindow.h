@@ -24,7 +24,7 @@ public:
 	{
 		setContentOwned (new ControllerView(masterTree), true);
 		setUsingNativeTitleBar(true);
-		setResizable(true, true);
+		setResizable(false, false);
 		centreWithSize (getWidth(), getHeight());
 		setVisible (true);
 	}

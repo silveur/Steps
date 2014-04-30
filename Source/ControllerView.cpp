@@ -39,7 +39,7 @@ void ControllerView::updatePositions()
 	int sequencerWidth = theMainScreen.getWidth() / 1.5;
 	theHeaderView->setBounds(0, 0, sequencerWidth, theMainScreen.getHeight() / 24);
 	totalHeigth += theHeaderView->getHeight();
-	for (int i=0; i<theSequencerViews.size(); i++)
+	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
 		{
@@ -51,7 +51,8 @@ void ControllerView::updatePositions()
 		}
 		totalHeigth += theSequencerViews[i]->getHeight();
 	}
-	setSize(sequencerWidth, totalHeigth);
+	if (getWidth() != sequencerWidth && getHeight() != totalHeigth)
+		setSize(sequencerWidth, totalHeigth);
 }
 
 void ControllerView::resized()
