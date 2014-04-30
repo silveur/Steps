@@ -22,7 +22,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theChannel = 1;
 		thePosition = 0;
 		thePpqCount = 0;
-		theLength = 32;
+		theLength = 16;
 		theRootNote = 0;
 		theRootOctave = 3;
 		theShuffle = 0;
