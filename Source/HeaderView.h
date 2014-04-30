@@ -56,11 +56,11 @@ public:
 		}
 		else if (buttonThatWasClicked == theUndoButton)
 		{
-			theUndoManager->undo();
+			theControllerView->undo();
 		}
 		else if (buttonThatWasClicked == theRedoButton)
 		{
-			theUndoManager->redo();
+			theControllerView->redo();
 		}
 		else if (buttonThatWasClicked == theKickBackButton)
 		{

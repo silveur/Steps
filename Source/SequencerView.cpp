@@ -397,6 +397,12 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	else if(slider == theSequencerLength)
 	{
 		int length = slider->getValue();
+		if (length == 1)
+		{
+			theOffsetSlider->setValue(0);
+			theOffsetSlider->setRange(0, 1, 1);
+			return;
+		}
 		if (theOffsetSlider->getValue() > length - 1)
 			theOffsetSlider->setValue(length-1);
 		theOffsetSlider->setRange(0, length-1, 1);

@@ -69,6 +69,32 @@ void ControllerView::kickBack()
 	}
 }
 
+void ControllerView::undo()
+{
+	for (int i=0; i<theSequencerViews.size(); i++)
+	{
+		theSequencerViews[i]->showPopUp = false;
+	}
+	theUndoManager->undo();
+	for (int i=0; i<theSequencerViews.size(); i++)
+	{
+		theSequencerViews[i]->startTimer(100);
+	}
+}
+
+void ControllerView::redo()
+{
+	for (int i=0; i<theSequencerViews.size(); i++)
+	{
+		theSequencerViews[i]->showPopUp = false;
+	}
+	theUndoManager->redo();
+	for (int i=0; i<theSequencerViews.size(); i++)
+	{
+		theSequencerViews[i]->startTimer(100);
+	}
+}
+
 const int ControllerView::getNumOfSequencer() const
 {
 	return theMasterTree.getNumChildren();

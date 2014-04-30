@@ -31,6 +31,8 @@ public:
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
 	Rectangle<int>& getScreenSize() { return theMainScreen; }
+	void undo();
+	void redo();
 	bool keyPressed (const KeyPress &key, Component *originatingComponent)
 	{
 		for (int i=0; i<theMasterTree.getNumChildren(); i++)
