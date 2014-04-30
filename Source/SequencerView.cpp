@@ -91,11 +91,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
 	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theOffsetSlider->setRange(0, 15, 1);
 	theOffsetSlider->setTextValueSuffix(" Offset");
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
+	int length = theSequencerTree.getProperty("Length");
+	if (length > 16) theOffsetSlider->setRange(0, 31, 1);
+	else theOffsetSlider->setRange(0, 15, 1);
 	theOffsetSlider->addListener(this);
 	
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
@@ -116,12 +118,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
-	
-	addAndMakeVisible(theChainList = new ComboBox("Chain"));
-	theChainList->addItem("Single", 1);
-	theChainList->addItem("Dual", 2);
-	theChainList->setSelectedItemIndex(theSequencerTree.getProperty("Chain"));
-	theChainList->addListener(this);
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	for (int i=1;i<=16;i++)
@@ -178,15 +174,10 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	int numOfStep = theSequencerTree.getProperty("Length");
-	int heigthDiv;
-	if (numOfStep > 16)
-		heigthDiv = getHeight() / 16;
-	else if (numOfStep <= 16)
-		heigthDiv = getHeight() / 8;
-	int widthDiv = getWidth() / 24;
+	int heigthDiv = theControllerView->getScreenSize().getHeight() / 32;
+	int widthDiv = theControllerView->getScreenSize().getWidth() / 24;
 
-	theMidiOutputList->setBounds(10, 10, 150, heigthDiv);
+	theMidiOutputList->setBounds(10, 0, 150, heigthDiv);
 	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, heigthDiv);
 	theSequencerLength->setBounds(theChannelList->getRight(), theMidiOutputList->getY(), 150, heigthDiv);
 	theRootNoteList->setBounds(10, theMidiOutputList->getBottom(), 40, heigthDiv);
@@ -202,7 +193,6 @@ void SequencerView::resized()
 	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), 60, heigthDiv);
 	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, heigthDiv);
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, heigthDiv);
-	theChainList->setBounds(theExportButton->getRight(), theExportButton->getY(), widthDiv * 2, heigthDiv);
 	for(int i=0;i<16;i++)
 	{
 		theStepSliders[i]->setBounds(theMidiOutputList->getX() + (getWidth()/16)*i, theRootNoteList->getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
@@ -211,10 +201,9 @@ void SequencerView::resized()
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
 	}
 	theStepView.setBounds(theMidiOutputList->getX(), theStateButtons[0]->getBottom(), getWidth(), heigthDiv);
-	if ((int)theSequencerTree.getProperty("Length") < 17) return;
 	for(int i=16;i<theSequencerTree.getNumChildren();i++)
 	{
-		theStepSliders[i]->setBounds(theStepSliders[i-16]->getX(), theStepView.getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
+		theStepSliders[i]->setBounds(theStepSliders[i-16]->getX(), theStepView.getBottom(), heigthDiv * 2, heigthDiv * 2);
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
@@ -323,7 +312,6 @@ void SequencerView::buttonClicked(Button* button)
 		{
 			currentState = !theSequencerTree.getChild(index).getProperty("State");
 		}
-		
 		theSequencerTree.getChild(index).setProperty("State", currentState, theUndoManager);
 	}
 	startTimer(100);
@@ -395,6 +383,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	}
 	else if(slider == theSequencerLength)
 	{
+		int length = slider->getValue();
+		if (theOffsetSlider->getValue() > length - 1)
+			theOffsetSlider->setValue(length-1);
+		theOffsetSlider->setRange(0, length-1, 1);
 		theSequencerTree.setProperty("Length", slider->getValue(), theUndoManager);
 	}
 	else if(slider == theShuffleSlider)
@@ -432,11 +424,6 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
-	}
-	else if(comboBoxThatHasChanged == theChainList)
-	{
-		int id = comboBoxThatHasChanged->getSelectedItemIndex();
-		theSequencerTree.setProperty("Chain", id, theUndoManager);
 	}
 	else if(comboBoxThatHasChanged == theScaleList)
 	{
@@ -477,7 +464,8 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else if(String(property) == "Length")
 	{
-		theSequencerLength->setValue(tree.getProperty(property));
+		int length = tree.getProperty(property);
+		theSequencerLength->setValue(length);
 		theControllerView->updatePositions();
 	}
 	else if(String(property) == "Channel")
@@ -499,10 +487,6 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "RootOctave")
 	{
 		theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
-	}
-	else if(String(property) == "Chain")
-	{
-		theChainList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "Scale")
 	{
@@ -579,18 +563,6 @@ void SequencerView::loadScales()
 	for (int i=1;i<theScaleList->getNumItems();i++)
 	{
 		theScales.add(new Scale(theScaleList->getItemText(i)));
-	}
-}
-
-void SequencerView::updateChainBox()
-{
-	theChainList->clear();
-	ValueTree masterTree = theSequencerTree.getParent();
-	int sequencerIndex = masterTree.indexOf(theSequencerTree);
-	for (int i=0; i<masterTree.getNumChildren(); i++)
-	{
-		if (sequencerIndex != i)
-			theChainList->addItem(String(i), i+1);
 	}
 }
 

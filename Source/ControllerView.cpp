@@ -33,8 +33,8 @@ ControllerView::~ControllerView()
 
 void ControllerView::updatePositions()
 {
-	int sequencer16Height = theMainScreen.getHeight() / 4;
-	int sequencer32Height = theMainScreen.getHeight() / 3;
+	int sequencer16Height = theMainScreen.getHeight() / 4.5;
+	int sequencer32Height = theMainScreen.getHeight() / 2.6;
 	int totalHeigth = 0;
 	int sequencerWidth = theMainScreen.getWidth() / 1.5;
 	theHeaderView->setBounds(0, 0, sequencerWidth, theMainScreen.getHeight() / 24);
@@ -43,11 +43,11 @@ void ControllerView::updatePositions()
 	{
 		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
 		{
-			theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencer32Height), sequencerWidth, sequencer32Height);
+			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
 		}
 		else if ((int)theMasterTree.getChild(i).getProperty("Length") < 17)
 		{
-			theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencer16Height), sequencerWidth, sequencer16Height);
+			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer16Height);
 		}
 		totalHeigth += theSequencerViews[i]->getHeight();
 	}
@@ -87,8 +87,6 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		ValueTree sequencerTree("Sequencer" + String(theMasterTree.getNumChildren()));
 		theMasterTree.addChild(sequencerTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
-		for (int i=0; i<theMasterTree.getNumChildren(); i++)
-		{ theSequencerViews[i]->updateChainBox(); }
 		addAndMakeVisible(theSequencerViews.getLast());
 		updatePositions();
 	}

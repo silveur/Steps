@@ -30,6 +30,7 @@ public:
 	void updatePositions();
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
+	Rectangle<int>& getScreenSize() { return theMainScreen; }
 	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}

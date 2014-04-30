@@ -30,7 +30,6 @@ public:
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
 	void showBubbleMessage(Component* targetComponent, const String& textToShow);
-	void updateChainBox();
 	const char * getTextForEnum(int enumVal);
 	static ValueTree& getCopyTree()
 	{
@@ -56,7 +55,6 @@ private:
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<ComboBox> theScaleList;
-	ScopedPointer<ComboBox> theChainList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;

@@ -24,14 +24,6 @@ enum StepStates
 	JUMP
 };
 
-enum Chains
-{
-	SINGLE,
-	DOUBLE,
-	TRIPLE,
-	QUADRUPLE
-};
-
 // [END_USER_CODE_SECTION]
 
 //==============================================================================

@@ -29,7 +29,6 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theRange = 1;
 		theOffset = 0;
 		theOnOffStatus = ON;
-		theChain = SINGLE;
 		initSequencerTree();
 		for (int i=0; i<32; i++)
 		{
@@ -57,7 +56,6 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
 	theSequencerTree.setProperty("Scale", 1, nullptr);
-	theSequencerTree.setProperty("Chain", SINGLE, nullptr);
 }
 
 void Sequencer::loadFromTree()
@@ -70,8 +68,6 @@ void Sequencer::loadFromTree()
 	theChannel = theSequencerTree.getProperty("Channel");
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
-	theChain = (Chains)(int)theSequencerTree.getProperty("Chain");
-	
 	for (int i=0; i<32; i++)
 	{
 		ValueTree stepTree = theSequencerTree.getChild(i);
@@ -199,10 +195,6 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Status")
 	{
 		theOnOffStatus = tree.getProperty(property);
-	}
-	else if(String(property) == "Chain")
-	{
-		theChain = (Chains)(int)tree.getProperty(property);
 	}
 	else if(String(property) == "KickBack")
 	{
