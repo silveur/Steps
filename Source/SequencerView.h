@@ -53,7 +53,7 @@ public:
 	{
 		showPopUp = true;
 	}
-	
+	bool showPopUp;
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
@@ -91,7 +91,6 @@ private:
 	ControllerView* theControllerView;
 	Image theStepImage;
 	int thePosition;
-	bool showPopUp;
 };
 
 

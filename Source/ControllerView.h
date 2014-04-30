@@ -35,8 +35,7 @@ public:
 	{
 		for (int i=0; i<theMasterTree.getNumChildren(); i++)
 		{
-			
-			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
+			theSequencerViews[i]->showPopUp=false;
 		}
 		if (key.isKeyCode(90) && key.getModifiers() == ModifierKeys::commandModifier)
 		{
@@ -45,6 +44,10 @@ public:
 		else if (key.isKeyCode(90) && key.getModifiers() == (ModifierKeys::commandModifier | ModifierKeys::shiftModifier))
 		{
 			theUndoManager->redo();
+		}
+		for (int i=0; i<theMasterTree.getNumChildren(); i++)
+		{
+			theSequencerViews[i]->startTimer(100);
 		}
 		return true;
 	}
