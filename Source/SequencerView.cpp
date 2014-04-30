@@ -149,6 +149,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
 	startTimer(200);
+	addKeyListener(this);
 }
 
 SequencerView::~SequencerView()
@@ -221,26 +222,31 @@ int randomise(int min, int max)
 	return ((int)rand() % (max + abs(min))) - abs(min);
 }
 
+void SequencerView::randomiseAll()
+{
+	for (int i=0;i<theSequencerTree.getNumChildren();i++)
+	{
+		ValueTree child = theSequencerTree.getChild(i);
+		int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
+		int max = (int)theSequencerTree.getProperty("Range") * 12;
+		int pitch = randomise(min , max);
+		while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
+		{
+			pitch = randomise(min, max);
+		}
+		child.setProperty("Pitch", pitch, theUndoManager);
+		child.setProperty("State", rand() % 2, theUndoManager);
+		child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
+		child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
+	}
+}
+
 void SequencerView::buttonClicked(Button* button)
 {
 	showPopUp = false;
 	if (button == theRandomAllButton)
 	{
-		for (int i=0;i<theSequencerTree.getNumChildren();i++)
-		{
-			ValueTree child = theSequencerTree.getChild(i);
-			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
-			int max = (int)theSequencerTree.getProperty("Range") * 12;
-			int pitch = randomise(min , max);
-			while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
-		   {
-			   pitch = randomise(min, max);
-		   }
-			child.setProperty("Pitch", pitch, theUndoManager);
-			child.setProperty("State", rand() % 2, theUndoManager);
-			child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
-			child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
-		}
+		randomiseAll();
 	}
 	else if (button == theCopyButton)
 	{

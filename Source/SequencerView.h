@@ -15,7 +15,7 @@
 
 class ControllerView;
 
-class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener, public Timer
+class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener, public Timer, public KeyListener
 {
 public:
 	SequencerView(ValueTree& sequencerTree, ControllerView* rootView);
@@ -31,6 +31,19 @@ public:
 	void updateSelectedMidiOut(String& midiOut);
 	void showBubbleMessage(Component* targetComponent, const String& textToShow);
 	const char * getTextForEnum(int enumVal);
+	void randomiseAll();
+	bool keyPressed(const KeyPress &key, Component *originatingComponent)
+	{
+		DBG(key.getKeyCode());
+		if (key.isKeyCode(82))
+		{
+			showPopUp = false;
+			randomiseAll();
+			startTimer(100);
+		}
+		return false;
+	}
+
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;

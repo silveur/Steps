@@ -24,6 +24,7 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
 	updatePositions();
 	theMasterTree.addListener(this);
+	addKeyListener(this);
 }
 
 ControllerView::~ControllerView()
