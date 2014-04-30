@@ -30,7 +30,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theOffset = 0;
 		theOnOffStatus = ON;
 		initSequencerTree();
-		for (int i=0; i<16; i++)
+		for (int i=0; i<32; i++)
 		{
 			ValueTree stepTree = sequencerTree.getChild(i);
 			stepTree = ValueTree("Step" + String(i));
@@ -68,8 +68,7 @@ void Sequencer::loadFromTree()
 	theChannel = theSequencerTree.getProperty("Channel");
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
-	
-	for (int i=0; i<16; i++)
+	for (int i=0; i<32; i++)
 	{
 		ValueTree stepTree = theSequencerTree.getChild(i);
 		theStepArray.add(new Step(stepTree));

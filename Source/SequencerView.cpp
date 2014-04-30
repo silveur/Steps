@@ -16,7 +16,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 {
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
-	for(int i=0;i<16;i++)
+	for(int i=0;i<theSequencerTree.getNumChildren();i++)
 	{
 		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
@@ -53,8 +53,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	}
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
-	theSequencerLength->setRange(1, 16,1);
+	theSequencerLength->setRange(1, 32,1);
+	theSequencerLength->setTextBoxStyle(Slider::NoTextBox, false, 30, 30);
 	theSequencerLength->setTextValueSuffix(" steps");
+	theSequencerLength->setPopupDisplayEnabled(true, theControllerView);
 	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
@@ -89,11 +91,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
 	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theOffsetSlider->setRange(0, 15, 1);
 	theOffsetSlider->setTextValueSuffix(" Offset");
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
+	int length = theSequencerTree.getProperty("Length");
+	if (length > 16) theOffsetSlider->setRange(0, 31, 1);
+	else theOffsetSlider->setRange(0, 15, 1);
 	theOffsetSlider->addListener(this);
 	
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
@@ -112,7 +116,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOnOffButton->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
-	theMidiOutputList->setTextWhenNothingSelected("Select an midi output");
+	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
@@ -137,6 +141,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	theScaleList->addListener(this);
+	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
 }
 
@@ -147,7 +152,12 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-	theStepView.update(theStepSliders[thePosition]->getX());
+	repaint();
+}
+
+void SequencerView::paint(Graphics& g)
+{
+	g.drawImageAt(theStepImage, theStateButtons[thePosition]->getX(), theStateButtons[thePosition]->getBottom(), false);
 }
 
 void SequencerView::refreshMidiList()
@@ -164,10 +174,10 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	int heigthDiv = getHeight() / 8;
-	int widthDiv = getWidth() / 24;
+	int heigthDiv = theControllerView->getScreenSize().getHeight() / 32;
+	int widthDiv = theControllerView->getScreenSize().getWidth() / 24;
 
-	theMidiOutputList->setBounds(10, 10, 150, heigthDiv);
+	theMidiOutputList->setBounds(10, 0, 150, heigthDiv);
 	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, heigthDiv);
 	theSequencerLength->setBounds(theChannelList->getRight(), theMidiOutputList->getY(), 150, heigthDiv);
 	theRootNoteList->setBounds(10, theMidiOutputList->getBottom(), 40, heigthDiv);
@@ -180,13 +190,20 @@ void SequencerView::resized()
 	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, heigthDiv);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), theMidiOutputList->getY(), 60, heigthDiv);
 	thePasteButton->setBounds(theCopyButton->getRight(), theMidiOutputList->getY(), 60, heigthDiv);
-	theStepView.setBounds(theMidiOutputList->getX(), getHeight()-20, getWidth(), heigthDiv);
 	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), 60, heigthDiv);
 	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), 60, heigthDiv);
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), 60, heigthDiv);
 	for(int i=0;i<16;i++)
 	{
 		theStepSliders[i]->setBounds(theMidiOutputList->getX() + (getWidth()/16)*i, theRootNoteList->getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
+		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
+		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
+		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
+	}
+	theStepView.setBounds(theMidiOutputList->getX(), theStateButtons[0]->getBottom(), getWidth(), heigthDiv);
+	for(int i=16;i<theSequencerTree.getNumChildren();i++)
+	{
+		theStepSliders[i]->setBounds(theStepSliders[i-16]->getX(), theStepView.getBottom(), heigthDiv * 2, heigthDiv * 2);
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
@@ -203,7 +220,7 @@ void SequencerView::buttonClicked(Button* button)
 	showPopUp = false;
 	if (button == theRandomAllButton)
 	{
-		for (int i=0;i<16;i++)
+		for (int i=0;i<theSequencerTree.getNumChildren();i++)
 		{
 			ValueTree child = theSequencerTree.getChild(i);
 			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
@@ -228,7 +245,7 @@ void SequencerView::buttonClicked(Button* button)
 		getCopyTree().removeProperty("MidiOutput", nullptr);
 		if (!getCopyTree().isValid()) return;
 		theSequencerTree.copyPropertiesFrom(getCopyTree(), theUndoManager);
-		for (int i=0; i<16; i++)
+		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 		{
 			ValueTree sourceChild = getCopyTree().getChild(i);
 			ValueTree destinationChild = theSequencerTree.getChild(i);
@@ -242,7 +259,7 @@ void SequencerView::buttonClicked(Button* button)
 		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
 		treeToLoad.removeProperty("MidiOutput", nullptr);
 		theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
-		for (int i=0; i<16; i++)
+		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 		{
 			ValueTree sourceChild = treeToLoad.getChild(i);
 			ValueTree destinationChild = theSequencerTree.getChild(i);
@@ -264,7 +281,7 @@ void SequencerView::buttonClicked(Button* button)
 			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
 			treeToLoad.removeProperty("MidiOutput", nullptr);
 			theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
-			for (int i=0; i<16; i++)
+			for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 			{
 				ValueTree sourceChild = treeToLoad.getChild(i);
 				ValueTree destinationChild = theSequencerTree.getChild(i);
@@ -295,7 +312,6 @@ void SequencerView::buttonClicked(Button* button)
 		{
 			currentState = !theSequencerTree.getChild(index).getProperty("State");
 		}
-		
 		theSequencerTree.getChild(index).setProperty("State", currentState, theUndoManager);
 	}
 	startTimer(100);
@@ -367,6 +383,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	}
 	else if(slider == theSequencerLength)
 	{
+		int length = slider->getValue();
+		if (theOffsetSlider->getValue() > length - 1)
+			theOffsetSlider->setValue(length-1);
+		theOffsetSlider->setRange(0, length-1, 1);
 		theSequencerTree.setProperty("Length", slider->getValue(), theUndoManager);
 	}
 	else if(slider == theShuffleSlider)
@@ -431,7 +451,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "Range")
 	{
 		int range = 12 * (int)theSequencerTree.getProperty("Range");
-		for(int i=0;i<16;i++)
+		for(int i=0;i<theSequencerTree.getNumChildren();i++)
 		{
 			theStepSliders[i]->setRange(0 - range, range, 1);
 			theStepSliders[i]->repaint();
@@ -444,7 +464,9 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else if(String(property) == "Length")
 	{
-		theSequencerLength->setValue(tree.getProperty(property));
+		int length = tree.getProperty(property);
+		theSequencerLength->setValue(length);
+		theControllerView->updatePositions();
 	}
 	else if(String(property) == "Channel")
 	{
@@ -477,7 +499,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else
 	{
-		for (int i=0; i<16;i++)
+		for (int i=0; i<theSequencerTree.getNumChildren();i++)
 		{
 			if (tree == (theSequencerTree.getChild(i)))
 			{
@@ -544,5 +566,10 @@ void SequencerView::loadScales()
 	}
 }
 
+const char* SequencerView::getTextForEnum(int enumVal)
+{
+	static const char * stateStrings[] = { "OFF", "ON", "JUMP" };
+	return stateStrings[enumVal];
+}
 
 

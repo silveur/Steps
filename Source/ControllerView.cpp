@@ -33,19 +33,25 @@ ControllerView::~ControllerView()
 
 void ControllerView::updatePositions()
 {
-	int sequencerHeight = theMainScreen.getHeight() / 5;
-	theHeaderView->setBounds(0, 0, getWidth(), sequencerHeight / 4);
-	if (theSequencerViews.size() == 0)
-	{
-//		setSize(theMainScreen.getWidth()/1.1, 100);
-	}
-	else
-		setSize(theMainScreen.getWidth()/1.6, theHeaderView->getHeight() + sequencerHeight * theSequencerViews.size());
-	
+	int sequencer16Height = theMainScreen.getHeight() / 4.5;
+	int sequencer32Height = theMainScreen.getHeight() / 2.6;
+	int totalHeigth = 0;
+	int sequencerWidth = theMainScreen.getWidth() / 1.5;
+	theHeaderView->setBounds(0, 0, sequencerWidth, theMainScreen.getHeight() / 24);
+	totalHeigth += theHeaderView->getHeight();
 	for (int i=0; i<theSequencerViews.size(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, theHeaderView->getHeight() + (i * sequencerHeight), getWidth(), sequencerHeight);
+		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
+		{
+			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
+		}
+		else if ((int)theMasterTree.getChild(i).getProperty("Length") < 17)
+		{
+			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer16Height);
+		}
+		totalHeigth += theSequencerViews[i]->getHeight();
 	}
+	setSize(sequencerWidth, totalHeigth);
 }
 
 void ControllerView::resized()
@@ -71,7 +77,6 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 	if(sequencerTreeToAdd.isValid())
 	{
 		ValueTree copiedTree = sequencerTreeToAdd.createCopy();
-
 		theMasterTree.addChild(copiedTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(copiedTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());

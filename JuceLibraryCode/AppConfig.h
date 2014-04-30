@@ -24,8 +24,6 @@ enum StepStates
 	JUMP
 };
 
-static const char * StateStrings[] = { "OFF", "ON", "JUMP" };
-
 // [END_USER_CODE_SECTION]
 
 //==============================================================================
