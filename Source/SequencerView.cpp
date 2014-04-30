@@ -121,6 +121,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
+	theChannelList->addSectionHeading("Midi channel");
 	for (int i=1;i<=16;i++)
 		theChannelList->addItem(String(i), i);
 	theChannelList->setSelectedId(theSequencerTree.getProperty("Channel"));
@@ -130,8 +131,11 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	String str = theSequencerTree.getProperty("MidiOutput");
 	updateSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
+	theRootNoteList->addSectionHeading("Root note");
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
+	theRootOctaveList->addSectionHeading("Root octave");
 	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
+	theScaleList->addSectionHeading("Scales");
 	loadScales();
 	updateNotesAndOctaves();
 	theCurrentScale = nullptr;
@@ -182,12 +186,12 @@ void SequencerView::resized()
 	theMidiOutputList->setBounds(10, 0, 150, heigthDiv);
 	theChannelList->setBounds(theMidiOutputList->getRight(), theMidiOutputList->getY(), 50, heigthDiv);
 	theSequencerLength->setBounds(theChannelList->getRight(), theMidiOutputList->getY(), 150, heigthDiv);
-	theRootNoteList->setBounds(10, theMidiOutputList->getBottom(), 40, heigthDiv);
+	theRootNoteList->setBounds(10, theMidiOutputList->getBottom(), widthDiv, heigthDiv);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theScaleList->setBounds(theRootOctaveList->getRight(), theRootOctaveList->getY(), theRootOctaveList->getWidth() * 2, theRootOctaveList->getHeight());
 	theRandomAllButton->setBounds(theSequencerLength->getRight(), theMidiOutputList->getY(), 90, heigthDiv);
 	theResetAllButton->setBounds(theRandomAllButton->getX(), theRandomAllButton->getBottom(), theRandomAllButton->getWidth(), heigthDiv);
-	theShuffleSlider->setBounds(200, theMidiOutputList->getBottom(), 30, heigthDiv);
+	theShuffleSlider->setBounds(theScaleList->getRight(), theMidiOutputList->getBottom(), 30, heigthDiv);
 	theRangeSlider->setBounds(theShuffleSlider->getRight(), theMidiOutputList->getBottom(), 30, heigthDiv);
 	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), 30, heigthDiv);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), theMidiOutputList->getY(), 60, heigthDiv);

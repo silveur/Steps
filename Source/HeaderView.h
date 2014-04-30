@@ -51,7 +51,8 @@ public:
 		}
 		else if (buttonThatWasClicked == theRemoveSequencerButton)
 		{
-			theControllerView->removeSequencer();
+			if (theControllerView->getNumOfSequencer() > 1)
+				theControllerView->removeSequencer();
 		}
 		else if (buttonThatWasClicked == theUndoButton)
 		{
