@@ -12,25 +12,31 @@
 #define MAINWINDOW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Interface.h"
+#include "ControllerView.h"
 
-class MainWindow    : public DocumentWindow
+class MainWindow: public DocumentWindow, public KeyListener
 {
 public:
-	MainWindow(Sequencer* sequencer)  : DocumentWindow ("MainWindow",
+	MainWindow(ValueTree& masterTree)  : DocumentWindow ("Sequencer",
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{
-		setContentOwned (new Interface(sequencer), true);
+		setContentOwned (new ControllerView(masterTree), true);
 		setUsingNativeTitleBar(true);
+		setResizable(true, false);
 		centreWithSize (getWidth(), getHeight());
 		setVisible (true);
+		addKeyListener(this);
+	}
+
+	void closeButtonPressed()
+	{		
+		JUCEApplication::getInstance()->systemRequestedQuit();
 	}
 	
-	void closeButtonPressed()
+	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
-		
-		JUCEApplication::getInstance()->systemRequestedQuit();
+		return true;
 	}
 	
 private:

@@ -17,7 +17,12 @@
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
 
-// (You can add your own code in this section, and the Introjucer will not overwrite it)
+enum StepStates
+{
+	OFF,
+	ON,
+	JUMP
+};
 
 // [END_USER_CODE_SECTION]
 

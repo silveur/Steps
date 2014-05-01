@@ -1,123 +1,147 @@
 /*
   ==============================================================================
 
-    Sequencer.cpp
-    Created: 22 Dec 2013 11:52:14pm
-    Author:  silvere letellier
+	Sequencer.cpp
+	Created: 22 Dec 2013 11:52:14pm
+	Author:  silvere letellier
 
   ==============================================================================
 */
 
 #include "Sequencer.h"
-#include "PluginProcessor.h"
 
-Sequencer::Sequencer()
+Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 {
-	theMidiInput = MidiInput::createNewDevice("Sequencer", this);
-	thePosition = 0;
-	theRootNote = 48;
-	thePpqCount = 0;
-	theSequencerTree = ValueTree("SequencerTree");
-    theMidiCore = new MidiCore();
-	for (int i=0; i<16; i++)
+	theMidiCore = new MidiCore();
+	if (theSequencerTree.getNumProperties() > 0)
 	{
-		theStepArray.add(new Step());
-		theSequencerTree.addChild(theStepArray[i]->getValueTree(), -1, nullptr);
+		loadFromTree();
 	}
-	thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default");
-	if(!thePreferenceFile.exists())
-    {
-        theSequencerTree.setProperty("Length", 16, nullptr);
-        theSequencerTree.setProperty("RootNote", 0, nullptr);
-        theSequencerTree.setProperty("RootOctave", 3, nullptr);
-        thePreferenceFile.create();
-    }
 	else
 	{
-		FileInputStream fileInputStream(thePreferenceFile);
-		ValueTree treeToLoad = ValueTree::readFromStream(fileInputStream);
-		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
-		String str = theSequencerTree.getProperty("MidiOutput");
-        theMidiCore->openMidiOutput(str);
-		for (int i=0; i<16; i++)
+		theChannel = 1;
+		thePosition = 0;
+		thePpqCount = 0;
+		theLength = 16;
+		theRootNote = 0;
+		theRootOctave = 3;
+		theShuffle = 0;
+		theRange = 1;
+		theOffset = 0;
+		theOnOffStatus = ON;
+		initSequencerTree();
+		for (int i=0; i<32; i++)
 		{
-			theSequencerTree.getChild(i).copyPropertiesFrom(treeToLoad.getChild(i), nullptr);
+			ValueTree stepTree = sequencerTree.getChild(i);
+			stepTree = ValueTree("Step" + String(i));
+			theStepArray.add(new Step(stepTree));
+			sequencerTree.addChild(stepTree, -1, nullptr);
 		}
 	}
-	theLength = theSequencerTree.getProperty("Length");
-	theRootNote = theSequencerTree.getProperty("RootNote");
-	theRootOctave = theSequencerTree.getProperty("RootOctave");
 	theSequencerTree.addListener(this);
-    startSequencer();
 }
 
 Sequencer::~Sequencer()
 {
-	thePreferenceFile.deleteFile();
-	FileOutputStream presetToSave(thePreferenceFile);
-	theSequencerTree.writeToStream(presetToSave);
 }
 
-void Sequencer::startSequencer()
+void Sequencer::initSequencerTree()
 {
-    theMidiInput->start();
+	theSequencerTree.setProperty("Length", theLength, nullptr);
+	theSequencerTree.setProperty("RootNote", theRootNote, nullptr);
+	theSequencerTree.setProperty("RootOctave", theRootOctave, nullptr);
+	theSequencerTree.setProperty("Shuffle", theShuffle, nullptr);
+	theSequencerTree.setProperty("Range", theRange, nullptr);
+	theSequencerTree.setProperty("Channel", theChannel, nullptr);
+	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
+	theSequencerTree.setProperty("Offset", theOffset, nullptr);
+	theSequencerTree.setProperty("Scale", 1, nullptr);
 }
 
-void Sequencer::stopSequencer()
+void Sequencer::loadFromTree()
 {
-    theMidiInput->stop();
+	theLength = theSequencerTree.getProperty("Length");
+	theRootNote = theSequencerTree.getProperty("RootNote");
+	theRootOctave = theSequencerTree.getProperty("RootOctave");
+	theShuffle = theSequencerTree.getProperty("Shuffle");
+	theRange = theSequencerTree.getProperty("Range");
+	theChannel = theSequencerTree.getProperty("Channel");
+	theOnOffStatus = theSequencerTree.getProperty("Status");
+	theOffset = theSequencerTree.getProperty("Offset");
+	for (int i=0; i<32; i++)
+	{
+		ValueTree stepTree = theSequencerTree.getChild(i);
+		theStepArray.add(new Step(stepTree));
+	}
 }
 
 void Sequencer::start()
 {
-	thePpqCount = 0;
-	thePosition = -1;
+	thePpqCount = -1;
+	thePosition = -1 + theOffset;
 	isIdle = false;
+	waitForShuffle = false;
 }
 
 void Sequencer::stop()
 {
-	thePpqCount = 0;
+	thePpqCount = -1;
 	thePosition = -1;
 	theMidiCore->killNotes();
 	isIdle = true;
+	waitForShuffle = false;
 }
 
 void Sequencer::carryOn()
 {
-	thePpqCount = 0;
+	thePpqCount = -1;
 	thePosition = -1;
 	isIdle = false;
+	waitForShuffle = false;
 }
 
-void Sequencer::setPosition(int beatPosition)
+void Sequencer::triggerStep()
 {
-}
-
-void Sequencer::handleIncomingMidiMessage (MidiInput* source,
-								const MidiMessage& message)
-{
-	if (message.isMidiClock())
+	thePosition = (thePosition+1) % theLength;
+	if (theStepArray[thePosition]->theState == JUMP)
+		thePosition = (thePosition+1) % theLength;
+	if (theStepArray[thePosition]->theState == ON)
 	{
-		if (thePpqCount == 0 && !isIdle)
-		{
-			thePosition = (thePosition+1)% theLength;
-			if (theStepArray[thePosition]->theState)
-			{
-				Step* step = theStepArray[thePosition];
-				MidiMessage onMsg = MidiMessage::noteOn(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-				MidiMessage offMsg = MidiMessage::noteOff(1, (24 + step->thePitch + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-				theMidiCore->outputMidi(onMsg);
-				theMidiCore->outputMidi(offMsg, 40);
-			}
-			theSequencerTree.setProperty("Position", thePosition, nullptr);
-			DBG("New Position: " << thePosition);
-		}
-		thePpqCount = (thePpqCount+1) % 6;
+		Step* step = theStepArray[thePosition];
+		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+		theMidiCore->outputMidi(onMsg);
+		theMidiCore->outputMidi(offMsg, step->theDecay);
 	}
+	theSequencerTree.setProperty("Position", thePosition, nullptr);
+}
+
+void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
+{
+	if (message.isMidiClock() && !isIdle && theOnOffStatus)
+	{
+		thePpqCount = (thePpqCount+1) % 6;
+		if( waitForShuffle && (thePpqCount == theShuffle))
+		{
+			triggerStep();
+			waitForShuffle = false;
+		}
+		else if (!thePpqCount)
+		{
+			if (!((thePosition +1) %2) || !theShuffle)
+			{
+				triggerStep();
+			}
+			else if((thePosition + 1) %2)
+			{
+				waitForShuffle = true;
+			}
+		}
+	}
+	
 	else if(message.isSongPositionPointer())
 	{
-		
+
 	}
 	else if (message.isMidiStart())
 	{
@@ -144,6 +168,10 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		theLength = tree.getProperty(property);
 	}
+	else if(String(property) == "Offset")
+	{
+		theOffset = tree.getProperty(property);
+	}
 	else if(String(property) == "RootOctave")
 	{
 		theRootOctave = tree.getProperty(property);
@@ -151,5 +179,26 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "RootNote")
 	{
 		theRootNote = tree.getProperty(property);
+	}
+	else if(String(property) == "Shuffle")
+	{
+		theShuffle = tree.getProperty(property);
+	}
+	else if(String(property) == "Range")
+	{
+		theRange = tree.getProperty(property);
+	}
+	else if(String(property) == "Channel")
+	{
+		theChannel = tree.getProperty(property);
+	}
+	else if(String(property) == "Status")
+	{
+		theOnOffStatus = tree.getProperty(property);
+	}
+	else if(String(property) == "KickBack")
+	{
+		thePosition = -1;
+		tree.setProperty(property, 0, nullptr);
 	}
 }

@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    MidiCore.cpp
-    Created: 13 Mar 2013 11:57:22pm
-    Author:  Silvere Letellier
+	MidiCore.cpp
+	Created: 13 Mar 2013 11:57:22pm
+	Author:  Silvere Letellier
 
   ==============================================================================
 */
@@ -15,12 +15,6 @@ MidiCore::MidiCore()
 	theMidiOutput = nullptr;
 }
 
-MidiCore::MidiCore(String& midiOut)
-{
-	theMidiOutput = nullptr;
-	openMidiOutput(midiOut);
-}
-
 void MidiCore::openMidiOutput(String& name)
 {
 	StringArray list = MidiOutput::getDevices();
@@ -28,6 +22,7 @@ void MidiCore::openMidiOutput(String& name)
 	{
 		if (list[i] == name)
 		{
+			killNotes();
 			if (theMidiOutput != nullptr)
 				delete theMidiOutput;
 			theMidiOutput = MidiOutput::openDevice(i);
@@ -35,28 +30,29 @@ void MidiCore::openMidiOutput(String& name)
 			break;
 		}
 	}
-	if (theMidiOutput == nullptr)
-	{
-		
-	}
 }
 
 MidiCore::~MidiCore()
 {
-	if(theMidiOutput != nullptr) delete theMidiOutput;
+	if(theMidiOutput != nullptr)
+	{
+		killNotes();
+		theMidiOutput->stopBackgroundThread();
+		delete theMidiOutput;
+	}
 }
 
 StringArray MidiCore::getMidiDevicesList()
 {
-    StringArray list = MidiOutput::getDevices();
-    return list;
+	StringArray list = MidiOutput::getDevices();
+	return list;
 }
 
-void MidiCore::noteOn(int noteNumber,int velocity)
+void MidiCore::noteOn(int noteNumber,uint8 velocity, int channel)
 {
 	if (theMidiOutput != nullptr)
 	{
-		const MidiMessage midiMessage(0x90,noteNumber,velocity,0);
+		const MidiMessage midiMessage(MidiMessage::noteOn(channel, noteNumber, (uint8)velocity));
 		outputMidi(midiMessage);
 	}
 }
@@ -98,6 +94,3 @@ void MidiCore::outputMidi(const MidiMessage &msg, int delayMs)
 		theMidiOutput->sendBlockOfMessages(buff, Time::getMillisecondCounter() + delayMs, 44100);
 	}
 }
-
-
-

@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    Sequencer.h
-    Created: 22 Dec 2013 11:52:14pm
-    Author:  silvere letellier
+	Sequencer.h
+	Created: 22 Dec 2013 11:52:14pm
+	Author:  silvere letellier
 
   ==============================================================================
 */
@@ -19,41 +19,43 @@ class SequencerAudioProcessor;
 class MidiCore;
 class NoteManager;
 
-class Sequencer: public MidiInputCallback, public ValueTree::Listener
+class Sequencer: public ValueTree::Listener
 {
 public:
-	Sequencer();
+	Sequencer(ValueTree& sequencerTree);
 	~Sequencer();
-	MidiCore* getMidiCore() { return theMidiCore; }
-	ValueTree& getSequencerTree() { return theSequencerTree; }
-    void startSequencer();
-    void stopSequencer();
-    
+	void handleIncomingMidiMessage (const MidiMessage& message);
+	void stop();
+	void start();
+	
 private:
+	void loadFromTree();
+	void initSequencerTree();
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message);
-	void stop();
-	void start();
+
 	void carryOn();
-	void setPosition(int beatPosition);
-	
+	void triggerStep();
 	ScopedPointer<MidiCore> theMidiCore;
-	ScopedPointer<MidiInput> theMidiInput;
 	OwnedArray<Step> theStepArray;
 	ValueTree theSequencerTree;
-	File thePreferenceFile;
 	
+	int theChannel;
 	int thePosition;
 	int theSyncTime;
 	int theRootNote;
 	int theRootOctave;
 	int thePpqCount;
 	int theLength;
+	int theRange;
+	int theShuffle;
+	int theOffset;
+	bool theOnOffStatus;
 	bool isIdle;
+	bool waitForShuffle;
 };
 
 

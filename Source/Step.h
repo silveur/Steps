@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    Step.h
-    Created: 22 Dec 2013 12:32:36pm
-    Author:  silvere letellier
+	Step.h
+	Created: 22 Dec 2013 12:32:36pm
+	Author:  silvere letellier
 
   ==============================================================================
 */
@@ -12,24 +12,51 @@
 #define STEP_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#define OFF	false	
-#define ON	true
 
 class Step: public ValueTree::Listener
 {
 public:
-	Step()
+	Step(ValueTree& stepTree): theStepTree(stepTree)
 	{
-		theStepTree = ValueTree("StepTree");
-		thePitch = 0; theVelocity = 127; theState = ON;
-		theStepTree.setProperty("Pitch", thePitch, nullptr);
-		theStepTree.setProperty("Velocity", theVelocity, nullptr);
-		theStepTree.setProperty("State", theState, nullptr);
-		theStepTree.addListener(this);
+		if (theStepTree.getNumProperties() > 0)
+		{
+			loadFromTree();
+		}
+		else
+		{
+			thePitch = 0;
+			theVelocity = 127;
+			theState = ON;
+			theDecay = 40;
+			initStepTree();
+			theStepTree.addListener(this);
+		}
 	}
 	
-	~Step()	{}
+	~Step() {}
 
+	ValueTree& getValueTree()
+	{
+		return theStepTree;
+	}
+	
+private:
+	void initStepTree()
+	{
+		theStepTree.setProperty("Pitch", thePitch, nullptr);
+		theStepTree.setProperty("Velocity", theVelocity, nullptr);
+		theStepTree.setProperty("State", ON, nullptr);
+		theStepTree.setProperty("Decay", theDecay, nullptr);
+	}
+	
+	void loadFromTree()
+	{
+		thePitch = theStepTree.getProperty("Pitch");
+		theVelocity = theStepTree.getProperty("Velocity");
+		theState = (StepStates)(int)theStepTree.getProperty("State");
+		theDecay = theStepTree.getProperty("Decay");
+	}
+	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 	{
 		if(String(property) == "Pitch")
@@ -42,29 +69,27 @@ public:
 		}
 		else if(String(property) == "State")
 		{
-			theState = tree.getProperty(property);
+			theState = (StepStates)(int)tree.getProperty(property);
 		}
-	}
-	
-	ValueTree& getValueTree()
-	{
-		return theStepTree;
+		else if(String(property) == "Decay")
+		{
+			theDecay = tree.getProperty(property);
+		}
 	}
 	
 	int theVelocity;
 	int thePitch;
-	bool theState;
+	int theDecay;
+	StepStates theState;
 	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	
-private:
+
 	ValueTree theStepTree;
+	friend class Sequencer;
 
 };
-
-
 
 #endif  // STEP_H_INCLUDED
