@@ -14,7 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
 
-class MainWindow: public DocumentWindow
+class MainWindow: public DocumentWindow, public KeyListener
 {
 public:
 	MainWindow(ValueTree& masterTree)  : DocumentWindow ("Sequencer",
@@ -26,11 +26,17 @@ public:
 		setResizable(true, false);
 		centreWithSize (getWidth(), getHeight());
 		setVisible (true);
+		addKeyListener(this);
 	}
 
 	void closeButtonPressed()
 	{		
 		JUCEApplication::getInstance()->systemRequestedQuit();
+	}
+	
+	bool keyPressed(const KeyPress &key, Component *originatingComponent)
+	{
+		return true;
 	}
 	
 private:

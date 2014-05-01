@@ -13,8 +13,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-extern UndoManager* theUndoManager;
-
 class Step: public ValueTree::Listener
 {
 public:

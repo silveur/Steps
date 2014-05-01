@@ -9,12 +9,12 @@
 #include "SequencerView.h"
 #include "ControllerView.h"
 
-extern UndoManager* theUndoManager;
 extern File thePresetFolder;
 
 SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView), showPopUp(true)
 {
 	showPopUp = false;
+	theUndoManager = new UndoManager();
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<theSequencerTree.getNumChildren();i++)
@@ -148,12 +148,14 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theScaleList->addListener(this);
 	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
+	theUndoManager->clearUndoHistory();
 	startTimer(200);
 	addKeyListener(this);
 }
 
 SequencerView::~SequencerView()
 {
+	delete theUndoManager;
 	theCurrentScale = nullptr;
 }
 

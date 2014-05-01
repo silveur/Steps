@@ -34,14 +34,26 @@ public:
 	void randomiseAll();
 	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
-		DBG(key.getKeyCode());
 		if (key.isKeyCode(82))
 		{
 			showPopUp = false;
 			randomiseAll();
 			startTimer(100);
 		}
-		return false;
+		else if (key.isKeyCode(90) && key.getModifiers() == ModifierKeys::commandModifier)
+		{
+			showPopUp = false;
+			theUndoManager->undo();
+			startTimer(100);
+		}
+		else if (key.isKeyCode(90) && key.getModifiers() == (ModifierKeys::commandModifier | ModifierKeys::shiftModifier))
+		{
+			showPopUp = false;
+			theUndoManager->redo();
+			startTimer(100);
+		}
+		
+		return true;
 	}
 
 	static ValueTree& getCopyTree()
@@ -53,7 +65,7 @@ public:
 	{
 		showPopUp = true;
 	}
-	bool showPopUp;
+
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
@@ -84,6 +96,7 @@ private:
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
 	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
+	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
 	StepView theStepView;
@@ -91,6 +104,7 @@ private:
 	ControllerView* theControllerView;
 	Image theStepImage;
 	int thePosition;
+	bool showPopUp;
 };
 
 

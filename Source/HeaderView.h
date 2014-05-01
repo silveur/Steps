@@ -54,14 +54,6 @@ public:
 			if (theControllerView->getNumOfSequencer() > 1)
 				theControllerView->removeSequencer();
 		}
-		else if (buttonThatWasClicked == theUndoButton)
-		{
-			theControllerView->undo();
-		}
-		else if (buttonThatWasClicked == theRedoButton)
-		{
-			theControllerView->redo();
-		}
 		else if (buttonThatWasClicked == theKickBackButton)
 		{
 			theControllerView->kickBack();
@@ -116,9 +108,7 @@ public:
 	{
 		theAddSequencerButton->setBounds(10, getHeight()/4, getWidth()/12, getHeight()/2);
 		theRemoveSequencerButton->setBounds(theAddSequencerButton->getRight(), getHeight()/4, getWidth()/12, getHeight()/2);
-		theUndoButton->setBounds(theRemoveSequencerButton->getRight(), getHeight()/4, getWidth()/20, getHeight()/2);
-		theRedoButton->setBounds(theUndoButton->getRight(), getHeight()/4, getWidth()/20, getHeight()/2);
-		theExportAllButton->setBounds(theRedoButton->getRight(), theRedoButton->getY(), getWidth()/16, getHeight()/2);
+		theExportAllButton->setBounds(theRemoveSequencerButton->getRight(), theRemoveSequencerButton->getY(), getWidth()/16, getHeight()/2);
 		theImportAllButton->setBounds(theExportAllButton->getRight(), theExportAllButton->getY(), getWidth()/16, getHeight()/2);
 		theKickBackButton->setBounds(theImportAllButton->getRight(), theImportAllButton->getY(), getWidth()/20, getHeight()/2);
 	}

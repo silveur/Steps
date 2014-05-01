@@ -24,7 +24,6 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
 	updatePositions();
 	theMasterTree.addListener(this);
-	addKeyListener(this);
 }
 
 ControllerView::~ControllerView()
@@ -66,32 +65,6 @@ void ControllerView::kickBack()
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		theMasterTree.getChild(i).setProperty("KickBack", 1, nullptr);
-	}
-}
-
-void ControllerView::undo()
-{
-	for (int i=0; i<theSequencerViews.size(); i++)
-	{
-		theSequencerViews[i]->showPopUp = false;
-	}
-	theUndoManager->undo();
-	for (int i=0; i<theSequencerViews.size(); i++)
-	{
-		theSequencerViews[i]->startTimer(100);
-	}
-}
-
-void ControllerView::redo()
-{
-	for (int i=0; i<theSequencerViews.size(); i++)
-	{
-		theSequencerViews[i]->showPopUp = false;
-	}
-	theUndoManager->redo();
-	for (int i=0; i<theSequencerViews.size(); i++)
-	{
-		theSequencerViews[i]->startTimer(100);
 	}
 }
 

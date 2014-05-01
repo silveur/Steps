@@ -18,7 +18,7 @@
 
 class HeaderView;
 
-class ControllerView: public Component, public ValueTree::Listener, public KeyListener
+class ControllerView: public Component, public ValueTree::Listener
 {
 public:
 	ControllerView(ValueTree& masterTree);
@@ -31,30 +31,7 @@ public:
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
 	Rectangle<int>& getScreenSize() { return theMainScreen; }
-	void undo();
-	void redo();
-	bool keyPressed (const KeyPress &key, Component *originatingComponent)
-	{
-		for (int i=0; i<theMasterTree.getNumChildren(); i++)
-		{
-			theSequencerViews[i]->showPopUp=false;
-		}
-		if (key.isKeyCode(90) && key.getModifiers() == ModifierKeys::commandModifier)
-		{
-			theUndoManager->undo();
-		}
-		else if (key.isKeyCode(90) && key.getModifiers() == (ModifierKeys::commandModifier | ModifierKeys::shiftModifier))
-		{
-			theUndoManager->redo();
-		}
-		for (int i=0; i<theMasterTree.getNumChildren(); i++)
-		{
-			theSequencerViews[i]->startTimer(100);
-		}
-		return true;
-	}
 
-	
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child){}
