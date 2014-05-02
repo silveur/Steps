@@ -33,7 +33,7 @@ ControllerView::~ControllerView()
 
 void ControllerView::updatePositions()
 {
-	int sequencer16Height = theMainScreen.getHeight() / 4.5;
+	int sequencer16Height = theMainScreen.getHeight() / 4.6;
 	int sequencer32Height = theMainScreen.getHeight() / 2.6;
 	int totalHeigth = 0;
 	int sequencerWidth = theMainScreen.getWidth() / 1.5;

@@ -20,6 +20,7 @@
 *.out
 *.app
 
+.DS*
 Builds/
 JuceLibraryCode/JuceHeader.h
 JuceLibraryCode/modules/*
