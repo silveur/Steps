@@ -15,6 +15,7 @@
 #include "Slider.h"
 
 class ControllerView;
+class PositionComp;
 
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
 {
@@ -24,7 +25,6 @@ public:
 
 	void sliderValueChanged(Slider* slider);
 	void resized();
-	void paint(Graphics& g);
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
@@ -73,6 +73,7 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
+	ScopedPointer<PositionComp> thePositionComp;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
@@ -81,6 +82,34 @@ private:
 	ControllerView* theControllerView;
 	Image theStepImage;
 	int thePosition;
+	friend class PositionComp;
+};
+
+class PositionComp: public Component
+{
+public:
+	PositionComp(SequencerView* view)
+	{
+		theSequencerView = view;
+		addAndMakeVisible(theSlider = new Slider(""));
+	}
+	
+	void paint(Graphics& g)
+	{
+		g.fillAll(Colours::red);
+		g.drawRect(theSequencerView->theStateButtons[theSequencerView->thePosition]->getX(), theSequencerView->theStateButtons[theSequencerView->thePosition]->getBottom(), 20, 20);
+	}
+
+	void resized()
+	{
+		theSlider->setBounds(0, 0, 20, 20);
+		repaint();
+	}
+	
+private:
+	ScopedPointer<Slider> theSlider;
+	SequencerView* theSequencerView;
+	
 };
 
 

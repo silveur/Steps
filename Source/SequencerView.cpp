@@ -144,9 +144,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	theScaleList->addListener(this);
-	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
+//	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
+	addAndMakeVisible(thePositionComp = new PositionComp(this));
 	addKeyListener(this);
 }
 
@@ -158,12 +159,7 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-	repaint();
-}
-
-void SequencerView::paint(Graphics& g)
-{
-	g.drawImageAt(theStepImage, theStateButtons[thePosition]->getX(), theStateButtons[thePosition]->getBottom(), false);
+	thePositionComp->repaint();
 }
 
 void SequencerView::refreshMidiList()
@@ -214,6 +210,7 @@ void SequencerView::resized()
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
 	}
+	thePositionComp->setBounds(0, getBottom() - 20, getWidth(), 50);
 }
 
 int randomise(int min, int max)
