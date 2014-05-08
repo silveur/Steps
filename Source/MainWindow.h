@@ -23,12 +23,34 @@ public:
 	{
 		setContentOwned (new ControllerView(masterTree), true);
 		setUsingNativeTitleBar(true);
-		setResizable(true, false);
-		centreWithSize (getWidth(), getHeight());
+		setResizable(true, true);
+		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
+		if (!thePreferenceFile.exists()) thePreferenceFile.create();
+		thePreferenceTree = ValueTree("Preferences");
+		FileInputStream inputStream(thePreferenceFile);
+		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+		if (treeToLoad.isValid())
+		{
+			thePreferenceTree.copyPropertiesFrom(treeToLoad, nullptr);
+			int x = thePreferenceTree.getProperty("X"); int y = thePreferenceTree.getProperty("Y");
+			int w = thePreferenceTree.getProperty("W"); int h = thePreferenceTree.getProperty("H");
+			setBounds(x, y, w, h);
+		}
 		setVisible (true);
 		addKeyListener(this);
 	}
-
+	
+	~MainWindow()
+	{
+		thePreferenceTree.setProperty("X", getX(), nullptr);
+		thePreferenceTree.setProperty("Y", getY(), nullptr);
+		thePreferenceTree.setProperty("W", getWidth(), nullptr);
+		thePreferenceTree.setProperty("H", getHeight(), nullptr);
+		if (thePreferenceFile.exists()) thePreferenceFile.deleteFile();
+		FileOutputStream outputStream(thePreferenceFile);
+		thePreferenceTree.writeToStream(outputStream);
+	}
+	
 	void closeButtonPressed()
 	{		
 		JUCEApplication::getInstance()->systemRequestedQuit();
@@ -40,6 +62,8 @@ public:
 	}
 	
 private:
+	File thePreferenceFile;
+	ValueTree thePreferenceTree;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
 };
 
