@@ -27,6 +27,7 @@
         <FILE id="QaPSxK" name="StepsView.h" compile="0" resource="0" file="Source/StepsView.h"/>
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
         <FILE id="NLibsS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
+        <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
         <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images">
           <FILE id="KfDVhB" name="button_minus.png" compile="0" resource="1"
                 file="Ressource/button_minus.png"/>

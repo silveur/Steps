@@ -11,15 +11,14 @@
 
 extern File thePresetFolder;
 
-SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView), showPopUp(true)
+SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView)
 {
-	showPopUp = false;
 	theUndoManager = new UndoManager();
 	theSequencerTree = sequencerTree;
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<theSequencerTree.getNumChildren();i++)
 	{
-		addAndMakeVisible(theStepSliders.add(new Slider("Pitch" + String(i))));
+		addAndMakeVisible(theStepSliders.add(new SeqSlider("Pitch" + String(i))));
 		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
@@ -79,7 +78,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
 	theImportButton->addListener(this);
 	
-	theCurrentBubbleMessage = new BubbleMessageComponent();
 
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -149,7 +147,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
-	startTimer(200);
 	addKeyListener(this);
 }
 
@@ -245,7 +242,6 @@ void SequencerView::randomiseAll()
 
 void SequencerView::buttonClicked(Button* button)
 {
-	showPopUp = false;
 	if (button == theRandomAllButton)
 	{
 		randomiseAll();
@@ -289,7 +285,6 @@ void SequencerView::buttonClicked(Button* button)
 		FileChooser fileChooser ("Load preset file...", thePresetFolder, "*.seq");
 		if (fileChooser.browseForFileToOpen())
 		{
-			showPopUp = false;
 			File presetToLoad = fileChooser.getResult();
 			FileInputStream inputStream(presetToLoad);
 			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
@@ -329,24 +324,8 @@ void SequencerView::buttonClicked(Button* button)
 		}
 		theSequencerTree.getChild(index).setProperty("State", currentState, theUndoManager);
 	}
-	startTimer(100);
 }
 
-void SequencerView::showBubbleMessage(Component *targetComponent, const String &textToShow)
-{
-	if (Desktop::canUseSemiTransparentWindows())
-	{
-		theCurrentBubbleMessage->setAlwaysOnTop (true);
-		theCurrentBubbleMessage->addToDesktop (0);
-	}
-	else
-	{
-		targetComponent->getTopLevelComponent()->addChildComponent (theCurrentBubbleMessage);
-	}
-	AttributedString text(textToShow);
-	text.setJustification(Justification::centred);
-	theCurrentBubbleMessage->showAt(targetComponent, text, 500, true, false);
-}
 
 String SequencerView::isOnScale(int value)
 {
@@ -382,10 +361,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 	int index = slider->getName().getTrailingIntValue();
 	if(slider->getName().contains("Pitch"))
 	{
+		SeqSlider* sld = (SeqSlider*)slider;
 		double value = slider->getValue();
 		String bubbleMessage = String(value) + " " + isOnScale(value);
-		if (showPopUp)
-			showBubbleMessage(slider, bubbleMessage);
+		sld->setMessage(bubbleMessage);
 		theSequencerTree.getChild(index).setProperty("Pitch", value, theUndoManager);
 	}
 	else if(slider->getName().contains("Velocity"))

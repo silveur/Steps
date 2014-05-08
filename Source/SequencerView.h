@@ -12,10 +12,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
+#include "Slider.h"
 
 class ControllerView;
 
-class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener, public Timer, public KeyListener
+class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
 {
 public:
 	SequencerView(ValueTree& sequencerTree, ControllerView* rootView);
@@ -29,30 +30,11 @@ public:
 	void refreshMidiList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
-	void showBubbleMessage(Component* targetComponent, const String& textToShow);
 	const char * getTextForEnum(int enumVal);
 	void randomiseAll();
 	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
-		if (key.isKeyCode(82))
-		{
-			showPopUp = false;
-			randomiseAll();
-			startTimer(100);
-		}
-		else if (key.isKeyCode(90) && key.getModifiers() == ModifierKeys::commandModifier)
-		{
-			showPopUp = false;
-			theUndoManager->undo();
-			startTimer(100);
-		}
-		else if (key.isKeyCode(90) && key.getModifiers() == (ModifierKeys::commandModifier | ModifierKeys::shiftModifier))
-		{
-			showPopUp = false;
-			theUndoManager->redo();
-			startTimer(100);
-		}
-		
+		if (key.isKeyCode(82)) randomiseAll();
 		return true;
 	}
 
@@ -60,10 +42,6 @@ public:
 	{
 		static ValueTree theCopyTree;
 		return theCopyTree;
-	}
-	void timerCallback()
-	{
-		showPopUp = true;
 	}
 
 private:
@@ -84,7 +62,7 @@ private:
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
 	ScopedPointer<Slider> theOffsetSlider;
-	OwnedArray<Slider> theStepSliders;
+	OwnedArray<SeqSlider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
 	OwnedArray<Slider> theDecaySliders;
 	OwnedArray<TextButton> theStateButtons;
@@ -95,7 +73,6 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
-	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
@@ -104,7 +81,6 @@ private:
 	ControllerView* theControllerView;
 	Image theStepImage;
 	int thePosition;
-	bool showPopUp;
 };
 
 
