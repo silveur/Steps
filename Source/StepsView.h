@@ -18,26 +18,24 @@ class StepView: public Component
 public:
 	StepView()
 	{
-		theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
+		thePosition = 0;
+		setVisible(true);
 	}
-	~StepView()
-	{
-	}
+	~StepView() {}
 	
 	void update(int x)
 	{
-		X = x;
+		thePosition = x;
 		repaint();
 	}
-	
 	void paint(Graphics& g)
 	{
-		g.drawImageAt(theStepImage, X, 0);
+		if (thePosition != -1)
+			g.drawEllipse(thePosition, 0, 20, 20, 2);
 	}
 	
 private:
-	Image theStepImage;
-	int X;
+	int thePosition;
 };
 
 

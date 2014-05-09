@@ -15,7 +15,6 @@
 #include "Slider.h"
 
 class ControllerView;
-class PositionComp;
 
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
 {
@@ -73,44 +72,14 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
-	ScopedPointer<PositionComp> thePositionComp;
+	ScopedPointer<StepView> thePositionComp;
+	ScopedPointer<StepView> thePositionComp2;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
-	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
-	Image theStepImage;
 	int thePosition;
-	friend class PositionComp;
 };
-
-class PositionComp: public Component
-{
-public:
-	PositionComp(SequencerView* view)
-	{
-		theSequencerView = view;
-		addAndMakeVisible(theSlider = new Slider(""));
-	}
-	
-	void paint(Graphics& g)
-	{
-		g.fillAll(Colours::red);
-		g.drawRect(theSequencerView->theStateButtons[theSequencerView->thePosition]->getX(), theSequencerView->theStateButtons[theSequencerView->thePosition]->getBottom(), 20, 20);
-	}
-
-	void resized()
-	{
-		theSlider->setBounds(0, 0, 20, 20);
-		repaint();
-	}
-	
-private:
-	ScopedPointer<Slider> theSlider;
-	SequencerView* theSequencerView;
-	
-};
-
 
 #endif  // MAINCOMPONENT_H_INCLUDED

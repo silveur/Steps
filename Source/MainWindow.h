@@ -36,7 +36,7 @@ public:
 			int w = thePreferenceTree.getProperty("W"); int h = thePreferenceTree.getProperty("H");
 			setBounds(x, y, w, h);
 		}
-		setVisible (true);
+		setVisible(true);
 		addKeyListener(this);
 	}
 	

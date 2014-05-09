@@ -22,10 +22,7 @@ public:
 		theMessage = String(getValue());
 	}
 	
-	~SeqSlider()
-	{
-		
-	}
+	~SeqSlider() {}
 	
 	void startedDragging()
 	{

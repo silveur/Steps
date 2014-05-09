@@ -77,7 +77,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
 	theImportButton->addListener(this);
-	
 
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -107,8 +106,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
 	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
 	theRangeSlider->addListener(this);
-	
-	addAndMakeVisible(&theStepView);
 	
 	addAndMakeVisible(theOnOffButton = new ToggleButton("On/Off"));
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
@@ -144,10 +141,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
 	theScaleList->addListener(this);
-//	theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
-	addAndMakeVisible(thePositionComp = new PositionComp(this));
+	addAndMakeVisible(thePositionComp = new StepView());
+	addAndMakeVisible(thePositionComp2 = new StepView());
 	addKeyListener(this);
 }
 
@@ -159,7 +156,16 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-	thePositionComp->repaint();
+	if (thePosition < 16)
+	{
+		thePositionComp->update(theStepSliders[thePosition]->getX());
+		thePositionComp2->update(-1);
+	}
+	else
+	{
+		thePositionComp->update(-1);
+		thePositionComp2->update(theStepSliders[thePosition]->getX());
+	}
 }
 
 void SequencerView::refreshMidiList()
@@ -202,15 +208,15 @@ void SequencerView::resized()
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
 	}
-	theStepView.setBounds(theMidiOutputList->getX(), theStateButtons[0]->getBottom(), getWidth(), heigthDiv);
+	thePositionComp->setBounds(theMidiOutputList->getX(), theStateButtons[0]->getBottom(), getWidth(), heigthDiv);
 	for(int i=16;i<theSequencerTree.getNumChildren();i++)
 	{
-		theStepSliders[i]->setBounds(theStepSliders[i-16]->getX(), theStepView.getBottom(), heigthDiv * 2, heigthDiv * 2);
+		theStepSliders[i]->setBounds(theStepSliders[i-16]->getX(), thePositionComp->getBottom(), heigthDiv * 2, heigthDiv * 2);
 		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
 	}
-	thePositionComp->setBounds(0, getBottom() - 20, getWidth(), 50);
+	thePositionComp2->setBounds(theMidiOutputList->getX(), theStateButtons[16]->getBottom(), getWidth(), heigthDiv);
 }
 
 int randomise(int min, int max)
