@@ -24,7 +24,6 @@ public:
 
 	void sliderValueChanged(Slider* slider);
 	void resized();
-	void paint(Graphics& g);
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 	void refreshMidiList();
@@ -73,15 +72,14 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
+	ScopedPointer<StepView> thePositionComp;
+	ScopedPointer<StepView> thePositionComp2;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
-	StepView theStepView;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
-	Image theStepImage;
 	int thePosition;
 };
-
 
 #endif  // MAINCOMPONENT_H_INCLUDED
