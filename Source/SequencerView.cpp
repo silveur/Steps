@@ -481,6 +481,12 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else if(String(property) == "Offset")
 	{
+		for(int i=0;i<32;i++)
+		{
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::blue);
+		}
+		int offset = tree.getProperty(property);
+		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);
 		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "RootNote")
