@@ -22,6 +22,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
+		theStepSliders[i]->setScrollWheelEnabled(false);
+		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
@@ -31,6 +33,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
 		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theVelocitySliders[i]->setRange(0, 127, 1);
+		theVelocitySliders[i]->setScrollWheelEnabled(false);
+		theVelocitySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::black);
 		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
@@ -44,6 +48,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
+		theDecaySliders[i]->setScrollWheelEnabled(false);
+		theDecaySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::yellow);
 		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
 		theDecaySliders[i]->setTextValueSuffix(" ms Decay");
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
@@ -51,9 +57,14 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
 		theDecaySliders[i]->addListener (this);
 	}
+	
+	int offset = theSequencerTree.getProperty("Offset");
+	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);
+	
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::LinearHorizontal);
 	theSequencerLength->setRange(1, 32,1);
+	theSequencerLength->setScrollWheelEnabled(false);
 	theSequencerLength->setTextBoxStyle(Slider::NoTextBox, false, 30, 30);
 	theSequencerLength->setTextValueSuffix(" steps");
 	theSequencerLength->setPopupDisplayEnabled(true, theControllerView);
@@ -82,6 +93,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theShuffleSlider->setRange(0, 5, 1);
 	theShuffleSlider->setTextValueSuffix(" Shuffle");
+	theShuffleSlider->setScrollWheelEnabled(false);
 	theShuffleSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
 	theShuffleSlider->setPopupDisplayEnabled(true, theControllerView);
@@ -90,6 +102,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
 	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theOffsetSlider->setTextValueSuffix(" Offset");
+	theOffsetSlider->setScrollWheelEnabled(false);
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
@@ -101,6 +114,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theRangeSlider = new Slider("Range"));
 	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theRangeSlider->setRange(1, 3, 1);
+	theRangeSlider->setScrollWheelEnabled(false);
 	theRangeSlider->setTextValueSuffix(" Range");
 	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
@@ -483,7 +497,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::blue);
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		}
 		int offset = tree.getProperty(property);
 		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);
