@@ -23,7 +23,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
-		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
+		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::pink);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
@@ -497,7 +497,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::pink);
 		}
 		int offset = tree.getProperty(property);
 		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);
