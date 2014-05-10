@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="Sequencer" projectType="guiapp" version="1.0.0"
+<JUCERPROJECT id="i0GMhV" name="Sequencer" projectType="guiapp" version="0.8"
               bundleIdentifier="com.yourcompany.Sequencer" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0">
   <MAINGROUP id="jYNjqi" name="Sequencer">
@@ -30,10 +30,24 @@
         <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
         <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images"/>
       </GROUP>
+      <GROUP id="{177A0B3F-5BE4-D5E2-1D58-6B0272C73950}" name="Updater">
+        <FILE id="CIsSIq" name="PackageHandler.h" compile="0" resource="0"
+              file="Source/PackageHandler.h"/>
+        <GROUP id="{E7DA2940-4994-5DF9-98B3-01FC4FF3AECC}" name="Network">
+          <FILE id="SUkoNr" name="dRowAudio_CURLEasySession.cpp" compile="1"
+                resource="0" file="Source/Network/dRowAudio_CURLEasySession.cpp"/>
+          <FILE id="fwdX0h" name="dRowAudio_CURLEasySession.h" compile="0" resource="0"
+                file="Source/Network/dRowAudio_CURLEasySession.h"/>
+          <FILE id="PXxjGB" name="dRowAudio_CURLManager.cpp" compile="1" resource="0"
+                file="Source/Network/dRowAudio_CURLManager.cpp"/>
+          <FILE id="Ty5h1F" name="dRowAudio_CURLManager.h" compile="0" resource="0"
+                file="Source/Network/dRowAudio_CURLManager.h"/>
+        </GROUP>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="Sequencer"/>

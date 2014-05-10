@@ -11,6 +11,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainWindow.h"
 #include "Master.h"
+#include "PackageHandler.h"
 
 File thePresetFolder;
 
@@ -25,6 +26,7 @@ public:
 
 	void initialise (const String& commandLine) override
 	{
+		thePackageHandler = new PackageHandler();
 		theSequencerMaster = new Master();
 		mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
 	}
@@ -46,6 +48,7 @@ public:
 private:
 	ScopedPointer<MainWindow> mainWindow;
 	ScopedPointer<Master> theSequencerMaster;
+	ScopedPointer<PackageHandler> thePackageHandler;
 };
 
 START_JUCE_APPLICATION (SequencerApplication)
