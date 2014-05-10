@@ -17,7 +17,7 @@
 class MainWindow: public DocumentWindow, public KeyListener
 {
 public:
-	MainWindow(ValueTree& masterTree)  : DocumentWindow ("Sequencer",
+	MainWindow(ValueTree& masterTree): DocumentWindow (String("Sequencer V" + String(ProjectInfo::versionString)),
 														Colours::lightgrey,
 														DocumentWindow::allButtons)
 	{

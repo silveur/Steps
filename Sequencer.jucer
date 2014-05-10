@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="Sequencer" projectType="guiapp" version="0.8"
-              bundleIdentifier="com.yourcompany.Sequencer" includeBinaryInAppConfig="1"
-              jucerVersion="3.1.0">
-  <MAINGROUP id="jYNjqi" name="Sequencer">
+<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.5"
+              bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
+              jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
+              companyName="Nummer">
+  <MAINGROUP id="jYNjqi" name="sequencer">
     <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
       <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
       <GROUP id="{4443E8B4-5C81-9C76-04CE-E6D7E1B32FC1}" name="Sequencer">
         <FILE id="g5QmNa" name="Master.h" compile="0" resource="0" file="Source/Master.h"/>
         <FILE id="NW2qIO" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
@@ -50,9 +52,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="Sequencer"/>
+                       isDebug="1" optimisation="1" targetName="sequencer"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="Sequencer"/>
+                       isDebug="0" optimisation="3" targetName="sequencer"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>

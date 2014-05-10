@@ -9,46 +9,25 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MainWindow.h"
-#include "Master.h"
+#include "Main.h"
 #include "PackageHandler.h"
 
 File thePresetFolder;
-
-class SequencerApplication  : public JUCEApplication
-{
-public:
-	SequencerApplication() {}
-
-	const String getApplicationName() override       { return ProjectInfo::projectName; }
-	const String getApplicationVersion() override    { return ProjectInfo::versionString; }
-	bool moreThanOneInstanceAllowed() override       { return true; }
-
-	void initialise (const String& commandLine) override
-	{
-		thePackageHandler = new PackageHandler();
-		theSequencerMaster = new Master();
-		mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
-	}
-
-	void shutdown() override
-	{
-		mainWindow = nullptr;
-	}
-
-	void systemRequestedQuit() override
-	{
-		quit();
-	}
-
-	void anotherInstanceStarted (const String& commandLine) override
-	{
-	}
-
-private:
-	ScopedPointer<MainWindow> mainWindow;
-	ScopedPointer<Master> theSequencerMaster;
-	ScopedPointer<PackageHandler> thePackageHandler;
-};
-
 START_JUCE_APPLICATION (SequencerApplication)
+
+void SequencerApplication::initialise (const String& commandLine)
+{
+	thePackageHandler = new PackageHandler();
+	theSequencerMaster = new Master();
+	mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
+}
+
+void SequencerApplication::updateCallback()
+{
+	startTimer(1000);
+}
+void SequencerApplication::timerCallback()
+{
+	delete thePackageHandler;
+	stopTimer();
+}

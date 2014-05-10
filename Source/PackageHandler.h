@@ -13,6 +13,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "dRowAudio_CURLEasySession.h"
+#include "Main.h"
+
+class SequencerApplication;
 
 class PackageHandler: private CURLEasySession::Listener
 {
@@ -22,7 +25,6 @@ public:
 		theTempApp = File::getSpecialLocation(File::tempDirectory).getFullPathName() + String("/sequencer.zip");
 		theCurlSession = new CURLEasySession();
 		theCurlSession->addListener(this);
-		DBG("Temp folder:" << theTempApp);
 		File tempAppFile = File(theTempApp); tempAppFile.deleteFile();
 		theCurlSession->setLocalFile(File(theTempApp));
 		theServerURL = "http://nummermusic.com/version-request.php?version=";
@@ -30,9 +32,10 @@ public:
 	}
 	~PackageHandler()
 	{
-		
+		File tempFolder = File::getSpecialLocation(File::tempDirectory).getFullPathName();
+		tempFolder.deleteRecursively();
 	}
-	bool checkForUpdate()
+	void checkForUpdate()
 	{
 		theServerURL = theServerURL + ProjectInfo::versionString;
 		URL serverURL(theServerURL);
@@ -42,11 +45,12 @@ public:
 		String responseString = response->readString();
 		if (response != nullptr)
 		{
-			if (responseString != "null")
+			if (!responseString.contains("null"))
 			{
 				downloadUpdate(responseString);
 			}
-			else return false;
+			else
+				deleteMe();
 			delete response;
 		}
 	}
@@ -56,10 +60,6 @@ public:
 		DBG("Downloading: " << url);
 		theCurlSession->setRemotePath(url);
 		theCurlSession->beginTransfer(false, true);
-	}
-	bool installUpdate()
-	{
-		
 	}
 	
 	void transferAboutToStart(CURLEasySession* session)
@@ -79,14 +79,16 @@ public:
 		destinationFolder.deleteRecursively();
 		DBG("Source:" << contents.getFullPathName());
 		DBG("Destination: " << destinationFolder.getFullPathName());
-		if (contents.copyDirectoryTo(destinationFolder) == true)
-		{
-			DBG("Copied");
-		}
-		else
-			DBG("ERROR");
+		contents.copyDirectoryTo(destinationFolder);
 		String chmod = ("chmod +x " + destinationFolder.getFullPathName() + "/MacOS/*");
 		system(chmod.toRawUTF8());
+		deleteMe();
+	}
+	
+	void deleteMe()
+	{
+		SequencerApplication* app = (SequencerApplication*)JUCEApplication::getInstance();
+		app->updateCallback();
 	}
 	
 private:
