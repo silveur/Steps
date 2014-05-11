@@ -23,7 +23,7 @@ public:
 	{
 		setContentOwned (new ControllerView(masterTree), true);
 		setUsingNativeTitleBar(true);
-		setResizable(true, true);
+		setResizable(false, false);
 		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
 		thePreferenceTree = ValueTree("Preferences");
@@ -58,6 +58,16 @@ public:
 	
 	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
+		if (key.isKeyCode(78))
+		{
+			ModifierKeys mod = ModifierKeys::getCurrentModifiersRealtime();
+			if (mod == ModifierKeys::commandModifier)
+			{
+				ControllerView* view = (ControllerView*)getContentComponent();
+				ValueTree tree;
+				view->addSequencer(tree);
+			}
+		}
 		return true;
 	}
 	

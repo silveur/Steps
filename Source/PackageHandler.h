@@ -42,17 +42,22 @@ public:
 		InputStream* response = serverURL.createInputStream(false, nullptr, nullptr,
 															"",
 															0, nullptr);
-		String responseString = response->readString();
 		if (response != nullptr)
 		{
+			String responseString = response->readString();
 			if (!responseString.contains("null"))
 			{
 				downloadUpdate(responseString);
 			}
 			else
+			{
 				deleteMe();
+				std::cout << "Up to date" << std::endl;
+			}
 			delete response;
 		}
+		else
+			std::cout << "No Internet" << std::endl;
 	}
 	void downloadUpdate(String url)
 	{

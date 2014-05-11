@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.6"
+<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.7"
               bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
               companyName="Nummer">
@@ -49,12 +49,12 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="libcurl.3.dylib">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="sequencer"/>
-        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="sequencer"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
+                       isDebug="0" optimisation="3" targetName="sequencer" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>

@@ -23,7 +23,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
-		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::pink);
+		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::brown);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
@@ -88,6 +88,9 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
 	theImportButton->addListener(this);
+	
+	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
+	theDeleteButton->addListener(this);
 
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
 	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -231,6 +234,7 @@ void SequencerView::resized()
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
 	}
 	thePositionComp2->setBounds(theMidiOutputList->getX(), theStateButtons[16]->getBottom(), getWidth(), heigthDiv);
+	theDeleteButton->setBounds(getWidth()-widthDiv, 0, widthDiv, heigthDiv);
 }
 
 int randomise(int min, int max)
@@ -297,6 +301,12 @@ void SequencerView::buttonClicked(Button* button)
 	{
 		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
+	else if (button == theDeleteButton)
+	{
+		int i = theSequencerTree.getParent().indexOf(theSequencerTree);
+		theControllerView->removeSequencer(i);
+	}
+	
 	else if (button == theImportButton)
 	{
 		FileChooser fileChooser ("Load preset file...", thePresetFolder, "*.seq");
@@ -497,7 +507,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::pink);
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::brown);
 		}
 		int offset = tree.getProperty(property);
 		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);

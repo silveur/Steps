@@ -26,7 +26,7 @@ public:
 	void resized();
 	void kickBack();
 	void addSequencer(ValueTree& sequencerTreeToAdd);
-	void removeSequencer();
+	void removeSequencer(int index);
 	void updatePositions();
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }

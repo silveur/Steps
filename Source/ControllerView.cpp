@@ -93,10 +93,22 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 	}
 }
 
-void ControllerView::removeSequencer()
+void ControllerView::removeSequencer(int i)
 {
-	int index = theMasterTree.getNumChildren()-1;
-	theMasterTree.removeChild(index, nullptr);
-	theSequencerViews.remove(index);
-	updatePositions();
+	if (i == -1)
+	{
+		int index = theMasterTree.getNumChildren()-1;
+		theMasterTree.removeChild(index, nullptr);
+		theSequencerViews.remove(index);
+		updatePositions();
+	}
+	else
+	{
+		theMasterTree.removeChild(i, nullptr);
+		theSequencerViews.remove(i);
+		updatePositions();
+	}
 }
+
+
+

@@ -24,8 +24,6 @@ public:
 		theMainLabel = "Sequencer";
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
 		theAddSequencerButton->addListener(this);
-		addAndMakeVisible(theRemoveSequencerButton = new TextButton("Remove Sequencer"));
-		theRemoveSequencerButton->addListener(this);
 		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
 		theUndoButton->addListener(this);
 		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
@@ -49,11 +47,6 @@ public:
 			ValueTree tree;
 			theControllerView->addSequencer(tree);
 		}
-		else if (buttonThatWasClicked == theRemoveSequencerButton)
-		{
-			if (theControllerView->getNumOfSequencer() > 1)
-				theControllerView->removeSequencer();
-		}
 		else if (buttonThatWasClicked == theKickBackButton)
 		{
 			theControllerView->kickBack();
@@ -68,7 +61,7 @@ public:
 				ValueTree masterTree = theControllerView->getMasterTree();
 				while (masterTree.getNumChildren())
 				{
-					theControllerView->removeSequencer();
+					theControllerView->removeSequencer(-1);
 				}
 				File presetToLoad = fileChooser.getResult();
 				FileInputStream inputStream(presetToLoad);
@@ -107,15 +100,13 @@ public:
 	void resized()
 	{
 		theAddSequencerButton->setBounds(10, getHeight()/4, getWidth()/12, getHeight()/2);
-		theRemoveSequencerButton->setBounds(theAddSequencerButton->getRight(), getHeight()/4, getWidth()/12, getHeight()/2);
-		theExportAllButton->setBounds(theRemoveSequencerButton->getRight(), theRemoveSequencerButton->getY(), getWidth()/16, getHeight()/2);
+		theExportAllButton->setBounds(theAddSequencerButton->getRight(), theAddSequencerButton->getY(), getWidth()/16, getHeight()/2);
 		theImportAllButton->setBounds(theExportAllButton->getRight(), theExportAllButton->getY(), getWidth()/16, getHeight()/2);
 		theKickBackButton->setBounds(theImportAllButton->getRight(), theImportAllButton->getY(), getWidth()/20, getHeight()/2);
 	}
 	
 private:
 	ScopedPointer<TextButton> theAddSequencerButton;
-	ScopedPointer<TextButton> theRemoveSequencerButton;
 	ScopedPointer<TextButton> theUndoButton;
 	ScopedPointer<TextButton> theRedoButton;
 	ScopedPointer<TextButton> theExportAllButton;

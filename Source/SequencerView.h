@@ -34,7 +34,7 @@ public:
 	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
 		if (key.isKeyCode(82)) randomiseAll();
-		return true;
+		return false;
 	}
 
 	static ValueTree& getCopyTree()
@@ -72,6 +72,7 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
+	ScopedPointer<TextButton> theDeleteButton;
 	ScopedPointer<StepView> thePositionComp;
 	ScopedPointer<StepView> thePositionComp2;
 	UndoManager* theUndoManager;
