@@ -10,14 +10,18 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Main.h"
+#ifndef OLD_MAC
 #include "PackageHandler.h"
+#endif
 
 File thePresetFolder;
 START_JUCE_APPLICATION (SequencerApplication)
 
 void SequencerApplication::initialise (const String& commandLine)
 {
+	#ifndef OLD_MAC
 	thePackageHandler = new PackageHandler();
+	#endif
 	theSequencerMaster = new Master();
 	mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
 }
@@ -28,6 +32,8 @@ void SequencerApplication::updateCallback()
 }
 void SequencerApplication::timerCallback()
 {
+	#ifndef OLD_MAC
 	delete thePackageHandler;
+	#endif
 	stopTimer();
 }

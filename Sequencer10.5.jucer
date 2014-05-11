@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.7"
+              bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
+              jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
+              companyName="Nummer" defines="OLD_MAC=1">
+  <MAINGROUP id="jYNjqi" name="sequencer">
+    <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
+      <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
+      <GROUP id="{4443E8B4-5C81-9C76-04CE-E6D7E1B32FC1}" name="Sequencer">
+        <FILE id="g5QmNa" name="Master.h" compile="0" resource="0" file="Source/Master.h"/>
+        <FILE id="NW2qIO" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
+        <FILE id="obMuqf" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
+        <FILE id="Q76wg2" name="MidiCore.cpp" compile="1" resource="0" file="Source/MidiCore.cpp"/>
+        <FILE id="YlFytd" name="MidiCore.h" compile="0" resource="0" file="Source/MidiCore.h"/>
+        <FILE id="xLbBQu" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
+        <FILE id="DVm9SJ" name="Scales.h" compile="0" resource="0" file="Source/Scales.h"/>
+      </GROUP>
+      <GROUP id="{5BBC7915-C851-834C-303A-627B32FA7DE9}" name="Graphics">
+        <FILE id="oGkwUR" name="SequencerView.cpp" compile="1" resource="0"
+              file="Source/SequencerView.cpp"/>
+        <FILE id="HdxLVf" name="SequencerView.h" compile="0" resource="0" file="Source/SequencerView.h"/>
+        <FILE id="dRf9bq" name="ControllerView.cpp" compile="1" resource="0"
+              file="Source/ControllerView.cpp"/>
+        <FILE id="dVfxqR" name="ControllerView.h" compile="0" resource="0"
+              file="Source/ControllerView.h"/>
+        <FILE id="tVk1yJ" name="HeaderView.h" compile="0" resource="0" file="Source/HeaderView.h"/>
+        <FILE id="QaPSxK" name="StepsView.h" compile="0" resource="0" file="Source/StepsView.h"/>
+        <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
+        <FILE id="NLibsS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
+        <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
+        <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="sequencer"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
+                       isDebug="0" optimisation="3" targetName="sequencer" linkTimeOptimisation="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Libraries/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+    <LINUX_MAKE targetFolder="Builds/Linux">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
+                       targetName="Sequencer"/>
+        <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
+                       targetName="Sequencer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="Libraries/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="Libraries/JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_audio_devices" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_audio_formats" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="0"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+  </MODULES>
+  <JUCEOPTIONS/>
+</JUCERPROJECT>

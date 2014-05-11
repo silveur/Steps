@@ -46,7 +46,9 @@ public:
 private:
 	ScopedPointer<MainWindow> mainWindow;
 	ScopedPointer<Master> theSequencerMaster;
+#ifndef OLD_MAC
 	PackageHandler* thePackageHandler;
+#endif
 };
 
 
