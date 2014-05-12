@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.7"
+<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.8"
               bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
               companyName="Nummer">

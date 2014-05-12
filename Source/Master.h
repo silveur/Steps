@@ -73,10 +73,16 @@ private:
 	{
 		if (parentTree == theMasterTree)
 		{
-			theSequencerArray.remove(parentTree.indexOf(child));
+			for (int i=0;i<theSequencerArray.size();i++)
+			{
+				if (theSequencerArray[i]->theSequencerTree == child)
+				{
+					theSequencerArray.remove(i);
+				}
+			}
 		}
 	}
-	
+	void valueTreeRedirected (ValueTree &treeWhichHasBeenChanged){}
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}

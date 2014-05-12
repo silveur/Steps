@@ -57,6 +57,7 @@ private:
 	bool theOnOffStatus;
 	bool isIdle;
 	bool waitForShuffle;
+	friend class Master;
 };
 
 

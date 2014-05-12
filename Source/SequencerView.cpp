@@ -132,6 +132,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSpeedList->addItem("1/1", 1);
 	theSpeedList->addItem("1/2", 2);
 	theSpeedList->addItem("1/4", 3);
+	theSpeedList->addItem("1/8", 4);
 	float speed = theSequencerTree.getProperty("Speed", 1);
 	theSpeedList->setSelectedId(1/speed);
 	theSpeedList->addListener(this);
@@ -470,6 +471,7 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		if (id == 1) speed = 1;
 		else if (id == 2) speed = 0.5;
 		else if (id == 3) speed = 0.25;
+		else if (id == 4) speed = 0.125;
 		theSequencerTree.setProperty("Speed", speed, theUndoManager);
 	}
 	else if(comboBoxThatHasChanged == theScaleList)
@@ -547,6 +549,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 		if (speed == 1) index = 1;
 		else if (speed == 0.5) index = 2;
 		else if (speed == 0.25) index = 3;
+		else if (speed == 0.125) index = 4;
 		theSpeedList->setSelectedId(index, dontSendNotification);
 	}
 	else if(String(property) == "Scale")
