@@ -127,6 +127,15 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
 	theRangeSlider->addListener(this);
 	
+	addAndMakeVisible(theSpeedList = new ComboBox("Speed"));
+	theSpeedList->addSectionHeading("Speed");
+	theSpeedList->addItem("1/1", 1);
+	theSpeedList->addItem("1/2", 2);
+	theSpeedList->addItem("1/4", 3);
+	float speed = theSequencerTree.getProperty("Speed", 1);
+	theSpeedList->setSelectedId(1/speed);
+	theSpeedList->addListener(this);
+	
 	addAndMakeVisible(theOnOffButton = new ToggleButton("On/Off"));
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
 	theOnOffButton->addListener(this);
@@ -215,6 +224,7 @@ void SequencerView::resized()
 	theShuffleSlider->setBounds(theScaleList->getRight(), theMidiOutputList->getBottom(), heigthDiv, heigthDiv);
 	theRangeSlider->setBounds(theShuffleSlider->getRight(), theMidiOutputList->getBottom(), heigthDiv, heigthDiv);
 	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), heigthDiv, heigthDiv);
+	theSpeedList->setBounds(theOffsetSlider->getRight(), theOffsetSlider->getY(), widthDiv, heigthDiv);
 	theCopyButton->setBounds(theRandomAllButton->getRight(), theMidiOutputList->getY(), widthDiv, heigthDiv);
 	thePasteButton->setBounds(theCopyButton->getRight(), theMidiOutputList->getY(), widthDiv, heigthDiv);
 	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), widthDiv, heigthDiv);
@@ -356,7 +366,6 @@ void SequencerView::buttonClicked(Button* button)
 	}
 }
 
-
 String SequencerView::isOnScale(int value)
 {
 	String returnedString;
@@ -455,6 +464,14 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		int id = comboBoxThatHasChanged->getSelectedId();
 		theSequencerTree.setProperty("Channel", id, theUndoManager);
 	}
+	else if(comboBoxThatHasChanged == theSpeedList)
+	{
+		int id = comboBoxThatHasChanged->getSelectedId(); float speed;
+		if (id == 1) speed = 1;
+		else if (id == 2) speed = 0.5;
+		else if (id == 3) speed = 0.25;
+		theSequencerTree.setProperty("Speed", speed, theUndoManager);
+	}
 	else if(comboBoxThatHasChanged == theScaleList)
 	{
 		int id = comboBoxThatHasChanged->getSelectedId();
@@ -523,6 +540,14 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	else if(String(property) == "RootOctave")
 	{
 		theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+	}
+	else if(String(property) == "Speed")
+	{
+		float speed = tree.getProperty(property); int index;
+		if (speed == 1) index = 1;
+		else if (speed == 0.5) index = 2;
+		else if (speed == 0.25) index = 3;
+		theSpeedList->setSelectedId(index, dontSendNotification);
 	}
 	else if(String(property) == "Scale")
 	{

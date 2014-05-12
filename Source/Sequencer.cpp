@@ -28,6 +28,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theShuffle = 0;
 		theRange = 1;
 		theOffset = 0;
+		theSpeed = 1;
 		theOnOffStatus = ON;
 		initSequencerTree();
 		for (int i=0; i<32; i++)
@@ -56,6 +57,7 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
 	theSequencerTree.setProperty("Scale", 1, nullptr);
+	theSequencerTree.setProperty("Speed", theSpeed, nullptr);
 }
 
 void Sequencer::loadFromTree()
@@ -68,6 +70,7 @@ void Sequencer::loadFromTree()
 	theChannel = theSequencerTree.getProperty("Channel");
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
+	theSpeed = theSequencerTree.getProperty("Speed");
 	for (int i=0; i<32; i++)
 	{
 		ValueTree stepTree = theSequencerTree.getChild(i);
@@ -120,7 +123,7 @@ void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 {
 	if (message.isMidiClock() && !isIdle && theOnOffStatus)
 	{
-		thePpqCount = (thePpqCount+1) % 6;
+		thePpqCount = (thePpqCount+1) % (int)(6.0f/theSpeed);
 		if( waitForShuffle && (thePpqCount == theShuffle))
 		{
 			triggerStep();
@@ -195,6 +198,10 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Status")
 	{
 		theOnOffStatus = tree.getProperty(property);
+	}
+	else if(String(property) == "Speed")
+	{
+		theSpeed = tree.getProperty(property);
 	}
 	else if(String(property) == "KickBack")
 	{

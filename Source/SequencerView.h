@@ -57,6 +57,7 @@ private:
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
 	ScopedPointer<ComboBox> theScaleList;
+	ScopedPointer<ComboBox> theSpeedList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
