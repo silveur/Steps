@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.7"
+<JUCERPROJECT id="i0GMhV" name="sequencer10.5" projectType="guiapp" version="0.7"
               bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
               companyName="Nummer" defines="OLD_MAC=1">
-  <MAINGROUP id="jYNjqi" name="sequencer">
+  <MAINGROUP id="jYNjqi" name="sequencer10.5">
     <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
       <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
@@ -38,9 +38,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="sequencer"/>
+                       isDebug="1" optimisation="1" targetName="sequencer10.5"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="sequencer" linkTimeOptimisation="0"/>
+                       isDebug="0" optimisation="3" targetName="sequencer10.5" linkTimeOptimisation="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
@@ -55,26 +55,6 @@
         <MODULEPATH id="juce_audio_processors" path="Libraries/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <LINUX_MAKE targetFolder="Builds/Linux">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
-                       targetName="Sequencer"/>
-        <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="3"
-                       targetName="Sequencer"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="Libraries/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="Libraries/JUCE/modules"/>
-      </MODULEPATHS>
-    </LINUX_MAKE>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="0"/>

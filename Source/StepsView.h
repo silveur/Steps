@@ -13,31 +13,70 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class StepView: public Component
+struct FollowComponent  : public Component
+{
+    FollowComponent()
+    {
+		colour = Colours::green;
+        setSize (20, 20);
+    }
+    void paint (Graphics& g)
+    {
+        g.setColour (colour);
+        g.fillEllipse (2.0f, 2.0f, getWidth() - 4.0f, getHeight() - 4.0f);
+    }
+
+    Colour colour;
+	
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FollowComponent)
+};
+
+class StepView: public Component, public Thread
 {
 public:
-	StepView()
+	StepView(): Thread("StepView"), X(0)
 	{
-		thePosition = 0;
-		setVisible(true);
+		addAndMakeVisible(theFollow = new FollowComponent());
+		startThread(0);
 	}
-	~StepView() {}
+	
+	~StepView() { delete theFollow; stopThread(200); }
+	
+	void resized()
+	{
+		theFollow->setBounds(0, 0, 20, 20);
+	}
+	
+	void run()
+	{
+		while(!threadShouldExit())
+		{
+			{
+				const MessageManagerLock mmLock;
+				theFollow->setCentrePosition(X, 10);
+			}
+			wait(1000);
+		}
+	}
 	
 	void update(int x)
 	{
-		thePosition = x;
-		repaint();
+		if (x != -1)
+		{
+			X = x + 10;
+			theFollow->setVisible(true);
+			notify();
+		}
+		else
+		{
+			theFollow->setVisible(false);
+		}
 	}
-	void paint(Graphics& g)
-	{
-		if (thePosition != -1)
-			g.drawEllipse(thePosition, 0, 20, 20, 2);
-	}
-	
+
 private:
-	int thePosition;
+	FollowComponent* theFollow;
+	MessageManagerLock lock;
+	int X;
 };
-
-
 
 #endif  // STEPSVIEW_H_INCLUDED
