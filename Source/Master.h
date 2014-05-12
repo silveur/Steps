@@ -67,14 +67,13 @@ private:
 		{
 			theSequencerArray.add(new Sequencer(child));
 		}
-		
 	}
 	
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& child)
 	{
 		if (parentTree == theMasterTree)
 		{
-			theSequencerArray.removeLast();
+			theSequencerArray.remove(parentTree.indexOf(child));
 		}
 	}
 	
