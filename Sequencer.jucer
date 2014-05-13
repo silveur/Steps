@@ -25,6 +25,8 @@
               file="Source/ControllerView.cpp"/>
         <FILE id="dVfxqR" name="ControllerView.h" compile="0" resource="0"
               file="Source/ControllerView.h"/>
+        <FILE id="iJ5flK" name="MenuBar.cpp" compile="1" resource="0" file="Source/MenuBar.cpp"/>
+        <FILE id="ZrIhjz" name="MenuBar.h" compile="0" resource="0" file="Source/MenuBar.h"/>
         <FILE id="tVk1yJ" name="HeaderView.h" compile="0" resource="0" file="Source/HeaderView.h"/>
         <FILE id="QaPSxK" name="StepsView.h" compile="0" resource="0" file="Source/StepsView.h"/>
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>

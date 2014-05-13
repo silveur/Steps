@@ -24,6 +24,8 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 	updatePositions();
 	theMasterTree.addListener(this);
 	setInterceptsMouseClicks(false, true);
+	theMenuBar = new MenuBar(this);
+	theMenuBar->addCommandTarget(this, this);
 }
 
 ControllerView::~ControllerView()

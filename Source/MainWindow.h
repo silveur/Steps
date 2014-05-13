@@ -21,7 +21,8 @@ public:
 	MainWindow(ValueTree& masterTree): ResizableWindow("MainWindow", true)
 	{
 		LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
-		setContentOwned (new ControllerView(masterTree), true);
+		theControllerView = new ControllerView(masterTree);
+		setContentOwned (theControllerView, true);
 		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
 		thePreferenceTree = ValueTree("Preferences");
@@ -51,6 +52,7 @@ public:
 	
 	void paint(Graphics& g) {}
 	
+		
 	void closeButtonPressed()
 	{		
 		JUCEApplication::getInstance()->systemRequestedQuit();
@@ -63,18 +65,18 @@ public:
 			ModifierKeys mod = ModifierKeys::getCurrentModifiersRealtime();
 			if (mod == ModifierKeys::commandModifier)
 			{
-				ControllerView* view = (ControllerView*)getContentComponent();
 				ValueTree tree;
-				view->addSequencer(tree);
+				theControllerView->addSequencer(tree);
 			}
 		}
 		return true;
 	}
-	
+
 private:
 	File thePreferenceFile;
 	ValueTree thePreferenceTree;
 	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
+	ControllerView* theControllerView;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
 };
 
