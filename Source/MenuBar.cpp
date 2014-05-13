@@ -13,7 +13,7 @@
 void MenuBar::constructApplicationMenuPopup()
 {
 	appDropDown = new PopupMenu();
-	appDropDown->addCommandItem(theCommandManager, COMMAND_ID_EXPORTALL);
+	appDropDown->addCommandItem(theCommandManager, COMMAND_ID_SHOW_ABOUT);
 	appDropDown->addSeparator();
 }
 
@@ -49,6 +49,7 @@ StringArray MenuBar::getMenuBarNames()
 {
 	StringArray names;
 	names.add("Edit");
+	names.add("Help");
 	return names;
 }
 
@@ -60,6 +61,12 @@ PopupMenu MenuBar::getMenuForIndex(int topLevelMenuIndex, const juce::String &me
 		case 0:
 		{
 			menu.addCommandItem(theCommandManager, COMMAND_ID_EXPORTALL);
+			menu.addCommandItem(theCommandManager, COMMAND_ID_IMPORT_ALL);
+			break;
+		}
+		case 1:
+		{
+			menu.addCommandItem(theCommandManager, COMMAND_ID_WEBSITE);
 			break;
 		}
 		default: break;

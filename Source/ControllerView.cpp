@@ -10,6 +10,7 @@
 
 #include "ControllerView.h"
 #include "HeaderView.h"
+#include "AboutView.h"
 
 ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 {
@@ -21,6 +22,8 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 	}
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
+	addAndMakeVisible(theAboutView = new AboutView(this));
+	theAboutView->setVisible(false);
 	updatePositions();
 	theMasterTree.addListener(this);
 	setInterceptsMouseClicks(false, true);
@@ -66,6 +69,7 @@ void ControllerView::updatePositions()
 void ControllerView::resized()
 {
 	updatePositions();
+	theAboutView->setBounds(getBounds());
 }
 
 void ControllerView::kickBack()
@@ -118,5 +122,111 @@ void ControllerView::removeSequencer(int i)
 	}
 }
 
+bool ControllerView::perform(const InvocationInfo& info)
+{
+	switch (info.commandID)
+	{
+		case COMMAND_ID_SHOW_ABOUT:
+		{
+			for (int i=0; i<theMasterTree.getNumChildren(); i++)
+			{
+				theSequencerViews.remove(i);
+			}
+			theHeaderView->setVisible(false);
+			theAboutView->setVisible(true);
+			return true;
+		}
+		case COMMAND_ID_EXPORTALL:
+		{
+			theHeaderView->exportAll();
+			return true;
+		}
+		case COMMAND_ID_IMPORT_ALL:
+		{
+			theHeaderView->importAll();
+			return true;
+		}
+		case COMMAND_ID_WEBSITE:
+		{
+			system("open http://www.nummermusic.com");
+			return true;
+		}
+		default: return false;
+	}
+}
 
+void ControllerView::aboutViewClicked()
+{
+	if (theAboutView->isVisible())
+	{
+		theAboutView->setVisible(false);
+		for (int i=0; i<theMasterTree.getNumChildren(); i++)
+		{
+			ValueTree sequenceTree = theMasterTree.getChild(i);
+			theSequencerViews.add(new SequencerView(sequenceTree, this));
+			addAndMakeVisible(theSequencerViews[i]);
+		}
+		theHeaderView->setVisible(true);
+		resized();
+	}
+}
+
+ApplicationCommandTarget* ControllerView::getNextCommandTarget()
+{
+	return this;
+}
+
+void ControllerView::getAllCommands(Array <CommandID>& commands)
+{
+	Array<CommandID> commandIDs = Array<CommandID>();
+	for (int i = 2; i < (int)COMMAND_NUM_IDS; i++) // Command IDs are non-zero
+	{
+		commandIDs.add((CommandID)i);
+	}
+	commands.addArray(commandIDs, 0, commandIDs.size());
+}
+
+void ControllerView::getCommandInfo(CommandID commandID, ApplicationCommandInfo& result)
+{
+	const String settingsCategory("Settings");
+	const String viewCategory("Views");
+	const String sizeCategory("Size");
+	const String supportCategory("Support");
+	
+	switch (commandID)
+	{
+		case COMMAND_ID_SHOW_ABOUT:
+		{
+			result.setInfo("About Sequencer",
+						   "About this software",
+						   settingsCategory, 0);
+			break;
+		}
+		case COMMAND_ID_EXPORTALL:
+		{
+			result.setInfo("Export All",
+						   "Export master sequencer",
+						   settingsCategory, 0);
+			result.addDefaultKeypress('s', ModifierKeys::commandModifier);
+			break;
+		}
+		case COMMAND_ID_IMPORT_ALL:
+		{
+			result.setInfo("Import All",
+						   "Import master sequencer",
+						   settingsCategory, 0);
+			result.addDefaultKeypress('s', ModifierKeys::commandModifier + ModifierKeys::altModifier);
+			break;
+		}
+		case COMMAND_ID_WEBSITE:
+		{
+			result.setInfo("Visit our website",
+						   "Nummer website",
+						   settingsCategory, 0);
+			break;
+		}
+
+		default: break;
+	}
+}
 

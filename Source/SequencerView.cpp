@@ -49,7 +49,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
 		theDecaySliders[i]->setScrollWheelEnabled(false);
-		theDecaySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::yellow);
+		theDecaySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
 		theDecaySliders[i]->setTextValueSuffix(" ms Decay");
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);

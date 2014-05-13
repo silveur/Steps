@@ -54,42 +54,51 @@ public:
 		}
 		else if (buttonThatWasClicked == theImportAllButton)
 		{
-			FileChooser fileChooser ("Load preset file...",
-									 thePresetFolder,
-									 "*.masterseq");
-			if (fileChooser.browseForFileToOpen())
-			{
-				ValueTree masterTree = theControllerView->getMasterTree();
-				while (masterTree.getNumChildren())
-				{
-					theControllerView->removeSequencer(-1);
-				}
-				File presetToLoad = fileChooser.getResult();
-				FileInputStream inputStream(presetToLoad);
-				ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-				treeToLoad.removeProperty("MidiOutput", nullptr);
-				for (int i=0;i<treeToLoad.getNumChildren();i++)
-				{
-					ValueTree treeToAdd = treeToLoad.getChild(i);
-					theControllerView->addSequencer(treeToAdd);
-				}
-			}
-
+			importAll();
 		}
 		else if (buttonThatWasClicked == theExportAllButton)
 		{
-			FileChooser fileChooser ("Save as...",
-									 thePresetFolder,
-									 "*.masterseq");
-			if (fileChooser.browseForFileToSave(false))
-			{
-				File preset = File(fileChooser.getResult().getFullPathName());
-				FileOutputStream outputStream(preset);
-				ValueTree masterTree = theControllerView->getMasterTree();
-				masterTree.writeToStream(outputStream);
-			}
+			exportAll();
 		}
 		repaint();
+	}
+	
+	void exportAll()
+	{
+		FileChooser fileChooser ("Save as...",
+								 thePresetFolder,
+								 "*.masterseq");
+		if (fileChooser.browseForFileToSave(false))
+		{
+			File preset = File(fileChooser.getResult().getFullPathName());
+			FileOutputStream outputStream(preset);
+			ValueTree masterTree = theControllerView->getMasterTree();
+			masterTree.writeToStream(outputStream);
+		}
+	}
+	
+	void importAll()
+	{
+		FileChooser fileChooser ("Load preset file...",
+								 thePresetFolder,
+								 "*.masterseq");
+		if (fileChooser.browseForFileToOpen())
+		{
+			ValueTree masterTree = theControllerView->getMasterTree();
+			while (masterTree.getNumChildren())
+			{
+				theControllerView->removeSequencer(-1);
+			}
+			File presetToLoad = fileChooser.getResult();
+			FileInputStream inputStream(presetToLoad);
+			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+			treeToLoad.removeProperty("MidiOutput", nullptr);
+			for (int i=0;i<treeToLoad.getNumChildren();i++)
+			{
+				ValueTree treeToAdd = treeToLoad.getChild(i);
+				theControllerView->addSequencer(treeToAdd);
+			}
+		}
 	}
 
 	void paint(Graphics& g) {}

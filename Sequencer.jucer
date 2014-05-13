@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="sequencer" projectType="guiapp" version="0.8"
+<JUCERPROJECT id="i0GMhV" name="Sequencer" projectType="guiapp" version="0.8"
               bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
               companyName="Nummer">
-  <MAINGROUP id="jYNjqi" name="sequencer">
+  <MAINGROUP id="jYNjqi" name="Sequencer">
     <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
       <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
@@ -32,6 +32,7 @@
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
         <FILE id="NLibsS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
         <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
+        <FILE id="bAnKhN" name="AboutView.h" compile="0" resource="0" file="Source/AboutView.h"/>
         <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images"/>
       </GROUP>
       <GROUP id="{177A0B3F-5BE4-D5E2-1D58-6B0272C73950}" name="Updater">
@@ -54,9 +55,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="sequencer"/>
+                       isDebug="1" optimisation="1" targetName="Sequencer"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="sequencer" linkTimeOptimisation="1"/>
+                       isDebug="0" optimisation="3" targetName="Sequencer" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
