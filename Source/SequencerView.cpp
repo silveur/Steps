@@ -175,6 +175,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theUndoManager->clearUndoHistory();
 	addAndMakeVisible(thePositionComp = new StepView());
 	addAndMakeVisible(thePositionComp2 = new StepView());
+	setInterceptsMouseClicks(false, true);
 	addKeyListener(this);
 }
 

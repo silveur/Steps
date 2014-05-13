@@ -23,6 +23,7 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 	addAndMakeVisible(theHeaderView = new HeaderView(this));
 	updatePositions();
 	theMasterTree.addListener(this);
+	setInterceptsMouseClicks(false, true);
 }
 
 ControllerView::~ControllerView()

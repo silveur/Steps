@@ -34,6 +34,7 @@ public:
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
+		setInterceptsMouseClicks(false, true);
 	}
 	~HeaderView()
 	{

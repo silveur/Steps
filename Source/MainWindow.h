@@ -15,16 +15,13 @@
 #include "ControllerView.h"
 #include "LookAndFeel.h"
 
-class MainWindow: public DocumentWindow, public KeyListener
+class MainWindow: public ResizableWindow, public KeyListener
 {
 public:
-	MainWindow(ValueTree& masterTree): DocumentWindow (String(),
-													   Colours::black,
-													   DocumentWindow::allButtons)
+	MainWindow(ValueTree& masterTree): ResizableWindow("MainWindow", true)
 	{
 		LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
 		setContentOwned (new ControllerView(masterTree), true);
-		setResizable(false, false);
 		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
 		thePreferenceTree = ValueTree("Preferences");

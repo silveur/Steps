@@ -76,7 +76,13 @@ public:
 		const float rw = radius * 2.0f;
 		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 		const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-
+		
+		bool isSym;
+		if ((slider.getMinimum() + slider.getMaximum()) == 0)
+		{
+			isSym = true;
+		}
+		else isSym = false;
 		
 		if (slider.isEnabled())
 			g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (isMouseOver ? 0.7f : 1.0f));
@@ -87,7 +93,10 @@ public:
 		
 		{
 			Path filledArc;
-			filledArc.addPieSegment (rx, ry, rw, rw, 3.76991, 8.79646, thickness);
+			float begin;
+			if (isSym) begin = 6.28319;
+			else begin = rotaryStartAngle;
+			filledArc.addPieSegment (rx, ry, rw, rw, begin, angle, thickness);
 			g.fillPath (filledArc);
 		}
 		
