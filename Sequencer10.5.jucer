@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="sequencer10.5" projectType="guiapp" version="0.8"
+<JUCERPROJECT id="i0GMhV" name="Sequencer10.5" projectType="guiapp" version="0.8"
               bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
               companyName="Nummer" defines="OLD_MAC=1">
-  <MAINGROUP id="jYNjqi" name="sequencer10.5">
+  <MAINGROUP id="jYNjqi" name="Sequencer10.5">
     <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
       <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
@@ -25,11 +25,14 @@
               file="Source/ControllerView.cpp"/>
         <FILE id="dVfxqR" name="ControllerView.h" compile="0" resource="0"
               file="Source/ControllerView.h"/>
+        <FILE id="maiNWs" name="MenuBar.cpp" compile="1" resource="0" file="Source/MenuBar.cpp"/>
+        <FILE id="hwGy4M" name="MenuBar.h" compile="0" resource="0" file="Source/MenuBar.h"/>
         <FILE id="tVk1yJ" name="HeaderView.h" compile="0" resource="0" file="Source/HeaderView.h"/>
         <FILE id="QaPSxK" name="StepsView.h" compile="0" resource="0" file="Source/StepsView.h"/>
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
         <FILE id="NLibsS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
         <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
+        <FILE id="ssZ6wE" name="AboutView.h" compile="0" resource="0" file="Source/AboutView.h"/>
         <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images"/>
       </GROUP>
     </GROUP>
@@ -38,9 +41,9 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="sequencer10.5"/>
+                       isDebug="1" optimisation="1" targetName="Sequencer10.5"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="sequencer10.5" linkTimeOptimisation="0"/>
+                       isDebug="0" optimisation="3" targetName="Sequencer10.5" linkTimeOptimisation="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
