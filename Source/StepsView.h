@@ -19,6 +19,7 @@ struct FollowComponent  : public Component
     {
 		colour = Colours::green;
         setSize (20, 20);
+		setInterceptsMouseClicks(false, true);
     }
     void paint (Graphics& g)
     {
@@ -38,13 +39,15 @@ public:
 	{
 		addAndMakeVisible(theFollow = new FollowComponent());
 		startThread(0);
+		setInterceptsMouseClicks(false, true);
+		X = 25;
 	}
 	
-	~StepView() { delete theFollow; stopThread(200); }
+	~StepView() { delete theFollow; stopThread(500); }
 	
 	void resized()
 	{
-		theFollow->setBounds(0, 0, 20, 20);
+		theFollow->setBounds(X, 0, 20, 20);
 	}
 	
 	void run()

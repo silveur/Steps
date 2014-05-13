@@ -34,6 +34,7 @@ public:
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
+		setInterceptsMouseClicks(false, true);
 	}
 	~HeaderView()
 	{
@@ -91,11 +92,7 @@ public:
 		repaint();
 	}
 
-	void paint(Graphics& g)
-	{
-		g.setColour(Colours::black);
-		g.drawRect(getBounds());
-	}
+	void paint(Graphics& g) {}
 	
 	void resized()
 	{

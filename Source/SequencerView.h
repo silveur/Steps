@@ -36,7 +36,7 @@ public:
 		if (key.isKeyCode(82)) randomiseAll();
 		return false;
 	}
-
+	void paint(Graphics& g) {}
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;
