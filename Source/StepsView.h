@@ -40,11 +40,11 @@ public:
 		startThread(0);
 	}
 	
-	~StepView() { delete theFollow; stopThread(200); }
+	~StepView() { delete theFollow; stopThread(500); }
 	
 	void resized()
 	{
-		theFollow->setBounds(0, 0, 20, 20);
+		theFollow->setVisible(false);
 	}
 	
 	void run()

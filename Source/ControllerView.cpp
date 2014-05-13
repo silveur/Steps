@@ -13,7 +13,6 @@
 
 ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 {
-	LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		ValueTree sequenceTree = theMasterTree.getChild(i);
@@ -29,6 +28,12 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 ControllerView::~ControllerView()
 {
 	delete theHeaderView;
+}
+
+void ControllerView::paint(Graphics& g)
+{
+	g.setColour(Colours::white);
+	g.fillAll();
 }
 
 void ControllerView::updatePositions()

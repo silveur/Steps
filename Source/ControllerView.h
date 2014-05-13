@@ -14,7 +14,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Master.h"
 #include "SequencerView.h"
-#include "LookAndFeel.h"
 
 class HeaderView;
 
@@ -25,6 +24,7 @@ public:
 	~ControllerView();
 	void resized();
 	void kickBack();
+	void paint(Graphics& g);
 	void addSequencer(ValueTree& sequencerTreeToAdd);
 	void removeSequencer(int index);
 	void updatePositions();
@@ -39,7 +39,6 @@ private:
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
-	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
 	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
 	ValueTree theMasterTree;

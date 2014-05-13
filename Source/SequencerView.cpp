@@ -23,7 +23,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
-		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::purple);
+		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
@@ -34,7 +34,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theVelocitySliders[i]->setRange(0, 127, 1);
 		theVelocitySliders[i]->setScrollWheelEnabled(false);
-		theVelocitySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::black);
+		theVelocitySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
@@ -42,7 +42,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
 		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
 		theStateButtons[i]->setButtonText(getTextForEnum(state));
-		
+		theStateButtons[i]->setColour(0, Colours::grey);
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
 		theDecaySliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
@@ -529,7 +529,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::purple);
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		}
 		int offset = tree.getProperty(property);
 		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);

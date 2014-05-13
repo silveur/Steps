@@ -13,16 +13,17 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
+#include "LookAndFeel.h"
 
 class MainWindow: public DocumentWindow, public KeyListener
 {
 public:
-	MainWindow(ValueTree& masterTree): DocumentWindow (String("Sequencer V" + String(ProjectInfo::versionString)),
-														Colours::lightgrey,
-														DocumentWindow::allButtons)
+	MainWindow(ValueTree& masterTree): DocumentWindow (String(),
+													   Colours::black,
+													   DocumentWindow::allButtons)
 	{
+		LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
 		setContentOwned (new ControllerView(masterTree), true);
-		setUsingNativeTitleBar(true);
 		setResizable(false, false);
 		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
@@ -51,6 +52,8 @@ public:
 		thePreferenceTree.writeToStream(outputStream);
 	}
 	
+	void paint(Graphics& g) {}
+	
 	void closeButtonPressed()
 	{		
 		JUCEApplication::getInstance()->systemRequestedQuit();
@@ -74,6 +77,7 @@ public:
 private:
 	File thePreferenceFile;
 	ValueTree thePreferenceTree;
+	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
 };
 
