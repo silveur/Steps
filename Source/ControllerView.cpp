@@ -12,7 +12,7 @@
 #include "HeaderView.h"
 #include "AboutView.h"
 
-ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
+ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree): theMasterTree(masterTree)
 {
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
@@ -21,7 +21,7 @@ ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
 		addAndMakeVisible(theSequencerViews[i]);
 	}
 	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-	addAndMakeVisible(theHeaderView = new HeaderView(this));
+	addAndMakeVisible(theHeaderView = new HeaderView(this, preferenceTree));
 	addAndMakeVisible(theAboutView = new AboutView(this));
 	theAboutView->setVisible(false);
 	updatePositions();

@@ -18,14 +18,12 @@
 class MainWindow: public ResizableWindow, public KeyListener
 {
 public:
-	MainWindow(ValueTree& masterTree): ResizableWindow("MainWindow", true)
+	MainWindow(ValueTree& masterTree, ValueTree& preferenceTree): ResizableWindow("MainWindow", true)
 	{
 		LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
-		theControllerView = new ControllerView(masterTree);
-		setContentOwned (theControllerView, true);
 		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
-		thePreferenceTree = ValueTree("Preferences");
+		thePreferenceTree = preferenceTree;
 		FileInputStream inputStream(thePreferenceFile);
 		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
 		if (treeToLoad.isValid())
@@ -35,6 +33,8 @@ public:
 			int w = thePreferenceTree.getProperty("W"); int h = thePreferenceTree.getProperty("H");
 			setBounds(x, y, w, h);
 		}
+		theControllerView = new ControllerView(masterTree, thePreferenceTree);
+		setContentOwned (theControllerView, true);
 		setVisible(true);
 		addKeyListener(this);
 	}

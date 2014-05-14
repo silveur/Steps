@@ -24,6 +24,12 @@ enum StepStates
 	JUMP
 };
 
+enum ClockMode
+{
+	EXTERNAL,
+	INTERNAL
+};
+
 // [END_USER_CODE_SECTION]
 
 //==============================================================================

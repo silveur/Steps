@@ -22,7 +22,7 @@ class HeaderView;
 class ControllerView: public Component, public ValueTree::Listener, public ApplicationCommandTarget
 {
 public:
-	ControllerView(ValueTree& masterTree);
+	ControllerView(ValueTree& masterTree, ValueTree& preferenceTree);
 	~ControllerView();
 	void resized();
 	void kickBack();
@@ -47,9 +47,9 @@ private:
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
 	ScopedPointer<MenuBar> theMenuBar;
+	ScopedPointer<AboutView> theAboutView;
 	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
-	ScopedPointer<AboutView> theAboutView;
 	ValueTree theMasterTree;
 };
 

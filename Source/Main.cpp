@@ -22,8 +22,9 @@ void SequencerApplication::initialise (const String& commandLine)
 	#ifndef OLD_MAC
 	thePackageHandler = new PackageHandler();
 	#endif
-	theSequencerMaster = new Master();
-	mainWindow = new MainWindow(theSequencerMaster->getMasterTree());
+	thePreferenceTree = ValueTree("Preferences");
+	theSequencerMaster = new Master(thePreferenceTree);
+	mainWindow = new MainWindow(theSequencerMaster->getMasterTree(), thePreferenceTree);
 }
 
 void SequencerApplication::updateCallback()
