@@ -13,17 +13,20 @@
 
 void ClockSource::run()
 {
-	DBG("Starting Thread");
+	msg = MidiMessage::midiStart();
+	send();
 	while(!threadShouldExit())
 	{
-		MidiMessage start = MidiMessage::midiStart();
-		theMaster->handleIncomingMidiMessage (nullptr, start);
-		if (theBPM != -1)
-		{
-			
-			
-		}
-		sleep(20);
+		msg = MidiMessage::midiClock();
+		send();
+		theStepTime = 1.0 / (theBPM / 15.0f);
+		wait(1000 * (theStepTime/6.0f));
 	}
-	DBG("Stopping Thread");
+	msg = MidiMessage::midiStop();
+	send();
+}
+
+void ClockSource::send() const
+{
+	theMaster->handleIncomingMidiMessage(nullptr, msg);
 }

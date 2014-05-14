@@ -14,6 +14,8 @@
         <FILE id="obMuqf" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
         <FILE id="Q76wg2" name="MidiCore.cpp" compile="1" resource="0" file="Source/MidiCore.cpp"/>
         <FILE id="YlFytd" name="MidiCore.h" compile="0" resource="0" file="Source/MidiCore.h"/>
+        <FILE id="V19Pc6" name="ClockSource.cpp" compile="1" resource="0" file="Source/ClockSource.cpp"/>
+        <FILE id="EYROX9" name="ClockSource.h" compile="0" resource="0" file="Source/ClockSource.h"/>
         <FILE id="xLbBQu" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
         <FILE id="DVm9SJ" name="Scales.h" compile="0" resource="0" file="Source/Scales.h"/>
       </GROUP>

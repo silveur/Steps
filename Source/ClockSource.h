@@ -28,9 +28,12 @@ public:
 	}
 	
 	void run();
+	void send() const;
 	
 private:
 	Master* theMaster;
+	MidiMessage msg;
+	float theStepTime;
 	float theBPM;
 	friend class Master;
 };

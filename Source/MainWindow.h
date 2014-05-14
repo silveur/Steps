@@ -46,6 +46,7 @@ public:
 		thePreferenceTree.setProperty("Y", getY(), nullptr);
 		thePreferenceTree.setProperty("W", getWidth(), nullptr);
 		thePreferenceTree.setProperty("H", getHeight(), nullptr);
+		thePreferenceTree.setProperty("State", false, nullptr);
 		if (thePreferenceFile.exists()) thePreferenceFile.deleteFile();
 		FileOutputStream outputStream(thePreferenceFile);
 		thePreferenceTree.writeToStream(outputStream);

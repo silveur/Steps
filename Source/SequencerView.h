@@ -36,7 +36,14 @@ public:
 		if (key.isKeyCode(82)) randomiseAll();
 		return false;
 	}
-	void paint(Graphics& g) {}
+	void paint(Graphics& g)
+	{
+		int index = theSequencerTree.getParent().indexOf(theSequencerTree);
+		if (index % 2 == 1)
+		{
+			g.fillAll(Colour::fromRGB(500, 500, 500));
+		}
+	}
 	static ValueTree& getCopyTree()
 	{
 		static ValueTree theCopyTree;

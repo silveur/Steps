@@ -128,10 +128,7 @@ bool ControllerView::perform(const InvocationInfo& info)
 	{
 		case COMMAND_ID_SHOW_ABOUT:
 		{
-			for (int i=0; i<theMasterTree.getNumChildren(); i++)
-			{
-				theSequencerViews.remove(i);
-			}
+			theSequencerViews.clear();
 			theHeaderView->setVisible(false);
 			theAboutView->setVisible(true);
 			return true;
