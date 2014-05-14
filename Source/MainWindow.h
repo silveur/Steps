@@ -35,6 +35,7 @@ public:
 		}
 		theControllerView = new ControllerView(masterTree, thePreferenceTree);
 		setContentOwned (theControllerView, true);
+		theState = false;
 		setVisible(true);
 		addKeyListener(this);
 	}
@@ -69,6 +70,11 @@ public:
 				theControllerView->addSequencer(tree);
 			}
 		}
+		else if(key.isKeyCode(32))
+		{
+			theState = !theState;
+			thePreferenceTree.setProperty("State", theState, nullptr);
+		}
 		return true;
 	}
 
@@ -77,6 +83,7 @@ private:
 	ValueTree thePreferenceTree;
 	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
 	ControllerView* theControllerView;
+	bool theState;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
 };
 

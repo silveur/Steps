@@ -13,7 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Sequencer.h"
-#include "ClockGenerator.h"
+#include "ClockSource.h"
 
 extern File thePresetFolder;
 
@@ -32,14 +32,17 @@ public:
 		ValueTree defaultTree = ValueTree("Sequencer");
 		theSequencerArray.add(new Sequencer(defaultTree));
 		theMasterTree.addChild(defaultTree, -1, nullptr);
-		theClockGenerator = new ClockGenerator();
+		theClockSource = new ClockSource(this);
+		theClockSource->theBPM = preferenceTree.getProperty("BPM");
 		theDefaultPreset.deleteFile();
 		FileOutputStream outputStream(theDefaultPreset);
 		defaultTree.writeToStream(outputStream);
 		theMasterTree.addListener(this);
 		theClockMode = (ClockMode)(bool)preferenceTree.getProperty("ClockMode");
 		if (theClockMode == EXTERNAL)
+		{
 			theMidiInput->start();
+		}
 	}
 
 	~Master()
@@ -78,12 +81,21 @@ private:
 				}
 				else if (theClockMode == EXTERNAL)
 				{
+					theClockSource->stopThread(200);
 					theMidiInput->start();
 				}
 			}
-			if (String(property) == "BPM")
+			else if (String(property) == "BPM")
 			{
-				theClockGenerator->setBPM(tree.getProperty(property));
+				theClockSource->theBPM = tree.getProperty(property);
+			}
+			else if (String(property) == "State" && theClockMode == INTERNAL)
+			{
+				bool state = tree.getProperty("State");
+				if (state)
+					theClockSource->startThread();
+				else
+					theClockSource->stopThread(200);
 			}
 		}
 	}
@@ -114,7 +126,7 @@ private:
 	void valueTreeParentChanged (ValueTree& tree){}
 
 	OwnedArray<Sequencer> theSequencerArray;
-	ScopedPointer<ClockGenerator> theClockGenerator;
+	ScopedPointer<ClockSource> theClockSource;
 	ScopedPointer<MidiInput> theMidiInput;
 	ValueTree thePreferenceTree;
 	ValueTree theMasterTree;

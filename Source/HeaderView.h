@@ -49,6 +49,7 @@ public:
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM"));
 		theBPMSlider->addListener(this);
+		theBPMSlider->setVisible(clockMode);
 		setInterceptsMouseClicks(false, true);
 		thePreferenceTree.addListener(this);
 	}

@@ -10,10 +10,10 @@
       <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
       <GROUP id="{4443E8B4-5C81-9C76-04CE-E6D7E1B32FC1}" name="Sequencer">
         <FILE id="g5QmNa" name="Master.h" compile="0" resource="0" file="Source/Master.h"/>
-        <FILE id="BlsUGJ" name="ClockGenerator.h" compile="0" resource="0"
-              file="Source/ClockGenerator.h"/>
         <FILE id="NW2qIO" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
         <FILE id="obMuqf" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
+        <FILE id="nyNxY0" name="ClockSource.cpp" compile="1" resource="0" file="Source/ClockSource.cpp"/>
+        <FILE id="pKfJzS" name="ClockSource.h" compile="0" resource="0" file="Source/ClockSource.h"/>
         <FILE id="Q76wg2" name="MidiCore.cpp" compile="1" resource="0" file="Source/MidiCore.cpp"/>
         <FILE id="YlFytd" name="MidiCore.h" compile="0" resource="0" file="Source/MidiCore.h"/>
         <FILE id="xLbBQu" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
