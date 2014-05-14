@@ -125,10 +125,11 @@ public:
 			File presetToLoad = fileChooser.getResult();
 			FileInputStream inputStream(presetToLoad);
 			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-			treeToLoad.removeProperty("MidiOutput", nullptr);
+			treeToLoad.setProperty("MidiOutput", String(), nullptr);
 			for (int i=0;i<treeToLoad.getNumChildren();i++)
 			{
 				ValueTree treeToAdd = treeToLoad.getChild(i);
+				treeToAdd.setProperty("MidiOutput", String(), nullptr);
 				theControllerView->addSequencer(treeToAdd);
 			}
 		}

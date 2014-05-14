@@ -154,7 +154,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	refreshMidiList();
 	String str = theSequencerTree.getProperty("MidiOutput");
-	updateSelectedMidiOut(str);
+//	updat eSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
@@ -348,6 +348,7 @@ void SequencerView::buttonClicked(Button* button)
 			File preset = File(fileChooser.getResult().getFullPathName());
 			if (preset.exists()) preset.deleteFile();
 			FileOutputStream outputStream(preset);
+			theSequencerTree.removeProperty("MidiOutput", nullptr);
 			theSequencerTree.writeToStream(outputStream);
 		}
 	}
