@@ -32,34 +32,27 @@ struct FollowComponent  : public Component
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FollowComponent)
 };
 
-class StepView: public Component, public Thread
+class StepView: public Component, public Timer
 {
 public:
-	StepView(): Thread("StepView"), X(0)
+	StepView(): X(0)
 	{
 		addAndMakeVisible(theFollow = new FollowComponent());
-		startThread(0);
 		setInterceptsMouseClicks(false, true);
 		X = 25;
 	}
 	
-	~StepView() { delete theFollow; stopThread(500); }
+	~StepView() {}
 	
 	void resized()
 	{
 		theFollow->setBounds(X, 0, 20, 20);
 	}
 	
-	void run()
+	void timerCallback()
 	{
-		while(!threadShouldExit())
-		{
-			{
-				const MessageManagerLock mmLock;
-				theFollow->setCentrePosition(X, 10);
-			}
-			wait(1000);
-		}
+		theFollow->setCentrePosition(X, 10);
+		stopTimer();
 	}
 	
 	void update(int x)
@@ -68,16 +61,16 @@ public:
 		{
 			X = x + 10;
 			theFollow->setVisible(true);
-			notify();
 		}
 		else
 		{
 			theFollow->setVisible(false);
 		}
+		startTimer(2);
 	}
 
 private:
-	FollowComponent* theFollow;
+	ScopedPointer<FollowComponent> theFollow;
 	MessageManagerLock lock;
 	int X;
 };
