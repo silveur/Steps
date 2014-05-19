@@ -8,6 +8,7 @@
 
 #include "SequencerView.h"
 #include "ControllerView.h"
+#include "Slider.h"
 
 extern File thePresetFolder;
 
@@ -18,13 +19,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	thePosition = theSequencerTree.getProperty("Position");
 	for(int i=0;i<theSequencerTree.getNumChildren();i++)
 	{
-		addAndMakeVisible(theStepSliders.add(new SeqSlider("Pitch" + String(i))));
+		addAndMakeVisible(theStepSliders.add(new SeqSlider("Pitch" + String(i),this)));
 		theStepSliders[i]->setSliderStyle(Slider::RotaryVerticalDrag);
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
 		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
-		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
+		theStepSliders[i]->setDoubleClickReturnValue(false, 0);
 		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
@@ -255,6 +256,11 @@ void SequencerView::resized()
 int randomise(int min, int max)
 {
 	return ((int)rand() % (max + abs(min))) - abs(min);
+}
+
+void SequencerView::trigMidiNote(int sliderIndex)
+{
+	theSequencerTree.setProperty("Trigger", sliderIndex, nullptr);
 }
 
 void SequencerView::randomiseAll()
