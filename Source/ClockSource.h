@@ -19,9 +19,8 @@ class ClockSource: public Thread
 {
 public:
 	ClockSource(Master* master): Thread("ClockGenerator"), theMaster(master), theBPM(-1)
-	{
-	}
-	
+	{}
+
 	~ClockSource()
 	{
 		stopThread(200);

@@ -153,8 +153,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theChannelList->addListener(this);
 	
 	refreshMidiList();
-	String str = theSequencerTree.getProperty("MidiOutput");
-//	updat eSelectedMidiOut(str);
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
@@ -449,8 +447,12 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 {
 	if(comboBoxThatHasChanged == theMidiOutputList)
 	{
-		String midiOutString = theMidiOutputList->getItemText(theMidiOutputList->getSelectedItemIndex());
-		theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
+		int index = theMidiOutputList->getSelectedItemIndex();
+		if (index != -1)
+		{
+			String midiOutString = theMidiOutputList->getItemText(index);
+			theSequencerTree.setProperty("MidiOutput", midiOutString, nullptr);
+		}
 	}
 	else if(comboBoxThatHasChanged == theRootOctaveList)
 	{

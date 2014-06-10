@@ -12,7 +12,7 @@
 #include "HeaderView.h"
 #include "AboutView.h"
 
-ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree): theMasterTree(masterTree)
+ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree): theMasterTree(masterTree), thePreferenceTree(preferenceTree)
 {
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
@@ -143,6 +143,18 @@ bool ControllerView::perform(const InvocationInfo& info)
 			theHeaderView->importAll();
 			return true;
 		}
+		case COMMAND_ID_CHANGE_PRESET_FOLDER:
+		{
+			FileChooser fileChooser ("Select New Preset Folder",
+									 thePresetFolder,
+									 "*");
+			if (fileChooser.browseForDirectory())
+			{
+				thePresetFolder = fileChooser.getResult();
+				thePreferenceTree.setProperty("PresetFolder", thePresetFolder.getFullPathName(), nullptr);
+			}
+			return true;
+		}
 		case COMMAND_ID_WEBSITE:
 		{
 			system("open http://www.nummermusic.com");
@@ -213,6 +225,13 @@ void ControllerView::getCommandInfo(CommandID commandID, ApplicationCommandInfo&
 						   "Import master sequencer",
 						   settingsCategory, 0);
 			result.addDefaultKeypress('s', ModifierKeys::commandModifier + ModifierKeys::altModifier);
+			break;
+		}
+		case COMMAND_ID_CHANGE_PRESET_FOLDER:
+		{
+			result.setInfo("Set Preset Folder",
+						   "Select new preset folder",
+						   settingsCategory, 0);
 			break;
 		}
 		case COMMAND_ID_WEBSITE:

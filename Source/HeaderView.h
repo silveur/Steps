@@ -44,10 +44,10 @@ public:
 		
 		addAndMakeVisible(theBPMSlider = new Slider("BPM"));
 		theBPMSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 60, 50);
-		theBPMSlider->setRange(30, 180, 0.1);
+		theBPMSlider->setRange(60, 180, 0.1);
 		theBPMSlider->setScrollWheelEnabled(false);
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
-		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM"));
+		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
 		theBPMSlider->addListener(this);
 		theBPMSlider->setVisible(clockMode);
 		setInterceptsMouseClicks(false, true);
@@ -125,11 +125,10 @@ public:
 			File presetToLoad = fileChooser.getResult();
 			FileInputStream inputStream(presetToLoad);
 			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-			treeToLoad.setProperty("MidiOutput", String(), nullptr);
 			for (int i=0;i<treeToLoad.getNumChildren();i++)
 			{
 				ValueTree treeToAdd = treeToLoad.getChild(i);
-				treeToAdd.setProperty("MidiOutput", String(), nullptr);
+				treeToAdd.removeProperty("MidiOutput", nullptr);
 				theControllerView->addSequencer(treeToAdd);
 			}
 		}

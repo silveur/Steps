@@ -51,6 +51,7 @@ private:
 	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
 	ValueTree theMasterTree;
+	ValueTree thePreferenceTree;
 };
 
 

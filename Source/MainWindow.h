@@ -15,6 +15,8 @@
 #include "ControllerView.h"
 #include "LookAndFeel.h"
 
+extern File thePresetFolder;
+
 class MainWindow: public ResizableWindow, public KeyListener
 {
 public:
@@ -29,10 +31,13 @@ public:
 		if (treeToLoad.isValid())
 		{
 			thePreferenceTree.copyPropertiesFrom(treeToLoad, nullptr);
-			int x = thePreferenceTree.getProperty("X"); int y = thePreferenceTree.getProperty("Y");
+			int x = thePreferenceTree.getProperty("X", 50); int y = thePreferenceTree.getProperty("Y", 50);
 			int w = thePreferenceTree.getProperty("W"); int h = thePreferenceTree.getProperty("H");
 			setBounds(x, y, w, h);
 		}
+		else
+			setBounds(100, 100, 100, 100);
+		thePresetFolder = thePreferenceTree.getProperty("PresetFolder");
 		theControllerView = new ControllerView(masterTree, thePreferenceTree);
 		setContentOwned (theControllerView, true);
 		theState = false;

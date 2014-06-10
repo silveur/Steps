@@ -62,6 +62,7 @@ PopupMenu MenuBar::getMenuForIndex(int topLevelMenuIndex, const juce::String &me
 		{
 			menu.addCommandItem(theCommandManager, COMMAND_ID_EXPORTALL);
 			menu.addCommandItem(theCommandManager, COMMAND_ID_IMPORT_ALL);
+			menu.addCommandItem(theCommandManager, COMMAND_ID_CHANGE_PRESET_FOLDER);
 			break;
 		}
 		case 1:

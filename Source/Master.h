@@ -24,7 +24,7 @@ public:
 	{
 		thePreferenceTree = preferenceTree;
 		thePreferenceTree.addListener(this);
-		thePresetFolder = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/presets/");
+		thePresetFolder = File(thePreferenceTree.getProperty("PresetFolder", String("~/")));
 		theDefaultPreset = File(thePresetFolder.getFullPathName() + "/default.seq");
 		if (!thePresetFolder.exists()) thePresetFolder.createDirectory();
 		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
@@ -39,10 +39,7 @@ public:
 		defaultTree.writeToStream(outputStream);
 		theMasterTree.addListener(this);
 		theClockMode = (ClockMode)(bool)preferenceTree.getProperty("ClockMode");
-		if (theClockMode == EXTERNAL)
-		{
-			theMidiInput->start();
-		}
+		if (theClockMode == EXTERNAL) theMidiInput->start();
 	}
 
 	~Master()
