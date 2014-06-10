@@ -12,11 +12,12 @@
 #define SLIDER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "SequencerView.h"
 
 class SeqSlider: public Slider
 {
 public:
-	SeqSlider(const String& name): Slider(name)
+	SeqSlider(const String& name, SequencerView* seqView): Slider(name), theSequencerView(seqView)
 	{
 		theCurrentBubbleMessage = new BubbleMessageComponent();
 		theMessage = String(getValue());
@@ -27,6 +28,15 @@ public:
 	void startedDragging()
 	{
 		showBubbleMessage(this, theMessage);
+	}
+	
+	void mouseUp(const MouseEvent& event) override
+	{
+		if (event.mouseWasClicked())
+		{
+			int index = getName().getTrailingIntValue();
+			theSequencerView->trigMidiNote(index);
+		}
 	}
 
 	void valueChanged()
@@ -58,6 +68,7 @@ public:
 	
 private:
 	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
+	SequencerView* theSequencerView;
 	String theMessage;
 };
 

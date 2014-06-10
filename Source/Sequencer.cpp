@@ -46,6 +46,18 @@ Sequencer::~Sequencer()
 {
 }
 
+void Sequencer::triggerNote(int stepIndex = -1)
+{
+	Step* step;
+	if (stepIndex == -1) step = theStepArray[thePosition];
+	else step = theStepArray[stepIndex];
+	
+	MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+	MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+	theMidiCore->outputMidi(onMsg);
+	theMidiCore->outputMidi(offMsg, step->theDecay);
+}
+
 void Sequencer::initSequencerTree()
 {
 	theSequencerTree.setProperty("Length", theLength, nullptr);
@@ -110,11 +122,7 @@ void Sequencer::triggerStep()
 		thePosition = (thePosition+1) % theLength;
 	if (theStepArray[thePosition]->theState == ON)
 	{
-		Step* step = theStepArray[thePosition];
-		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-		MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-		theMidiCore->outputMidi(onMsg);
-		theMidiCore->outputMidi(offMsg, step->theDecay);
+		triggerNote();
 	}
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }
@@ -207,5 +215,14 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		thePosition = -1;
 		tree.setProperty(property, 0, nullptr);
+	}
+	else if(String(property) == "Trigger")
+	{
+		int index= tree.getProperty(property);
+		if (index != -1)
+		{
+			triggerNote(index);
+			tree.setProperty(property, -1, nullptr);
+		}
 	}
 }

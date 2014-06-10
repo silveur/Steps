@@ -29,6 +29,7 @@ public:
 	void start();
 	
 private:
+	void triggerNote(int stepIndex);
 	void loadFromTree();
 	void initSequencerTree();
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);

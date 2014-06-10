@@ -12,9 +12,10 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
-#include "Slider.h"
+//#include "Slider.h"
 
 class ControllerView;
+class SeqSlider;
 
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
 {
@@ -26,6 +27,7 @@ public:
 	void resized();
 	void buttonClicked(Button* button);
 	void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+	void trigMidiNote(int sliderIndex);
 	void refreshMidiList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
