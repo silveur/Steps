@@ -36,12 +36,25 @@ public:
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
 		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
-		theClockSourceList->addItem("External Clock", 1);
-		theClockSourceList->addItem("Internal Clock", 2);
+		theClockSourceList->addSectionHeading("Clock source");
+		theClockSourceList->addItem("External", 1);
+		theClockSourceList->addItem("Internal", 2);
 		bool clockMode = thePreferenceTree.getProperty("ClockMode", 0);
 		theClockSourceList->setSelectedItemIndex(clockMode);
 		theClockSourceList->addListener(this);
 		
+		addAndMakeVisible(theMasterClockList = new ComboBox("MasterClock"));
+		theMasterClockList->addSectionHeading("Clock output");
+		theMasterClockList->setTextWhenNothingSelected("Clock output");
+		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");
+		StringArray midiList = MidiOutput::getDevices();
+		for(int i=0;i<midiList.size();i++)
+		{
+			if (midiList[i] != "Sequencer") theMasterClockList->addItem(midiList[i], i+1);
+		}
+		theMasterClockList->setSelectedItemIndex(thePreferenceTree.getProperty("MasterClock"));
+		theMasterClockList->addListener(this);
+
 		addAndMakeVisible(theBPMSlider = new Slider("BPM"));
 		theBPMSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 60, 50);
 		theBPMSlider->setRange(60, 180, 0.1);
@@ -85,6 +98,10 @@ public:
 		if (box == theClockSourceList)
 		{
 			thePreferenceTree.setProperty("ClockMode", box->getSelectedItemIndex(), nullptr);
+		}
+		else if (box == theMasterClockList)
+		{
+			thePreferenceTree.setProperty("MasterClock", box->getSelectedItemIndex(), nullptr);
 		}
 	}
 	
@@ -141,10 +158,9 @@ public:
 		theAddSequencerButton->setBounds(10, getHeight()/4, getWidth()/12, getHeight()/2);
 		theExportAllButton->setBounds(theAddSequencerButton->getRight(), theAddSequencerButton->getY(), getWidth()/16, getHeight()/2);
 		theImportAllButton->setBounds(theExportAllButton->getRight(), theExportAllButton->getY(), getWidth()/16, getHeight()/2);
-		theKickBackButton->setBounds(theImportAllButton->getRight(), theImportAllButton->getY(), getWidth()/20, getHeight()/2);
-		
-		theBPMSlider->setBounds(getWidth()/1.3, 0, getHeight()*3, getHeight());
-		theClockSourceList->setBounds(theBPMSlider->getRight(), 0, 110, getHeight());
+		theBPMSlider->setBounds(getWidth()/1.6, 0, getHeight()*3, getHeight());
+		theMasterClockList->setBounds(theBPMSlider->getRight(), theMasterClockList->getY(), getWidth()/8, getHeight());
+		theClockSourceList->setBounds(theMasterClockList->getRight(), 0, 110, getHeight());
 	}
 	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
@@ -165,6 +181,10 @@ public:
 		{
 			theBPMSlider->setValue(tree.getProperty(property));
 		}
+		else if (String(property) == "MasterClock")
+		{
+			theMasterClockList->setSelectedItemIndex(tree.getProperty(property));
+		}
 	}
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
@@ -180,6 +200,7 @@ private:
 	ScopedPointer<TextButton> theKickBackButton;
 	ScopedPointer<Slider> theBPMSlider;
 	ScopedPointer<ComboBox> theClockSourceList;
+	ScopedPointer<ComboBox> theMasterClockList;
 	ControllerView* theControllerView;
 	ValueTree thePreferenceTree;
 	String theMainLabel;

@@ -57,6 +57,8 @@ public:
 		{
 			theSequencerArray[i]->handleIncomingMidiMessage(message);
 		}
+		if (theMasterClockOutput != nullptr)
+			theMasterClockOutput->sendMessageNow(message);
 	}
 
 	ValueTree& getMasterTree()
@@ -85,6 +87,10 @@ private:
 			else if (String(property) == "BPM")
 			{
 				theClockSource->theBPM = tree.getProperty(property);
+			}
+			else if (String(property) == "MasterClock")
+			{
+				theMasterClockOutput = MidiOutput::openDevice(tree.getProperty(property));
 			}
 			else if (String(property) == "State" && theClockMode == INTERNAL)
 			{
@@ -125,6 +131,7 @@ private:
 	OwnedArray<Sequencer> theSequencerArray;
 	ScopedPointer<ClockSource> theClockSource;
 	ScopedPointer<MidiInput> theMidiInput;
+	ScopedPointer<MidiOutput> theMasterClockOutput;
 	ValueTree thePreferenceTree;
 	ValueTree theMasterTree;
 	File theDefaultPreset;
