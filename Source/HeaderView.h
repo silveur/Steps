@@ -48,9 +48,10 @@ public:
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
 		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");
 		StringArray midiList = MidiOutput::getDevices();
+		theMasterClockList->addItem("-- NO OUTPUT --", 1);
 		for(int i=0;i<midiList.size();i++)
 		{
-			if (midiList[i] != "Sequencer") theMasterClockList->addItem(midiList[i], i+1);
+			if (midiList[i] != "Sequencer") theMasterClockList->addItem(midiList[i], i+2);
 		}
 		theMasterClockList->setSelectedItemIndex(thePreferenceTree.getProperty("MasterClock"));
 		theMasterClockList->addListener(this);

@@ -40,6 +40,7 @@ public:
 		theMasterTree.addListener(this);
 		theClockMode = (ClockMode)(bool)preferenceTree.getProperty("ClockMode");
 		if (theClockMode == EXTERNAL) theMidiInput->start();
+		outputClock = thePreferenceTree.getProperty("MasterClock");
 	}
 
 	~Master()
@@ -57,8 +58,7 @@ public:
 		{
 			theSequencerArray[i]->handleIncomingMidiMessage(message);
 		}
-		if (theMasterClockOutput != nullptr)
-			theMasterClockOutput->sendMessageNow(message);
+		if (theMasterClockOutput != nullptr && outputClock) theMasterClockOutput->sendMessageNow(message);
 	}
 
 	ValueTree& getMasterTree()
@@ -90,7 +90,9 @@ private:
 			}
 			else if (String(property) == "MasterClock")
 			{
-				theMasterClockOutput = MidiOutput::openDevice(tree.getProperty(property));
+				int index = tree.getProperty(property);
+				if (index == 0) outputClock = false;
+				else { theMasterClockOutput = MidiOutput::openDevice(index-1); outputClock = true; }
 			}
 			else if (String(property) == "State" && theClockMode == INTERNAL)
 			{
@@ -136,6 +138,7 @@ private:
 	ValueTree theMasterTree;
 	File theDefaultPreset;
 	ClockMode theClockMode;
+	bool outputClock;
 };
 
 #endif  // MASTER_H_INCLUDED
