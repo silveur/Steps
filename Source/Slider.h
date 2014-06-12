@@ -58,7 +58,7 @@ public:
 		}
 		AttributedString text(textToShow);
 		text.setJustification(Justification::centred);
-		theCurrentBubbleMessage->showAt(targetComponent, text, 300, true, false);
+		theCurrentBubbleMessage->showAt(targetComponent, text, 800, true, false);
 	}
 	
 	void setMessage(String& msg)
