@@ -80,7 +80,6 @@ private:
 	OwnedArray<Slider> theDecaySliders;
 	OwnedArray<TextButton> theStateButtons;
 	ScopedPointer<ToggleButton> theOnOffButton;
-	ScopedPointer<TextButton> theResetAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;

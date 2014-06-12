@@ -31,6 +31,7 @@ private:
 	SequencerView* theSequencerView;
 	ValueTree theSequencerTree;
 	ScopedPointer<TextButton> theRandomAllButton;
+	ScopedPointer<TextButton> theResetAllButton;
 	ScopedPointer<ToggleButton> theVelocityButton;
 	ScopedPointer<ToggleButton> theDecayButton;
 	ScopedPointer<ToggleButton> thePitchButton;

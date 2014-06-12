@@ -75,9 +75,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
-	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
-	theResetAllButton->addListener(this);
-	
 	addAndMakeVisible(theCopyButton = new TextButton("Copy settings"));
 	theCopyButton->addListener(this);
 	
@@ -232,8 +229,6 @@ void SequencerView::resized()
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), widthDiv, heigthDiv);
 	
 	theRandomiser->setBounds(getWidth()-(widthDiv*4), theExportButton->getY(), widthDiv*4, heigthDiv*2);
-	
-	theResetAllButton->setBounds(theImportButton->getRight(), theImportButton->getBottom(), theImportButton->getWidth(), heigthDiv);
 	for(int i=0;i<16;i++)
 	{
 		theStepSliders[i]->setBounds(theMidiOutputList->getX() + (getWidth()/16)*i, theRootNoteList->getBottom() + 5, heigthDiv * 2, heigthDiv * 2);
@@ -298,19 +293,6 @@ void SequencerView::buttonClicked(Button* button)
 		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 		{
 			ValueTree sourceChild = getCopyTree().getChild(i);
-			ValueTree destinationChild = theSequencerTree.getChild(i);
-			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
-		}
-	}
-	else if (button == theResetAllButton)
-	{
-		File presetToLoad = File(thePresetFolder.getFullPathName() + "/default.seq");
-		FileInputStream inputStream(presetToLoad);
-		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-		theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
-		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
-		{
-			ValueTree sourceChild = treeToLoad.getChild(i);
 			ValueTree destinationChild = theSequencerTree.getChild(i);
 			destinationChild.copyPropertiesFrom(sourceChild, theUndoManager);
 		}

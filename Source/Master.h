@@ -16,6 +16,7 @@
 #include "ClockSource.h"
 
 extern File thePresetFolder;
+extern File theDefaultPreset;
 
 class Master: public MidiInputCallback, ValueTree::Listener
 {
@@ -25,7 +26,7 @@ public:
 		thePreferenceTree = preferenceTree;
 		thePreferenceTree.addListener(this);
 		thePresetFolder = File(thePreferenceTree.getProperty("PresetFolder", String("~/")));
-		theDefaultPreset = File(thePresetFolder.getFullPathName() + "/default.seq");
+		theDefaultPreset = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default.seq");
 		if (!thePresetFolder.exists()) thePresetFolder.createDirectory();
 		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 		theMasterTree = ValueTree("MasterTree");
@@ -137,7 +138,6 @@ private:
 	ScopedPointer<MidiOutput> theMasterClockOutput;
 	ValueTree thePreferenceTree;
 	ValueTree theMasterTree;
-	File theDefaultPreset;
 	ClockMode theClockMode;
 	bool outputClock;
 };
