@@ -58,7 +58,10 @@ public:
 		{
 			theSequencerArray[i]->handleIncomingMidiMessage(message);
 		}
-		if (theMasterClockOutput != nullptr && outputClock) theMasterClockOutput->sendMessageNow(message);
+		if (theMasterClockOutput != nullptr && outputClock)
+		{
+			theMasterClockOutput->sendMessageNow(message);
+		}
 	}
 
 	ValueTree& getMasterTree()
@@ -97,10 +100,8 @@ private:
 			else if (String(property) == "State" && theClockMode == INTERNAL)
 			{
 				bool state = tree.getProperty("State");
-				if (state)
-					theClockSource->startThread();
-				else
-					theClockSource->stopThread(200);
+				if (state) theClockSource->startThread();
+				else theClockSource->stopThread(200);
 			}
 		}
 	}

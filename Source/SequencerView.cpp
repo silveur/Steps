@@ -8,6 +8,7 @@
 
 #include "SequencerView.h"
 #include "ControllerView.h"
+#include "Randomiser.h"
 #include "Slider.h"
 
 extern File thePresetFolder;
@@ -72,8 +73,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
-	addAndMakeVisible(theRandomAllButton = new TextButton("Random all"));
-	theRandomAllButton->addListener(this);
+	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
 	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
 	theResetAllButton->addListener(this);
@@ -221,16 +221,18 @@ void SequencerView::resized()
 	theRootNoteList->setBounds(10, theMidiOutputList->getBottom(), widthDiv, heigthDiv);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), theRootNoteList->getY(), theRootNoteList->getWidth(), theRootNoteList->getHeight());
 	theScaleList->setBounds(theRootOctaveList->getRight(), theRootOctaveList->getY(), theRootOctaveList->getWidth() * 2, theRootOctaveList->getHeight());
-	theRandomAllButton->setBounds(theSequencerLength->getRight(), theMidiOutputList->getY(), widthDiv, heigthDiv);
 	theShuffleSlider->setBounds(theScaleList->getRight(), theMidiOutputList->getBottom(), heigthDiv, heigthDiv);
 	theRangeSlider->setBounds(theShuffleSlider->getRight(), theMidiOutputList->getBottom(), heigthDiv, heigthDiv);
 	theOffsetSlider->setBounds(theRangeSlider->getRight(), theRangeSlider->getY(), heigthDiv, heigthDiv);
 	theSpeedList->setBounds(theOffsetSlider->getRight(), theOffsetSlider->getY(), widthDiv, heigthDiv);
-	theCopyButton->setBounds(theRandomAllButton->getRight(), theMidiOutputList->getY(), widthDiv, heigthDiv);
+	theCopyButton->setBounds(theOffsetSlider->getRight(), theMidiOutputList->getY(), widthDiv, heigthDiv);
 	thePasteButton->setBounds(theCopyButton->getRight(), theMidiOutputList->getY(), widthDiv, heigthDiv);
 	theOnOffButton->setBounds(thePasteButton->getRight(), thePasteButton->getY(), widthDiv, heigthDiv);
 	theImportButton->setBounds(theOnOffButton->getRight(), theOnOffButton->getY(), widthDiv, heigthDiv);
 	theExportButton->setBounds(theImportButton->getRight(), theImportButton->getY(), widthDiv, heigthDiv);
+	
+	theRandomiser->setBounds(getWidth()-(widthDiv*4), theExportButton->getY(), widthDiv*4, heigthDiv*2);
+	
 	theResetAllButton->setBounds(theImportButton->getRight(), theImportButton->getBottom(), theImportButton->getWidth(), heigthDiv);
 	for(int i=0;i<16;i++)
 	{
@@ -248,7 +250,7 @@ void SequencerView::resized()
 		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
 	}
 	thePositionComp2->setBounds(theMidiOutputList->getX(), theStateButtons[16]->getBottom(), getWidth(), heigthDiv);
-	theDeleteButton->setBounds(getWidth()-widthDiv, 0, widthDiv, heigthDiv);
+	theDeleteButton->setBounds(theImportButton->getX(), theImportButton->getBottom(), widthDiv, heigthDiv);
 }
 
 int randomise(int min, int max)
@@ -266,33 +268,31 @@ void SequencerView::randomiseAll()
 	for (int i=0;i<theSequencerTree.getNumChildren();i++)
 	{
 		ValueTree child = theSequencerTree.getChild(i);
-		int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
-		int max = (int)theSequencerTree.getProperty("Range") * 12;
-		int pitch = randomise(min , max);
-		while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
+		if (theSequencerTree.getProperty("RandPitch"))
 		{
-			pitch = randomise(min, max);
+			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
+			int max = (int)theSequencerTree.getProperty("Range") * 12;
+			int pitch = randomise(min , max);
+			while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
+			{
+				pitch = randomise(min, max);
+			}
+			child.setProperty("Pitch", pitch, theUndoManager);
 		}
-		child.setProperty("Pitch", pitch, theUndoManager);
-		child.setProperty("State", rand() % 2, theUndoManager);
-		child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
-		child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
+		if (theSequencerTree.getProperty("RandState")) child.setProperty("State", rand() % 2, theUndoManager);
+		if (theSequencerTree.getProperty("RandVelocity")) child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
+		if (theSequencerTree.getProperty("RandDecay")) child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
 	}
 }
 
 void SequencerView::buttonClicked(Button* button)
 {
-	if (button == theRandomAllButton)
-	{
-		randomiseAll();
-	}
-	else if (button == theCopyButton)
+	if (button == theCopyButton)
 	{
 		getCopyTree() = theSequencerTree.createCopy();
 	}
 	else if (button == thePasteButton)
 	{
-		getCopyTree().removeProperty("MidiOutput", nullptr);
 		if (!getCopyTree().isValid()) return;
 		theSequencerTree.copyPropertiesFrom(getCopyTree(), theUndoManager);
 		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
@@ -307,7 +307,6 @@ void SequencerView::buttonClicked(Button* button)
 		File presetToLoad = File(thePresetFolder.getFullPathName() + "/default.seq");
 		FileInputStream inputStream(presetToLoad);
 		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-		treeToLoad.removeProperty("MidiOutput", nullptr);
 		theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
 		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 		{
@@ -334,7 +333,6 @@ void SequencerView::buttonClicked(Button* button)
 			File presetToLoad = fileChooser.getResult();
 			FileInputStream inputStream(presetToLoad);
 			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-			treeToLoad.removeProperty("MidiOutput", nullptr);
 			theSequencerTree.copyPropertiesFrom(treeToLoad, theUndoManager);
 			for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 			{
@@ -352,7 +350,6 @@ void SequencerView::buttonClicked(Button* button)
 			File preset = File(fileChooser.getResult().getFullPathName());
 			if (preset.exists()) preset.deleteFile();
 			FileOutputStream outputStream(preset);
-			theSequencerTree.removeProperty("MidiOutput", nullptr);
 			theSequencerTree.writeToStream(outputStream);
 		}
 	}

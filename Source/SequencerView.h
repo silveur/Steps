@@ -12,10 +12,10 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
-//#include "Slider.h"
 
 class ControllerView;
 class SeqSlider;
+class Randomiser;
 
 class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
 {
@@ -42,6 +42,10 @@ public:
 	{
 		int index = theSequencerTree.getParent().indexOf(theSequencerTree);
 		if (index % 2 == 1)
+		{
+			g.fillAll(Colour::fromRGB(500, 500, 500));
+		}
+		else
 		{
 			g.fillAll(Colour::fromRGB(500, 500, 500));
 		}
@@ -76,7 +80,6 @@ private:
 	OwnedArray<Slider> theDecaySliders;
 	OwnedArray<TextButton> theStateButtons;
 	ScopedPointer<ToggleButton> theOnOffButton;
-	ScopedPointer<TextButton> theRandomAllButton;
 	ScopedPointer<TextButton> theResetAllButton;
 	ScopedPointer<TextButton> theCopyButton;
 	ScopedPointer<TextButton> thePasteButton;
@@ -85,6 +88,7 @@ private:
 	ScopedPointer<TextButton> theDeleteButton;
 	ScopedPointer<StepView> thePositionComp;
 	ScopedPointer<StepView> thePositionComp2;
+	ScopedPointer<Randomiser> theRandomiser;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;

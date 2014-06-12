@@ -70,6 +70,10 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
 	theSequencerTree.setProperty("Scale", 1, nullptr);
 	theSequencerTree.setProperty("Speed", theSpeed, nullptr);
+	theSequencerTree.setProperty("RandVelocity", true, nullptr);
+	theSequencerTree.setProperty("RandDecay", true, nullptr);
+	theSequencerTree.setProperty("RandPitch", true, nullptr);
+	theSequencerTree.setProperty("RandState", true, nullptr);
 }
 
 void Sequencer::loadFromTree()

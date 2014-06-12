@@ -48,7 +48,7 @@ public:
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
 		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");
 		StringArray midiList = MidiOutput::getDevices();
-		theMasterClockList->addItem("-- NO OUTPUT --", 1);
+		theMasterClockList->addItem("--", 1);
 		for(int i=0;i<midiList.size();i++)
 		{
 			if (midiList[i] != "Sequencer") theMasterClockList->addItem(midiList[i], i+2);
@@ -146,7 +146,6 @@ public:
 			for (int i=0;i<treeToLoad.getNumChildren();i++)
 			{
 				ValueTree treeToAdd = treeToLoad.getChild(i);
-				treeToAdd.removeProperty("MidiOutput", nullptr);
 				theControllerView->addSequencer(treeToAdd);
 			}
 		}
