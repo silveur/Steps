@@ -43,6 +43,7 @@ public:
 		theState = false;
 		setVisible(true);
 		addKeyListener(this);
+		setResizable(true, true);
 	}
 	
 	~MainWindow()

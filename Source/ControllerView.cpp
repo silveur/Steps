@@ -24,11 +24,12 @@ ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree)
 	addAndMakeVisible(theHeaderView = new HeaderView(this, preferenceTree));
 	addAndMakeVisible(theAboutView = new AboutView(this));
 	theAboutView->setVisible(false);
-	updatePositions();
+//	updatePositions();
 	theMasterTree.addListener(this);
 	setInterceptsMouseClicks(false, true);
 	theMenuBar = new MenuBar(this);
 	theMenuBar->addCommandTarget(this, this);
+	setSize(theMainScreen.getWidth()*0.6, theMainScreen.getHeight()/4);
 }
 
 ControllerView::~ControllerView()
@@ -54,11 +55,11 @@ void ControllerView::updatePositions()
 	{
 		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
 		{
-			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
+//			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
 		}
 		else if ((int)theMasterTree.getChild(i).getProperty("Length") < 17)
 		{
-			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer16Height);
+//			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer16Height);
 		}
 		totalHeigth += theSequencerViews[i]->getHeight();
 	}
@@ -68,7 +69,10 @@ void ControllerView::updatePositions()
 
 void ControllerView::resized()
 {
-	updatePositions();
+	float heightDiv = getHeight() / 48.0f;
+	float widthDiv = getWidth() / 132.0f;
+	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * 8);
+
 	theAboutView->setBounds(getBounds());
 }
 

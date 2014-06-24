@@ -57,13 +57,14 @@ public:
 		theMasterClockList->addListener(this);
 
 		addAndMakeVisible(theBPMSlider = new Slider("BPM"));
-		theBPMSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 60, 50);
+		theBPMSlider->setTextBoxStyle(Slider::NoTextBox, false, 60, 50);
 		theBPMSlider->setRange(60, 180, 0.1);
 		theBPMSlider->setScrollWheelEnabled(false);
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
 		theBPMSlider->addListener(this);
 		theBPMSlider->setVisible(clockMode);
+		
 		setInterceptsMouseClicks(false, true);
 		thePreferenceTree.addListener(this);
 	}
@@ -151,16 +152,32 @@ public:
 		}
 	}
 
-	void paint(Graphics& g) {}
+	void paint(Graphics& g)
+	{
+		g.setColour(Colours::black);
+		g.drawRect(getBounds());
+		
+		float heigthDiv = getHeight() / 8.0f;
+		float widthDiv = getWidth() / 132.0f;
+		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 10);
+		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5.5, widthDiv * 4, heigthDiv * 2, Justification::centred, 10);
+		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 10);
+	}
 	
 	void resized()
 	{
-		theAddSequencerButton->setBounds(10, getHeight()/4, getWidth()/12, getHeight()/2);
-		theExportAllButton->setBounds(theAddSequencerButton->getRight(), theAddSequencerButton->getY(), getWidth()/16, getHeight()/2);
-		theImportAllButton->setBounds(theExportAllButton->getRight(), theExportAllButton->getY(), getWidth()/16, getHeight()/2);
-		theBPMSlider->setBounds(getWidth()/1.6, 0, getHeight()*3, getHeight());
-		theMasterClockList->setBounds(theBPMSlider->getRight(), theMasterClockList->getY(), getWidth()/8, getHeight());
-		theClockSourceList->setBounds(theMasterClockList->getRight(), 0, 110, getHeight());
+		float heigthDiv = getHeight() / 8.0f;
+		float widthDiv = getWidth() / 132.0f;
+		
+		theAddSequencerButton->setBounds(widthDiv * 2, heigthDiv, widthDiv * 12, heigthDiv * 4);
+		theImportAllButton->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 4);
+		theExportAllButton->setBounds(widthDiv * 28, heigthDiv, widthDiv * 10, heigthDiv * 4);
+		
+		theMasterClockList->setBounds(widthDiv * 88, heigthDiv, widthDiv * 17, heigthDiv * 4);
+//		theClockOutputLabel->setBounds(widthDiv * 88, heigthDiv * 6, widthDiv * 17, heigthDiv * 2);
+		theBPMSlider->setBounds(widthDiv * 107, heigthDiv, widthDiv * 4, heigthDiv * 4);
+		theClockSourceList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 17, heigthDiv * 4);
+		repaint();
 	}
 	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
