@@ -40,15 +40,10 @@ public:
 	}
 	void paint(Graphics& g)
 	{
-		int index = theSequencerTree.getParent().indexOf(theSequencerTree);
-		if (index % 2 == 1)
-		{
-			g.fillAll(Colour::fromRGB(500, 500, 500));
-		}
-		else
-		{
-			g.fillAll(Colour::fromRGB(500, 500, 500));
-		}
+		g.setColour(Colour::fromRGB(198, 201, 180));
+		g.fillAll();
+		g.setColour(Colours::black);
+		g.drawRect(getLocalBounds());
 	}
 	static ValueTree& getCopyTree()
 	{

@@ -124,6 +124,9 @@ public:
 		
 		g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
 		
+		g.setColour(Colours::black);
+		g.drawRect(x, y, width, height);
+		
 	}
 
 private:

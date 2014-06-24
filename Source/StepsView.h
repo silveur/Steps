@@ -18,13 +18,12 @@ struct FollowComponent  : public Component
     FollowComponent()
     {
 		colour = Colours::green;
-        setSize (20, 20);
 		setInterceptsMouseClicks(false, true);
     }
     void paint (Graphics& g)
     {
         g.setColour (colour);
-        g.fillEllipse (2.0f, 2.0f, getWidth() - 4.0f, getHeight() - 4.0f);
+        g.fillEllipse (.0f, .0f, getWidth(), getHeight());
     }
 
     Colour colour;
@@ -46,12 +45,12 @@ public:
 	
 	void resized()
 	{
-		theFollow->setBounds(X, 0, 20, 20);
+		theFollow->setBounds(X, 0, getHeight(), getHeight());
 	}
 	
 	void timerCallback()
 	{
-		theFollow->setCentrePosition(X, 10);
+		theFollow->setCentrePosition(X, theFollow->getHeight()/2);
 		stopTimer();
 	}
 	
@@ -71,7 +70,6 @@ public:
 
 private:
 	ScopedPointer<FollowComponent> theFollow;
-	MessageManagerLock lock;
 	int X;
 };
 

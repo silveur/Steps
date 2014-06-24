@@ -154,14 +154,20 @@ public:
 
 	void paint(Graphics& g)
 	{
+		g.setColour(Colour::fromRGB(198, 201, 180));
+		g.fillAll();
+		
 		g.setColour(Colours::black);
 		g.drawRect(getBounds());
 		
 		float heigthDiv = getHeight() / 8.0f;
 		float widthDiv = getWidth() / 132.0f;
-		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 10);
-		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5.5, widthDiv * 4, heigthDiv * 2, Justification::centred, 10);
-		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 10);
+		
+		g.setColour(Colours::black);
+		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5.5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Midi Sequencer", widthDiv * 48, heigthDiv, widthDiv * 20, heigthDiv * 6, Justification::centred, 1);
 	}
 	
 	void resized()
@@ -174,7 +180,6 @@ public:
 		theExportAllButton->setBounds(widthDiv * 28, heigthDiv, widthDiv * 10, heigthDiv * 4);
 		
 		theMasterClockList->setBounds(widthDiv * 88, heigthDiv, widthDiv * 17, heigthDiv * 4);
-//		theClockOutputLabel->setBounds(widthDiv * 88, heigthDiv * 6, widthDiv * 17, heigthDiv * 2);
 		theBPMSlider->setBounds(widthDiv * 107, heigthDiv, widthDiv * 4, heigthDiv * 4);
 		theClockSourceList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 17, heigthDiv * 4);
 		repaint();
