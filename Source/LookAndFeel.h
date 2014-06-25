@@ -46,6 +46,36 @@ public:
 	{
 		
 	}
+	
+	void drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/,
+									   int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box)
+	{
+		g.fillAll (box.findColour (ComboBox::backgroundColourId));
+		
+		const Colour buttonColour (box.findColour (ComboBox::buttonColourId));
+		
+		if (box.isEnabled() && box.hasKeyboardFocus (false))
+		{
+			g.setColour (buttonColour);
+			g.drawRect (0, 0, width, height, 2);
+		}
+		else
+		{
+			g.setColour (box.findColour (ComboBox::outlineColourId));
+			g.drawRect (0, 0, width, height);
+		}
+		
+		const float arrowX = 0.3f;
+		const float arrowH = 0.2f;
+		
+		Path p;
+		p.addTriangle (buttonX + buttonW * 0.5f,            buttonY + buttonH * (0.45f + arrowH),
+					   buttonX + buttonW * (1.0f - arrowX), buttonY + buttonH * 0.45f,
+					   buttonX + buttonW * arrowX,          buttonY + buttonH * 0.45f);
+		
+		g.setColour (box.findColour (ComboBox::arrowColourId).withMultipliedAlpha (box.isEnabled() ? 1.0f : 0.3f));
+		g.fillPath (p);
+	}
 
 	void drawDocumentWindowTitleBar (DocumentWindow& window, Graphics& g, int, int, int, int, const Image*, bool)
 	{
