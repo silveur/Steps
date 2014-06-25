@@ -14,6 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
 #include "LookAndFeel.h"
+
 extern UndoManager* theUndoManager;
 
 class HeaderView: public Component, ButtonListener, public ComboBoxListener, public ValueTree::Listener, SliderListener
@@ -168,11 +169,10 @@ public:
 		float heigthDiv = getHeight() / 8.0f;
 		float widthDiv = getWidth() / 132.0f;
 		
-		g.setColour(Colours::black);
-		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5.5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5.5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Midi Sequencer", widthDiv * 48, heigthDiv, widthDiv * 20, heigthDiv * 6, Justification::centred, 1);
+		g.setFont(11);
+		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
 	}
 	
 	void resized()

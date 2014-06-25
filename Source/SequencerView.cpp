@@ -41,6 +41,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
+		theVelocitySliders[i]->setColour(Slider::trackColourId, Colour::fromRGB(83, 85, 75));
+		theVelocitySliders[i]->setColour(Slider::thumbColourId, Colour::fromRGB(30, 31, 83));
 		theVelocitySliders[i]->addListener(this);
 		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
 		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
@@ -60,6 +62,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
+		theDecaySliders[i]->setColour(Slider::trackColourId, Colour::fromRGB(83, 85, 75));
+		theDecaySliders[i]->setColour(Slider::thumbColourId, Colour::fromRGB(104, 179, 94));
 		theDecaySliders[i]->addListener (this);
 		
 		addAndMakeVisible(theLEDs.add(new StepView()));
@@ -80,20 +84,20 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
-	addAndMakeVisible(theCopyButton = new TextButton("Copy settings"));
+	addAndMakeVisible(theCopyButton = new TextButton("Copy"));
 	theCopyButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theCopyButton->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
 	theCopyButton->addListener(this);
 	
-	addAndMakeVisible(thePasteButton = new TextButton("Paste settings"));
+	addAndMakeVisible(thePasteButton = new TextButton("Paste"));
 	thePasteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	thePasteButton->addListener(this);
 	
-	addAndMakeVisible(theExportButton = new TextButton("Export preset"));
+	addAndMakeVisible(theExportButton = new TextButton("Export"));
 	theExportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theExportButton->addListener(this);
 	
-	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
+	addAndMakeVisible(theImportButton = new TextButton("Import"));
 	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theImportButton->addListener(this);
 	
@@ -187,6 +191,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theUndoManager->clearUndoHistory();
 	setInterceptsMouseClicks(false, true);
 	addKeyListener(this);
+	
+	randomiseAll();
 }
 
 SequencerView::~SequencerView()
@@ -243,12 +249,12 @@ void SequencerView::resized()
 	theOffsetSlider->setBounds(widthDiv * 71, heigthDiv, widthDiv * 4, heigthDiv * 4);
 	theSequencerLength->setBounds(widthDiv * 77, heigthDiv, widthDiv * 4, heigthDiv * 4);
 	
-	theCopyButton->setBounds(widthDiv * 82, heigthDiv, widthDiv * 6, heigthDiv * 3);
-	theImportButton->setBounds(widthDiv * 82, heigthDiv * 4, widthDiv * 6, heigthDiv * 3);
-	thePasteButton->setBounds(widthDiv * 88, heigthDiv, widthDiv * 6, heigthDiv * 3);
-	theExportButton->setBounds(widthDiv * 88, heigthDiv * 4, widthDiv * 6, heigthDiv * 3);
+	theCopyButton->setBounds(widthDiv * 83, heigthDiv, widthDiv * 5, heigthDiv * 2);
+	theImportButton->setBounds(widthDiv * 83, heigthDiv * 3, widthDiv * 5, heigthDiv * 2);
+	thePasteButton->setBounds(widthDiv * 88, heigthDiv, widthDiv * 5, heigthDiv * 2);
+	theExportButton->setBounds(widthDiv * 88, heigthDiv * 3, widthDiv * 5, heigthDiv * 2);
 	
-	theMidiOutputList->setBounds(widthDiv * 96, heigthDiv, widthDiv * 14, heigthDiv * 4);
+	theMidiOutputList->setBounds(widthDiv * 95, heigthDiv, widthDiv * 16, heigthDiv * 4);
 	theChannelList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 6, heigthDiv * 4);
 	theOnOffButton->setBounds(widthDiv * 121, heigthDiv, widthDiv * 4, heigthDiv * 4);
 	theDeleteButton->setBounds(widthDiv * 127, heigthDiv, widthDiv * 4, heigthDiv * 4);

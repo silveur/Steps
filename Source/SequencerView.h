@@ -40,10 +40,25 @@ public:
 	}
 	void paint(Graphics& g)
 	{
+		g.setFont(11);
 		g.setColour(Colour::fromRGB(198, 201, 180));
 		g.fillAll();
 		g.setColour(Colours::black);
 		g.drawRect(getLocalBounds());
+		
+		float heigthDiv = getHeight() / 40.0f;
+		float widthDiv = getWidth() / 132.0f;
+		
+		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Scale", widthDiv * 16, heigthDiv * 5, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Division", widthDiv * 28, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Shuffle", widthDiv * 59, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Range", widthDiv * 65, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Offset", widthDiv * 71, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Length", widthDiv * 77, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Midi output", widthDiv * 95, heigthDiv * 5, widthDiv * 16, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 	}
 	static ValueTree& getCopyTree()
 	{
