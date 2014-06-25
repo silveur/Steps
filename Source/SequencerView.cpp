@@ -185,7 +185,7 @@ void SequencerView::handleAsyncUpdate()
 {
 	if (thePosition < 16)
 	{
-		thePositionComp->update(theStepSliders[thePosition]->getX());
+		thePositionComp->update(theStepSliders[thePosition]->getX() + (theStepSliders[thePosition]->getWidth()/3));
 		thePositionComp2->update(-1);
 	}
 	else
@@ -209,7 +209,7 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	float heigthDiv = getHeight() / 32.0f;
+	float heigthDiv = getHeight() / 40.0f;
 	float widthDiv = getWidth() / 132.0f;
 	
 	theRootNoteList->setBounds(widthDiv * 2, heigthDiv, widthDiv * 6, heigthDiv * 4);
@@ -218,17 +218,17 @@ void SequencerView::resized()
 	theScaleList->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 4);
 	theSpeedList->setBounds(widthDiv * 28, heigthDiv, widthDiv * 6, heigthDiv * 4);
 	
-	theRandomiser->setBounds(widthDiv * 36, heigthDiv, widthDiv * 20, heigthDiv * 8);
+	theRandomiser->setBounds(widthDiv * 36, heigthDiv, widthDiv * 21, heigthDiv * 6);
 	
-	theShuffleSlider->setBounds(widthDiv * 58, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theRangeSlider->setBounds(widthDiv * 64, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theOffsetSlider->setBounds(widthDiv * 70, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theSequencerLength->setBounds(widthDiv * 76, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theShuffleSlider->setBounds(widthDiv * 59, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theRangeSlider->setBounds(widthDiv * 65, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theOffsetSlider->setBounds(widthDiv * 71, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theSequencerLength->setBounds(widthDiv * 77, heigthDiv, widthDiv * 4, heigthDiv * 4);
 	
-	theCopyButton->setBounds(widthDiv * 82, heigthDiv, widthDiv * 6, heigthDiv * 4);
-	theImportButton->setBounds(widthDiv * 82, heigthDiv * 5, widthDiv * 6, heigthDiv * 4);
-	thePasteButton->setBounds(widthDiv * 88, heigthDiv, widthDiv * 6, heigthDiv * 4);
-	theExportButton->setBounds(widthDiv * 88, heigthDiv * 5, widthDiv * 6, heigthDiv * 4);
+	theCopyButton->setBounds(widthDiv * 82, heigthDiv, widthDiv * 6, heigthDiv * 3);
+	theImportButton->setBounds(widthDiv * 82, heigthDiv * 4, widthDiv * 6, heigthDiv * 3);
+	thePasteButton->setBounds(widthDiv * 88, heigthDiv, widthDiv * 6, heigthDiv * 3);
+	theExportButton->setBounds(widthDiv * 88, heigthDiv * 4, widthDiv * 6, heigthDiv * 3);
 	
 	theMidiOutputList->setBounds(widthDiv * 96, heigthDiv, widthDiv * 14, heigthDiv * 4);
 	theChannelList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 6, heigthDiv * 4);
@@ -237,20 +237,20 @@ void SequencerView::resized()
 
 	for(int i=0;i<16;i++)
 	{
-		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 10, widthDiv * 8, heigthDiv * 8);
-		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 19, widthDiv * 6, heigthDiv * 2);
-		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 22, widthDiv * 6, heigthDiv * 2);
-		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 25, widthDiv * 6, heigthDiv * 4);
+		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 8, widthDiv * 8, heigthDiv * 8);
+		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 16.5, widthDiv * 6, heigthDiv * 1.5);
+		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 18.5, widthDiv * 6, heigthDiv * 1.5);
+		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 20, widthDiv * 6, heigthDiv * 2);
 	}
-	thePositionComp->setBounds(0, heigthDiv * 30, getWidth(), heigthDiv * 2);
+	thePositionComp->setBounds(0, heigthDiv * 22, getWidth(), heigthDiv * 2);
 	for(int i=16;i<theSequencerTree.getNumChildren();i++)
 	{
-		theStepSliders[i]->setBounds(theStepSliders[i-16]->getX(), thePositionComp->getBottom(), heigthDiv * 2, heigthDiv * 2);
-		theVelocitySliders[i]->setBounds(theStepSliders[i]->getX(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
-		theDecaySliders[i]->setBounds(theVelocitySliders[i]->getRight(), theStepSliders[i]->getBottom(), heigthDiv, heigthDiv);
-		theStateButtons[i]->setBounds(theStepSliders[i]->getX(), theVelocitySliders[i]->getBottom(), widthDiv, heigthDiv);
+		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 24, widthDiv * 8, heigthDiv * 8);
+		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 32.5, widthDiv * 6, heigthDiv * 1.5);
+		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 34.5, widthDiv * 6, heigthDiv * 1.5);
+		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 36, widthDiv * 6, heigthDiv * 2);
 	}
-	thePositionComp2->setBounds(theMidiOutputList->getX(), theStateButtons[16]->getBottom(), getWidth(), heigthDiv);
+	thePositionComp2->setBounds(0, heigthDiv * 38, getWidth(), heigthDiv * 2);
 
 }
 
@@ -510,7 +510,6 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		int length = tree.getProperty(property);
 		theSequencerLength->setValue(length);
-		theControllerView->updatePositions();
 	}
 	else if(String(property) == "Channel")
 	{

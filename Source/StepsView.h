@@ -45,12 +45,12 @@ public:
 	
 	void resized()
 	{
-		theFollow->setBounds(X, 0, getHeight(), getHeight());
+		theFollow->setBounds(X, getHeight()*0.1, getHeight()*0.8, getHeight()*0.8);
 	}
 	
 	void timerCallback()
 	{
-		theFollow->setCentrePosition(X, theFollow->getHeight()/2);
+		theFollow->setCentrePosition(X, (theFollow->getHeight() * 1.4)/2);
 		stopTimer();
 	}
 	

@@ -43,36 +43,13 @@ void ControllerView::paint(Graphics& g)
 	g.fillAll();
 }
 
-void ControllerView::updatePositions()
-{
-	int totalHeigth = 0;
-	int sequencerWidth = theMainScreen.getWidth() / 1.5;
-	theHeaderView->setBounds(0, 0, sequencerWidth, theMainScreen.getHeight() / 24);
-	totalHeigth += theHeaderView->getHeight();
-	for (int i=0; i<theMasterTree.getNumChildren(); i++)
-	{
-		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
-		{
-//			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
-		}
-		else if ((int)theMasterTree.getChild(i).getProperty("Length") < 17)
-		{
-//			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer16Height);
-		}
-		totalHeigth += theSequencerViews[i]->getHeight();
-	}
-	if (theMasterTree.getNumChildren() != 0)
-		setSize(sequencerWidth, totalHeigth);
-}
-
 void ControllerView::resized()
 {
 	float heightDiv = getHeight() / 48.0f;
-	float widthDiv = getWidth() / 132.0f;
-	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * 12);
+	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * 8);
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, (heightDiv*12) + ((theMasterTree.getNumChildren()-1) * (heightDiv*36)), getWidth(), heightDiv*36);
+		theSequencerViews[i]->setBounds(0, (heightDiv*8) + ((theMasterTree.getNumChildren()-1) * (heightDiv*24)), getWidth(), heightDiv*40);
 	}
 	theAboutView->setBounds(getBounds());
 }
@@ -98,7 +75,6 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		theMasterTree.addChild(copiedTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(copiedTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
-		updatePositions();
 	}
 	else
 	{
@@ -106,7 +82,6 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		theMasterTree.addChild(sequencerTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
-		updatePositions();
 	}
 }
 
@@ -117,13 +92,11 @@ void ControllerView::removeSequencer(int i)
 		int index = theMasterTree.getNumChildren()-1;
 		theMasterTree.removeChild(index, nullptr);
 		theSequencerViews.remove(index);
-		updatePositions();
 	}
 	else
 	{
 		theMasterTree.removeChild(i, nullptr);
 		theSequencerViews.remove(i);
-		updatePositions();
 	}
 }
 
