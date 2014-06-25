@@ -13,64 +13,31 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-struct FollowComponent  : public Component
-{
-    FollowComponent()
-    {
-		colour = Colours::green;
-		setInterceptsMouseClicks(false, true);
-    }
-    void paint (Graphics& g)
-    {
-        g.setColour (colour);
-        g.fillEllipse (.0f, .0f, getWidth(), getHeight());
-    }
-
-    Colour colour;
-	
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FollowComponent)
-};
-
-class StepView: public Component, public Timer
+class StepView: public Component
 {
 public:
-	StepView(): X(0)
+	StepView()
 	{
-		addAndMakeVisible(theFollow = new FollowComponent());
 		setInterceptsMouseClicks(false, true);
-		X = 25;
 	}
 	
 	~StepView() {}
 	
-	void resized()
+	void update(bool state)
 	{
-		theFollow->setBounds(X, getHeight()*0.1, getHeight()*0.8, getHeight()*0.8);
+		theState = state;
+		repaint();
 	}
-	
-	void timerCallback()
+
+	void paint(Graphics& g)
 	{
-		theFollow->setCentrePosition(X, (theFollow->getHeight() * 1.4)/2);
-		stopTimer();
-	}
-	
-	void update(int x)
-	{
-		if (x != -1)
-		{
-			X = x + 10;
-			theFollow->setVisible(true);
-		}
-		else
-		{
-			theFollow->setVisible(false);
-		}
-		startTimer(2);
+		if (theState) g.setColour (Colour::fromRGB(30, 31, 84));
+		else g.setColour (Colour::fromRGB(236, 235, 226));
+        g.fillEllipse (getWidth()*0.4f, getHeight()*0.1f, getHeight()*0.8f, getHeight()*0.8f);
 	}
 
 private:
-	ScopedPointer<FollowComponent> theFollow;
-	int X;
+	bool theState;
 };
 
 #endif  // STEPSVIEW_H_INCLUDED

@@ -80,12 +80,11 @@ private:
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
 	ScopedPointer<TextButton> theDeleteButton;
-	ScopedPointer<StepView> thePositionComp;
-	ScopedPointer<StepView> thePositionComp2;
 	ScopedPointer<Randomiser> theRandomiser;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
+	OwnedArray<StepView> theLEDs;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
 	int thePosition;

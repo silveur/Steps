@@ -13,6 +13,27 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+enum SequencerColours
+{
+	ColourDarkGrey = 0,
+	ColourLightGrey,
+	ColourBlueGrey,
+	ColourLightBlue,
+	ColourRed,
+	ColourViolet,
+	ColourBlue,
+	ColourDarkBlue,
+	ColourGreen,
+	ColourRedOrange,
+	ColourGreenBlue,
+	ColourOrange,
+	ColourOrangeYellow,
+	ColourRichBlue,
+	ColourYellow,
+	ColourPurple,
+	ColourYellowGreen,
+};
+
 class SeqLookAndFeel: public LookAndFeel_V3
 {
 public:
@@ -126,7 +147,32 @@ public:
 		
 		g.setColour(Colours::black);
 		g.drawRect(x, y, width, height);
-		
+	}
+	
+	static Colour getColour(const SequencerColours colour, float alpha=1.0f)
+	{
+		uint8 intAlpha = (int) (alpha * 255.0f);
+		switch (colour)
+		{
+			case ColourDarkGrey: return Colour::fromRGBA(47, 46, 47, intAlpha);
+			case ColourLightGrey: return Colour::fromRGBA(209, 211, 211, intAlpha);
+			case ColourBlueGrey: return Colour::fromRGBA(81, 117, 139, intAlpha);
+			case ColourLightBlue: return Colour::fromRGBA(156, 183, 211, intAlpha);
+			case ColourRed: return Colour::fromRGBA(230, 63, 82, intAlpha);
+			case ColourViolet: return Colour::fromRGBA(180, 87, 161, intAlpha);
+			case ColourBlue: return Colour::fromRGBA(57, 127, 186, intAlpha);
+			case ColourDarkBlue: return Colour::fromRGBA(30, 40, 40, intAlpha);
+			case ColourGreen: return Colour::fromRGBA(101, 180, 72, intAlpha);
+			case ColourRedOrange: return Colour::fromRGBA(228, 118, 72, intAlpha);
+			case ColourGreenBlue: return Colour::fromRGBA(63, 180, 165, intAlpha);
+			case ColourOrange: return Colour::fromRGBA(227, 157, 69, intAlpha);
+			case ColourOrangeYellow: return Colour::fromRGBA(225, 186, 64, intAlpha);
+			case ColourRichBlue: return Colour::fromRGBA(38, 84, 165, intAlpha);
+			case ColourYellow: return Colour::fromRGBA(227, 215, 67, intAlpha);
+			case ColourPurple: return Colour::fromRGBA(101, 86, 165, intAlpha);
+			case ColourYellowGreen: return Colour::fromRGBA(186, 203, 64, intAlpha);
+			default: return Colour();
+		}
 	}
 
 private:

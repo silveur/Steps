@@ -9,6 +9,7 @@
 */
 
 #include "Randomiser.h"
+#include "LookAndFeel.h"
 
 extern File thePresetFolder;
 extern File theDefaultPreset;
@@ -16,6 +17,7 @@ extern File theDefaultPreset;
 Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): theSequencerView(sequencerView), theSequencerTree(sequencerTree)
 {
 	addAndMakeVisible(theRandomAllButton = new TextButton("Randomise"));
+	theRandomAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theRandomAllButton->addListener(this);
 	
 	addAndMakeVisible(theVelocityButton = new ToggleButton("Velocity"));
@@ -35,6 +37,7 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 	theStateButton->addListener(this);
 	
 	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
+	theResetAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theResetAllButton->addListener(this);
 	
 	theSequencerTree.addListener(this);

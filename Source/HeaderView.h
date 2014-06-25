@@ -13,7 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
-
+#include "LookAndFeel.h"
 extern UndoManager* theUndoManager;
 
 class HeaderView: public Component, ButtonListener, public ComboBoxListener, public ValueTree::Listener, SliderListener
@@ -24,18 +24,22 @@ public:
 		theMainLabel = "Sequencer";
 		thePreferenceTree = preferenceTree;
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
+		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theAddSequencerButton->addListener(this);
 		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
 		theUndoButton->addListener(this);
 		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
 		theRedoButton->addListener(this);
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
+		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theExportAllButton->addListener(this);
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
+		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
 		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
+		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theClockSourceList->addSectionHeading("Clock source");
 		theClockSourceList->addItem("External", 1);
 		theClockSourceList->addItem("Internal", 2);
@@ -44,6 +48,7 @@ public:
 		theClockSourceList->addListener(this);
 		
 		addAndMakeVisible(theMasterClockList = new ComboBox("MasterClock"));
+		theMasterClockList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theMasterClockList->addSectionHeading("Clock output");
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
 		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");

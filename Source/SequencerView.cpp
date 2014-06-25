@@ -10,6 +10,7 @@
 #include "ControllerView.h"
 #include "Randomiser.h"
 #include "Slider.h"
+#include "LookAndFeel.h"
 
 extern File thePresetFolder;
 
@@ -43,8 +44,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->addListener(this);
 		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
 		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
+		if (state == ON) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
+		else if (state == OFF) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourRedOrange));
+		else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourPurple));
 		theStateButtons[i]->setButtonText(getTextForEnum(state));
-		theStateButtons[i]->setColour(0, Colours::grey);
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
 		theDecaySliders[i]->setSliderStyle(Slider::LinearHorizontal);
@@ -58,6 +61,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
 		theDecaySliders[i]->addListener (this);
+		
+		addAndMakeVisible(theLEDs.add(new StepView()));
 	}
 	
 	int offset = theSequencerTree.getProperty("Offset");
@@ -76,15 +81,20 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
 	addAndMakeVisible(theCopyButton = new TextButton("Copy settings"));
+	theCopyButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
+	theCopyButton->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
 	theCopyButton->addListener(this);
 	
 	addAndMakeVisible(thePasteButton = new TextButton("Paste settings"));
+	thePasteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	thePasteButton->addListener(this);
 	
 	addAndMakeVisible(theExportButton = new TextButton("Export preset"));
+	theExportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theExportButton->addListener(this);
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import preset"));
+	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theImportButton->addListener(this);
 	
 	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
@@ -126,6 +136,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRangeSlider->addListener(this);
 	
 	addAndMakeVisible(theSpeedList = new ComboBox("Speed"));
+	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theSpeedList->addSectionHeading("Speed");
 	theSpeedList->addItem("1/1", 1);
 	theSpeedList->addItem("1/2", 2);
@@ -140,11 +151,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOnOffButton->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
+	theMidiOutputList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	theChannelList->addSectionHeading("Midi channel");
+	theChannelList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	for (int i=1;i<=16;i++)
 		theChannelList->addItem(String(i), i);
 	theChannelList->setSelectedId(theSequencerTree.getProperty("Channel"));
@@ -153,9 +166,12 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	refreshMidiList();
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
+	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
+	theRootOctaveList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theRootOctaveList->addSectionHeading("Root octave");
 	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
+	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theScaleList->addSectionHeading("Scales");
 	loadScales();
 	updateNotesAndOctaves();
@@ -169,8 +185,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theScaleList->addListener(this);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
-	addAndMakeVisible(thePositionComp = new StepView());
-	addAndMakeVisible(thePositionComp2 = new StepView());
 	setInterceptsMouseClicks(false, true);
 	addKeyListener(this);
 }
@@ -185,13 +199,17 @@ void SequencerView::handleAsyncUpdate()
 {
 	if (thePosition < 16)
 	{
-		thePositionComp->update(theStepSliders[thePosition]->getX() + (theStepSliders[thePosition]->getWidth()/3));
-		thePositionComp2->update(-1);
+		theLEDs[thePosition]->update(true);
+		if (thePosition != 0) theLEDs[thePosition-1]->update(false);
+		else theLEDs[15]->update(false);
+		if (thePosition == 0) theLEDs[31]->update(false);
 	}
 	else
 	{
-		thePositionComp->update(-1);
-		thePositionComp2->update(theStepSliders[thePosition]->getX());
+		theLEDs[thePosition]->update(true);
+		if (thePosition != 16) theLEDs[thePosition-1]->update(false);
+		else theLEDs[31]->update(false);
+		if (thePosition == 16) theLEDs[15]->update(false);
 	}
 }
 
@@ -241,17 +259,16 @@ void SequencerView::resized()
 		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 16.5, widthDiv * 6, heigthDiv * 1.5);
 		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 18.5, widthDiv * 6, heigthDiv * 1.5);
 		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 20, widthDiv * 6, heigthDiv * 2);
+		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 22, widthDiv * 8, heigthDiv * 2);
 	}
-	thePositionComp->setBounds(0, heigthDiv * 22, getWidth(), heigthDiv * 2);
 	for(int i=16;i<theSequencerTree.getNumChildren();i++)
 	{
 		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 24, widthDiv * 8, heigthDiv * 8);
 		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 32.5, widthDiv * 6, heigthDiv * 1.5);
 		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 34.5, widthDiv * 6, heigthDiv * 1.5);
 		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 36, widthDiv * 6, heigthDiv * 2);
+		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 38, widthDiv * 8, heigthDiv * 2);
 	}
-	thePositionComp2->setBounds(0, heigthDiv * 38, getWidth(), heigthDiv * 2);
-
 }
 
 int randomise(int min, int max)
@@ -569,7 +586,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 				{
 					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
 					theStateButtons[i]->setButtonText(getTextForEnum(state));
-				}
+					if (state == ON) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
+					else if (state == OFF) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourRedOrange));
+					else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourPurple));
+ 				}
 				else if (String(property) == "Velocity")
 					theVelocitySliders[i]->setValue((int)tree.getProperty(property));
 				else if (String(property) == "Decay")
@@ -629,5 +649,3 @@ const char* SequencerView::getTextForEnum(int enumVal)
 	static const char * stateStrings[] = { "OFF", "ON", "JUMP" };
 	return stateStrings[enumVal];
 }
-
-
