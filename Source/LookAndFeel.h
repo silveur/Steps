@@ -119,7 +119,24 @@ public:
                            float sliderPos, float rotaryStartAngle, float rotaryEndAngle,
                            Slider& slider) override
 	{
-		const float radius = jmin (width / 2, height / 2) - 2.0f;
+		bool isSym; int numPositions; int interval;
+		
+		interval = slider.getInterval();
+		numPositions = abs(slider.getMinimum()) + slider.getMaximum();
+		if ((slider.getMinimum() + slider.getMaximum()) == 0 ? isSym = true : isSym = false);
+		float sliderHeight = slider.getHeight();
+		float sliderWidth = slider.getWidth();
+		
+		g.setColour(Colours::black);
+		g.drawEllipse(x, y, width, height, 0.4);
+		g.setColour(Colour::fromRGB(83, 17, 21));
+		g.fillEllipse(slider.getWidth()*0.05, slider.getHeight()*0.05, slider.getWidth()*0.9, slider.getHeight()*0.9);
+		
+		g.setColour(Colours::white);
+		g.drawEllipse(slider.getWidth()*0.2, slider.getHeight()*0.2, slider.getWidth()*0.6, slider.getHeight()*0.6f, 0.4f);
+		g.drawEllipse(slider.getWidth()*0.22, slider.getHeight()*0.22, slider.getWidth()*0.56f, slider.getHeight()*0.56f, 0.4f);
+					
+		const float radius = jmin (width / 2, height / 2) - 5.0f;
 		const float centreX = x + width * 0.5f;
 		const float centreY = y + height * 0.5f;
 		const float rx = centreX - radius;
@@ -128,21 +145,15 @@ public:
 		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 		const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
 		
-		bool isSym;
-		if ((slider.getMinimum() + slider.getMaximum()) == 0)
-		{
-			isSym = true;
-		}
-		else isSym = false;
-		
-		if (slider.isEnabled())
-			g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (isMouseOver ? 0.7f : 1.0f));
-		else
-			g.setColour (Colour (0x80808080));
+//			if (slider.isEnabled())
+//				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (isMouseOver ? 0.7f : 1.0f));
+//			else
+//				g.setColour (Colour (0x80808080));
 		
 		const float thickness = 0.7f;
 		
 		{
+			g.setColour(getColour(SequencerColours::ColourBlueGrey));
 			Path filledArc;
 			float begin;
 			if (isSym) begin = 6.28319;
@@ -150,33 +161,6 @@ public:
 			filledArc.addPieSegment (rx, ry, rw, rw, begin, angle, thickness);
 			g.fillPath (filledArc);
 		}
-		
-		if (thickness > 0)
-		{
-			const float innerRadius = radius * 0.2f;
-			Path p;
-			p.addTriangle (-innerRadius, 0.0f,
-						   0.0f, -radius * thickness * 1.1f,
-						   innerRadius, 0.0f);
-			
-			p.addEllipse (-innerRadius, -innerRadius, innerRadius * 2.0f, innerRadius * 2.0f);
-			
-			g.fillPath (p, AffineTransform::rotation (angle).translated (centreX, centreY));
-		}
-		
-		if (slider.isEnabled())
-			g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
-		else
-			g.setColour (Colour (0x80808080));
-		
-		Path outlineArc;
-		outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
-		outlineArc.closeSubPath();
-		
-		g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
-		
-		g.setColour(Colours::black);
-		g.drawRect(x, y, width, height);
 	}
 	
 	void drawLinearSlider (Graphics& g, int x, int y, int width, int height,
@@ -206,6 +190,8 @@ public:
 			g.fillRect (fx, sliderPos, fw, 1.0f);
 		else
 			g.fillRect (sliderPos, fy, 1.0f, fh);
+		
+		g.drawRect(slider.getLocalBounds());
 	}
 	
 	static Colour getColour(const SequencerColours colour, float alpha=1.0f)
