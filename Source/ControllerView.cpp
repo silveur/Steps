@@ -45,6 +45,11 @@ void ControllerView::paint(Graphics& g)
 
 void ControllerView::resized()
 {
+	refreshView();
+}
+
+void ControllerView::refreshView()
+{
 	float heightDiv = getHeight() / 48.0f;
 	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * 8);
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
@@ -83,6 +88,7 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
 	}
+	refreshView();
 }
 
 void ControllerView::removeSequencer(int i)
