@@ -139,7 +139,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
 	theRangeSlider->addListener(this);
 	
-	addAndMakeVisible(theSpeedList = new ComboBox("Speed"));
+	addAndMakeVisible(theSpeedList = new SeqComboBox("Speed"));
 	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theSpeedList->addSectionHeading("Speed");
 	theSpeedList->addItem("1/1", 1);
@@ -154,12 +154,12 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
 	theOnOffButton->addListener(this);
 
-	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
+	addAndMakeVisible(theMidiOutputList = new SeqComboBox("Midi Output list"));
 	theMidiOutputList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	
-	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
+	addAndMakeVisible(theChannelList = new SeqComboBox("Channel"));
 	theChannelList->addSectionHeading("Midi channel");
 	theChannelList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	for (int i=1;i<=16;i++)
@@ -168,13 +168,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theChannelList->addListener(this);
 	
 	refreshMidiList();
-	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
+	addAndMakeVisible(theRootNoteList = new SeqComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
 	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
+	addAndMakeVisible(theRootOctaveList = new SeqComboBox("RootOctaveList"));
 	theRootOctaveList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theRootOctaveList->addSectionHeading("Root octave");
-	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
+	addAndMakeVisible(theScaleList = new SeqComboBox("Scale"));
 	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theScaleList->addSectionHeading("Scales");
 	loadScales();

@@ -14,6 +14,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
 #include "LookAndFeel.h"
+#include "ComboBox.h"
 
 extern UndoManager* theUndoManager;
 
@@ -39,7 +40,7 @@ public:
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
-		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
+		addAndMakeVisible(theClockSourceList = new SeqComboBox("Clock source"));
 		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theClockSourceList->addSectionHeading("Clock source");
 		theClockSourceList->addItem("External", 1);
@@ -48,7 +49,7 @@ public:
 		theClockSourceList->setSelectedItemIndex(clockMode);
 		theClockSourceList->addListener(this);
 		
-		addAndMakeVisible(theMasterClockList = new ComboBox("MasterClock"));
+		addAndMakeVisible(theMasterClockList = new SeqComboBox("MasterClock"));
 		theMasterClockList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theMasterClockList->addSectionHeading("Clock output");
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
@@ -216,8 +217,8 @@ private:
 	ScopedPointer<TextButton> theImportAllButton;
 	ScopedPointer<TextButton> theKickBackButton;
 	ScopedPointer<Slider> theBPMSlider;
-	ScopedPointer<ComboBox> theClockSourceList;
-	ScopedPointer<ComboBox> theMasterClockList;
+	ScopedPointer<SeqComboBox> theClockSourceList;
+	ScopedPointer<SeqComboBox> theMasterClockList;
 	ControllerView* theControllerView;
 	ValueTree thePreferenceTree;
 	String theMainLabel;

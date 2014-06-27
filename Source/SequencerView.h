@@ -13,6 +13,7 @@
 #include "StepsView.h"
 #include "Scales.h"
 #include "DeleteButton.h"
+#include "ComboBox.h"
 
 class ControllerView;
 class SeqSlider;
@@ -48,6 +49,7 @@ public:
 		float heigthDiv = getHeight() / 40.0f;
 		float widthDiv = getWidth() / 132.0f;
 		
+		g.setColour(Colours::black);
 		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Scale", widthDiv * 16, heigthDiv * 5, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
@@ -76,12 +78,12 @@ private:
 	void updateNotesAndOctaves();
 	void loadScales();
 	String isOnScale(int value);
-	ScopedPointer<ComboBox> theMidiOutputList;
-	ScopedPointer<ComboBox> theChannelList;
-	ScopedPointer<ComboBox> theRootNoteList;
-	ScopedPointer<ComboBox> theRootOctaveList;
-	ScopedPointer<ComboBox> theScaleList;
-	ScopedPointer<ComboBox> theSpeedList;
+	ScopedPointer<SeqComboBox> theMidiOutputList;
+	ScopedPointer<SeqComboBox> theChannelList;
+	ScopedPointer<SeqComboBox> theRootNoteList;
+	ScopedPointer<SeqComboBox> theRootOctaveList;
+	ScopedPointer<SeqComboBox> theScaleList;
+	ScopedPointer<SeqComboBox> theSpeedList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;

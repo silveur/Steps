@@ -160,19 +160,12 @@ public:
 		
 		if (isButtonDown || isMouseOverButton)
 			baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
-		
-		const bool flatOnLeft   = button.isConnectedOnLeft();
-		const bool flatOnRight  = button.isConnectedOnRight();
-		const bool flatOnTop    = button.isConnectedOnTop();
-		const bool flatOnBottom = button.isConnectedOnBottom();
-		
+
 		const float width  = button.getWidth() - 1.0f;
 		const float height = button.getHeight() - 1.0f;
 		
 		if (width > 0 && height > 0)
 		{
-			const float cornerSize = 4.0f;
-			
 			Path outline;
 			outline.addRectangle (0.5f, 0.5f, width, height);
 			const float mainBrightness = baseColour.getBrightness();
@@ -188,7 +181,6 @@ public:
 			
 			g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
 			g.strokePath (outline, PathStrokeType (1.0f));
-//			drawButtonShape (g, outline, baseColour, height);
 		}
 	}
 	
@@ -308,6 +300,104 @@ public:
 			Colour cl = slider.findColour (Slider::thumbColourId);
 			g.setColour(cl);
 			g.fillEllipse(kx - sliderRadius, ky - sliderRadius, sliderRadius * 2.0f, sliderRadius * 2.0f);
+		}
+	}
+	
+	Font getPopupMenuFont()
+	{
+		return Font (15.0f);
+	}
+	
+	void drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,
+											const bool isSeparator, const bool isActive,
+											const bool isHighlighted, const bool isTicked,
+											const bool hasSubMenu, const String& text,
+											const String& shortcutKeyText,
+											const Drawable* icon, const Colour* const textColourToUse)
+	{
+		if (isSeparator)
+		{
+			Rectangle<int> r (area.reduced (5, 0));
+			r.removeFromTop (r.getHeight() / 2 - 1);
+			
+			g.setColour (Colour (0x33000000));
+			g.fillRect (r.removeFromTop (1));
+			
+			g.setColour (Colour (0x66ffffff));
+			g.fillRect (r.removeFromTop (1));
+		}
+		else
+		{
+			Colour textColour (findColour (PopupMenu::textColourId));
+			
+			if (textColourToUse != nullptr)
+				textColour = *textColourToUse;
+			
+			Rectangle<int> r (area.reduced (1));
+			
+			if (isHighlighted)
+			{
+				g.setColour (findColour (PopupMenu::highlightedBackgroundColourId));
+				g.fillRect (r);
+				
+				g.setColour (findColour (PopupMenu::highlightedTextColourId));
+			}
+			else
+			{
+				g.setColour (textColour);
+			}
+			
+			if (! isActive)
+				g.setOpacity (0.3f);
+			
+			Font font (getPopupMenuFont());
+			
+			const float maxFontHeight = area.getHeight() / 1.3f;
+			
+			if (font.getHeight() > maxFontHeight)
+				font.setHeight (maxFontHeight);
+			
+			g.setFont (font);
+			
+			Rectangle<float> iconArea (r.removeFromLeft ((r.getHeight() * 3) / 4).reduced (5).toFloat());
+			
+			if (icon != nullptr)
+			{
+				icon->drawWithin (g, iconArea, RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
+			}
+			else if (isTicked)
+			{
+				const Path tick (getTickShape (1.0f));
+				g.fillPath (tick, tick.getTransformToScaleToFit (iconArea, true));
+			}
+			
+			if (hasSubMenu)
+			{
+				const float arrowH = 0.6f * getPopupMenuFont().getAscent();
+				
+				const float x = (float) r.removeFromRight ((int) arrowH).getX();
+				const float halfH = (float) r.getCentreY();
+				
+				Path p;
+				p.addTriangle (x, halfH - arrowH * 0.5f,
+							   x, halfH + arrowH * 0.5f,
+							   x + arrowH * 0.6f, halfH);
+				
+				g.fillPath (p);
+			}
+			
+			r.removeFromRight (3);
+			g.drawFittedText (text, r, Justification::centredLeft, 1);
+			
+			if (shortcutKeyText.isNotEmpty())
+			{
+				Font f2 (font);
+				f2.setHeight (f2.getHeight() * 0.75f);
+				f2.setHorizontalScale (0.95f);
+				g.setFont (f2);
+				
+				g.drawText (shortcutKeyText, r, Justification::centredRight, true);
+			}
 		}
 	}
 	
