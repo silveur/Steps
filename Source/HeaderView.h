@@ -164,7 +164,6 @@ public:
 		g.fillAll();
 		
 		g.setColour(Colours::black);
-		g.drawRect(getBounds());
 		
 		float heigthDiv = getHeight() / 8.0f;
 		float widthDiv = getWidth() / 132.0f;
@@ -173,6 +172,9 @@ public:
 		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		
+		g.setColour(Colours::grey);
+		g.drawLine(0, getHeight(), getWidth(), getHeight(), 1.0f);
 	}
 	
 	void resized()
@@ -192,19 +194,7 @@ public:
 	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 	{
-		if (String(property) == "ClockMode")
-		{
-			ClockMode theClockMode = (ClockMode)(bool)tree.getProperty(property);
-			if (theClockMode == INTERNAL)
-			{
-				theBPMSlider->setVisible(true);
-			}
-			else if (theClockMode == EXTERNAL)
-			{
-				theBPMSlider->setVisible(false);
-			}
-		}
-		else if (String(property) == "BPM")
+		if (String(property) == "BPM")
 		{
 			theBPMSlider->setValue(tree.getProperty(property));
 		}

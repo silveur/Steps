@@ -39,7 +39,7 @@ ControllerView::~ControllerView()
 
 void ControllerView::paint(Graphics& g)
 {
-	g.setColour(Colours::white);
+	g.setColour(Colour::fromRGB(198, 201, 180));
 	g.fillAll();
 }
 

@@ -44,9 +44,7 @@ public:
 		g.setFont(11);
 		g.setColour(Colour::fromRGB(198, 201, 180));
 		g.fillAll();
-		g.setColour(Colours::black);
-		g.drawRect(getLocalBounds());
-		
+
 		float heigthDiv = getHeight() / 40.0f;
 		float widthDiv = getWidth() / 132.0f;
 		

@@ -152,6 +152,46 @@ public:
 						  Justification::centred, 2);
 	}
 	
+	void drawButtonBackground (Graphics& g, Button& button, const Colour& backgroundColour,
+											   bool isMouseOverButton, bool isButtonDown)
+	{
+		Colour baseColour (backgroundColour.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+						   .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
+		
+		if (isButtonDown || isMouseOverButton)
+			baseColour = baseColour.contrasting (isButtonDown ? 0.2f : 0.1f);
+		
+		const bool flatOnLeft   = button.isConnectedOnLeft();
+		const bool flatOnRight  = button.isConnectedOnRight();
+		const bool flatOnTop    = button.isConnectedOnTop();
+		const bool flatOnBottom = button.isConnectedOnBottom();
+		
+		const float width  = button.getWidth() - 1.0f;
+		const float height = button.getHeight() - 1.0f;
+		
+		if (width > 0 && height > 0)
+		{
+			const float cornerSize = 4.0f;
+			
+			Path outline;
+			outline.addRectangle (0.5f, 0.5f, width, height);
+			const float mainBrightness = baseColour.getBrightness();
+			const float mainAlpha = baseColour.getFloatAlpha();
+			
+			g.setGradientFill (ColourGradient (baseColour.brighter (0.2f), 0.0f, 0.0f,
+											   baseColour.darker (0.25f), 0.0f, height, false));
+			g.fillPath (outline);
+			
+			g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
+			g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
+						  .scaled (1.0f, (height - 1.6f) / height));
+			
+			g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
+			g.strokePath (outline, PathStrokeType (1.0f));
+//			drawButtonShape (g, outline, baseColour, height);
+		}
+	}
+	
 	void drawRotarySlider (Graphics& g, int x, int y, int width, int height,
                            float sliderPos, float rotaryStartAngle, float rotaryEndAngle,
                            Slider& slider) override
@@ -172,7 +212,7 @@ public:
 		float ellipseY = (height / 2.0f) - radius + (offset/2.0f);
 		
 		g.setColour(Colours::black);
-		g.drawEllipse(ellipseX, ellipseY, min, min, 0.4);
+		g.drawEllipse(ellipseX, ellipseY, min, min, 1.0f);
 		g.setColour(Colour::fromRGB(83, 17, 21));
 		g.fillEllipse(ellipseX + (min*0.05),ellipseY +(min*0.05), min*0.9, min*0.9);
 		
@@ -186,10 +226,10 @@ public:
 		const float ry = centreY - radius;
 		const float rw = radius * 2.0f;
 		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-		const float thickness = 0.7f;
+		const float thickness = 0.85f;
 		
 		{
-			g.setColour(getColour(SequencerColours::ColourBlueGrey));
+			g.setColour(getColour(SequencerColours::ColourPurple));
 			Path filledArc;
 			float begin;
 			if (isSym) begin = 6.28319;
