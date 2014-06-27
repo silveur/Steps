@@ -43,6 +43,7 @@ public:
 		theState = false;
 		setVisible(true);
 		addKeyListener(this);
+		setResizable(true, true);
 	}
 	
 	~MainWindow()
@@ -57,7 +58,11 @@ public:
 		thePreferenceTree.writeToStream(outputStream);
 	}
 	
-	void paint(Graphics& g) {}
+	void paint(Graphics& g)
+	{
+		g.setColour(Colour::fromRGB(198, 201, 180));
+		g.fillAll();
+	}
 	
 		
 	void closeButtonPressed()

@@ -13,6 +13,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
+#include "LookAndFeel.h"
+#include "ComboBox.h"
 
 extern UndoManager* theUndoManager;
 
@@ -24,18 +26,22 @@ public:
 		theMainLabel = "Sequencer";
 		thePreferenceTree = preferenceTree;
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
+		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theAddSequencerButton->addListener(this);
 		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
 		theUndoButton->addListener(this);
 		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
 		theRedoButton->addListener(this);
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
+		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theExportAllButton->addListener(this);
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
+		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
-		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
+		addAndMakeVisible(theClockSourceList = new SeqComboBox("Clock source"));
+		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theClockSourceList->addSectionHeading("Clock source");
 		theClockSourceList->addItem("External", 1);
 		theClockSourceList->addItem("Internal", 2);
@@ -43,7 +49,8 @@ public:
 		theClockSourceList->setSelectedItemIndex(clockMode);
 		theClockSourceList->addListener(this);
 		
-		addAndMakeVisible(theMasterClockList = new ComboBox("MasterClock"));
+		addAndMakeVisible(theMasterClockList = new SeqComboBox("MasterClock"));
+		theMasterClockList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theMasterClockList->addSectionHeading("Clock output");
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
 		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");
@@ -57,13 +64,14 @@ public:
 		theMasterClockList->addListener(this);
 
 		addAndMakeVisible(theBPMSlider = new Slider("BPM"));
-		theBPMSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 60, 50);
+		theBPMSlider->setTextBoxStyle(Slider::NoTextBox, false, 60, 50);
 		theBPMSlider->setRange(60, 180, 0.1);
 		theBPMSlider->setScrollWheelEnabled(false);
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
 		theBPMSlider->addListener(this);
 		theBPMSlider->setVisible(clockMode);
+		
 		setInterceptsMouseClicks(false, true);
 		thePreferenceTree.addListener(this);
 	}
@@ -151,33 +159,43 @@ public:
 		}
 	}
 
-	void paint(Graphics& g) {}
+	void paint(Graphics& g)
+	{
+		g.setColour(Colour::fromRGB(198, 201, 180));
+		g.fillAll();
+		
+		g.setColour(Colours::black);
+		
+		float heigthDiv = getHeight() / 8.0f;
+		float widthDiv = getWidth() / 132.0f;
+		
+		g.setFont(11);
+		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		
+		g.setColour(Colours::grey);
+		g.drawLine(0, getHeight(), getWidth(), getHeight(), 1.0f);
+	}
 	
 	void resized()
 	{
-		theAddSequencerButton->setBounds(10, getHeight()/4, getWidth()/12, getHeight()/2);
-		theExportAllButton->setBounds(theAddSequencerButton->getRight(), theAddSequencerButton->getY(), getWidth()/16, getHeight()/2);
-		theImportAllButton->setBounds(theExportAllButton->getRight(), theExportAllButton->getY(), getWidth()/16, getHeight()/2);
-		theBPMSlider->setBounds(getWidth()/1.6, 0, getHeight()*3, getHeight());
-		theMasterClockList->setBounds(theBPMSlider->getRight(), theMasterClockList->getY(), getWidth()/8, getHeight());
-		theClockSourceList->setBounds(theMasterClockList->getRight(), 0, 110, getHeight());
+		float heigthDiv = getHeight() / 8.0f;
+		float widthDiv = getWidth() / 132.0f;
+		
+		theAddSequencerButton->setBounds(widthDiv * 2, heigthDiv, widthDiv * 12, heigthDiv * 4);
+		theImportAllButton->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 4);
+		theExportAllButton->setBounds(widthDiv * 28, heigthDiv, widthDiv * 10, heigthDiv * 4);
+		
+		theMasterClockList->setBounds(widthDiv * 88, heigthDiv, widthDiv * 17, heigthDiv * 4);
+		theBPMSlider->setBounds(widthDiv * 107, heigthDiv, widthDiv * 4, heigthDiv * 4);
+		theClockSourceList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 17, heigthDiv * 4);
+		repaint();
 	}
 	
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
 	{
-		if (String(property) == "ClockMode")
-		{
-			ClockMode theClockMode = (ClockMode)(bool)tree.getProperty(property);
-			if (theClockMode == INTERNAL)
-			{
-				theBPMSlider->setVisible(true);
-			}
-			else if (theClockMode == EXTERNAL)
-			{
-				theBPMSlider->setVisible(false);
-			}
-		}
-		else if (String(property) == "BPM")
+		if (String(property) == "BPM")
 		{
 			theBPMSlider->setValue(tree.getProperty(property));
 		}
@@ -199,8 +217,8 @@ private:
 	ScopedPointer<TextButton> theImportAllButton;
 	ScopedPointer<TextButton> theKickBackButton;
 	ScopedPointer<Slider> theBPMSlider;
-	ScopedPointer<ComboBox> theClockSourceList;
-	ScopedPointer<ComboBox> theMasterClockList;
+	ScopedPointer<SeqComboBox> theClockSourceList;
+	ScopedPointer<SeqComboBox> theMasterClockList;
 	ControllerView* theControllerView;
 	ValueTree thePreferenceTree;
 	String theMainLabel;

@@ -9,6 +9,7 @@
 */
 
 #include "Randomiser.h"
+#include "LookAndFeel.h"
 
 extern File thePresetFolder;
 extern File theDefaultPreset;
@@ -16,6 +17,7 @@ extern File theDefaultPreset;
 Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): theSequencerView(sequencerView), theSequencerTree(sequencerTree)
 {
 	addAndMakeVisible(theRandomAllButton = new TextButton("Randomise"));
+	theRandomAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theRandomAllButton->addListener(this);
 	
 	addAndMakeVisible(theVelocityButton = new ToggleButton("Velocity"));
@@ -35,6 +37,7 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 	theStateButton->addListener(this);
 	
 	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
+	theResetAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theResetAllButton->addListener(this);
 	
 	theSequencerTree.addListener(this);
@@ -42,21 +45,34 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 
 void Randomiser::resized()
 {
-	int heigthDiv = getHeight() / 8;
-	int widthDiv = getWidth() / 4;
-	theVelocityButton->setBounds(0, 0, widthDiv, heigthDiv*4);
-	theDecayButton->setBounds(theVelocityButton->getRight(), theVelocityButton->getY(), widthDiv, heigthDiv*4);
-	thePitchButton->setBounds(theDecayButton->getRight(), theDecayButton->getY(), widthDiv, heigthDiv*4);
-	theStateButton->setBounds(thePitchButton->getRight(), thePitchButton->getY(), widthDiv, heigthDiv*4);
+	float heigthDiv = getHeight() / 6.0f;
+	float widthDiv = getWidth() / 21.0f;
 	
-	theRandomAllButton->setBounds(0, heigthDiv*4, getWidth()/2, heigthDiv*4);
-	theResetAllButton->setBounds(theRandomAllButton->getRight(), theRandomAllButton->getY(), getWidth()/2, heigthDiv*4);
+	theVelocityButton->setBounds(widthDiv * 1.8, 0, widthDiv * 3, heigthDiv * 3);
+	theDecayButton->setBounds(widthDiv * 6.8, 0, widthDiv * 3, heigthDiv * 3);
+	thePitchButton->setBounds(widthDiv * 11.8, 0, widthDiv * 3, heigthDiv * 3);
+	theStateButton->setBounds(widthDiv * 16.8, 0, widthDiv * 3, heigthDiv * 3);
+
+	theRandomAllButton->setBounds(0, heigthDiv * 4, getWidth()/2, heigthDiv * 2);
+	theResetAllButton->setBounds(getWidth()/2.0f, heigthDiv * 4, getWidth()/2, heigthDiv * 2);
 }
 
 void Randomiser::paint(Graphics &g)
 {
 	g.setColour(Colours::grey);
 	g.fillAll();
+	
+	g.setFont(10.0f);
+	
+	float heigthDiv = getHeight() / 6.0f;
+	float widthDiv = getWidth() / 20.0f;
+	
+	g.setColour(Colours::black);
+	g.drawFittedText("Velocity", widthDiv, heigthDiv * 2.4, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+	g.drawFittedText("Decay", widthDiv * 6, heigthDiv * 2.4, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+	g.drawFittedText("Pitch", widthDiv * 10.8f, heigthDiv * 2.4, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+	g.drawFittedText("State", widthDiv * 15.3f, heigthDiv * 2.4, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+
 }
 
 void Randomiser::buttonClicked(Button* button)

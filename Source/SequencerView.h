@@ -12,6 +12,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
+#include "DeleteButton.h"
+#include "ComboBox.h"
 
 class ControllerView;
 class SeqSlider;
@@ -40,15 +42,26 @@ public:
 	}
 	void paint(Graphics& g)
 	{
-		int index = theSequencerTree.getParent().indexOf(theSequencerTree);
-		if (index % 2 == 1)
-		{
-			g.fillAll(Colour::fromRGB(500, 500, 500));
-		}
-		else
-		{
-			g.fillAll(Colour::fromRGB(500, 500, 500));
-		}
+		g.setFont(11);
+		g.setColour(Colour::fromRGB(198, 201, 180));
+		g.fillAll();
+
+		float heigthDiv = getHeight() / 40.0f;
+		float widthDiv = getWidth() / 132.0f;
+		
+		g.setColour(Colours::black);
+		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Scale", widthDiv * 16, heigthDiv * 5, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Division", widthDiv * 28, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Shuffle", widthDiv * 59, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Range", widthDiv * 65, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Offset", widthDiv * 71, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Length", widthDiv * 77, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Midi output", widthDiv * 95, heigthDiv * 5, widthDiv * 16, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("On / Off", widthDiv * 121, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Delete", widthDiv * 126, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 	}
 	static ValueTree& getCopyTree()
 	{
@@ -65,12 +78,12 @@ private:
 	void updateNotesAndOctaves();
 	void loadScales();
 	String isOnScale(int value);
-	ScopedPointer<ComboBox> theMidiOutputList;
-	ScopedPointer<ComboBox> theChannelList;
-	ScopedPointer<ComboBox> theRootNoteList;
-	ScopedPointer<ComboBox> theRootOctaveList;
-	ScopedPointer<ComboBox> theScaleList;
-	ScopedPointer<ComboBox> theSpeedList;
+	ScopedPointer<SeqComboBox> theMidiOutputList;
+	ScopedPointer<SeqComboBox> theChannelList;
+	ScopedPointer<SeqComboBox> theRootNoteList;
+	ScopedPointer<SeqComboBox> theRootOctaveList;
+	ScopedPointer<SeqComboBox> theScaleList;
+	ScopedPointer<SeqComboBox> theSpeedList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theShuffleSlider;
 	ScopedPointer<Slider> theRangeSlider;
@@ -84,13 +97,12 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
-	ScopedPointer<TextButton> theDeleteButton;
-	ScopedPointer<StepView> thePositionComp;
-	ScopedPointer<StepView> thePositionComp2;
+	ScopedPointer<DeleteButton> theDeleteButton;
 	ScopedPointer<Randomiser> theRandomiser;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;
+	OwnedArray<StepView> theLEDs;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
 	int thePosition;

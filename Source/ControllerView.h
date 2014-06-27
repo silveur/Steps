@@ -29,7 +29,6 @@ public:
 	void paint(Graphics& g);
 	void addSequencer(ValueTree& sequencerTreeToAdd);
 	void removeSequencer(int index);
-	void updatePositions();
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
 	Rectangle<int>& getScreenSize() { return theMainScreen; }
