@@ -45,8 +45,8 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 
 void Randomiser::resized()
 {
-	int heigthDiv = getHeight() / 8;
-	int widthDiv = getWidth() / 4;
+	float heigthDiv = getHeight() / 8.0f;
+	float widthDiv = getWidth() / 4.0f;
 	theVelocityButton->setBounds(0, 0, widthDiv, heigthDiv*4);
 	theDecayButton->setBounds(theVelocityButton->getRight(), theVelocityButton->getY(), widthDiv, heigthDiv*4);
 	thePitchButton->setBounds(theDecayButton->getRight(), theDecayButton->getY(), widthDiv, heigthDiv*4);

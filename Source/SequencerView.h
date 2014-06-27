@@ -12,6 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
+#include "DeleteButton.h"
 
 class ControllerView;
 class SeqSlider;
@@ -59,6 +60,8 @@ public:
 		g.drawFittedText("Length", widthDiv * 77, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Midi output", widthDiv * 95, heigthDiv * 5, widthDiv * 16, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("On / Off", widthDiv * 121, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Delete", widthDiv * 126, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 	}
 	static ValueTree& getCopyTree()
 	{
@@ -94,7 +97,7 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
-	ScopedPointer<TextButton> theDeleteButton;
+	ScopedPointer<DeleteButton> theDeleteButton;
 	ScopedPointer<Randomiser> theRandomiser;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;

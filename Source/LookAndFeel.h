@@ -47,6 +47,43 @@ public:
 		
 	}
 	
+	void drawToggleButton (Graphics& g, ToggleButton& button,
+										   bool isMouseOverButton, bool isButtonDown)
+	{
+		float min, radius; float offset = 3.0f;
+		float width = button.getWidth(); float height = button.getHeight();
+		if (width < height ? min = width : min = height);
+		radius = min / 2.0f;
+		min -= offset;
+		
+		float ellipseX = (width / 2.0f) - radius + (offset/2.0f);
+		float ellipseY = (height / 2.0f) - radius + (offset/2.0f);
+		
+		g.fillEllipse(ellipseX, ellipseY, min, min);
+		g.setColour(Colours::white);
+		Path p;
+		if (button.getToggleState())
+		{
+			p.startNewSubPath (ellipseX + (min/3.0f), ellipseY + (min/2.0f));
+			p.lineTo (ellipseX + (min/2.0f), ellipseY + (min*0.7f));
+			p.startNewSubPath (ellipseX + (min/2.2f),ellipseY + (min*0.7f));
+			p.lineTo (ellipseX + (min*0.7f), ellipseY + (min*0.3f));
+			p.closeSubPath();
+			g.strokePath(p, PathStrokeType (3.0f));
+		}
+		else
+		{
+			p.startNewSubPath (ellipseX + (min/3.0f), ellipseY + (min/3.0f));
+			p.lineTo (ellipseX + (min*0.666f), ellipseY + (min*0.666f));
+			
+			p.startNewSubPath (ellipseX + (min/3.0f), ellipseY + (min*0.666f));
+			p.lineTo (ellipseX + (min*0.666f), ellipseY + (min/3.0f));
+
+			p.closeSubPath();
+			g.strokePath(p, PathStrokeType (3.0f));
+		}
+	}
+	
 	void drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/,
 									   int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box)
 	{
@@ -124,32 +161,31 @@ public:
 		interval = slider.getInterval();
 		numPositions = abs(slider.getMinimum()) + slider.getMaximum();
 		if ((slider.getMinimum() + slider.getMaximum()) == 0 ? isSym = true : isSym = false);
-		float sliderHeight = slider.getHeight();
-		float sliderWidth = slider.getWidth();
+		
+		float min, radius; float offset = 3.0f;
+		float _width = slider.getWidth(); float _height = slider.getHeight();
+		if (_width < _height ? min = _width : min = _height);
+		radius = min / 2.0f;
+		min -= offset;
+		
+		float ellipseX = (width / 2.0f) - radius + (offset/2.0f);
+		float ellipseY = (height / 2.0f) - radius + (offset/2.0f);
 		
 		g.setColour(Colours::black);
-		g.drawEllipse(x, y, width, height, 0.4);
+		g.drawEllipse(ellipseX, ellipseY, min, min, 0.4);
 		g.setColour(Colour::fromRGB(83, 17, 21));
-		g.fillEllipse(slider.getWidth()*0.05, slider.getHeight()*0.05, slider.getWidth()*0.9, slider.getHeight()*0.9);
+		g.fillEllipse(ellipseX + (min*0.05),ellipseY +(min*0.05), min*0.9, min*0.9);
 		
 		g.setColour(Colours::white);
-		g.drawEllipse(slider.getWidth()*0.2, slider.getHeight()*0.2, slider.getWidth()*0.6, slider.getHeight()*0.6f, 0.4f);
-		g.drawEllipse(slider.getWidth()*0.22, slider.getHeight()*0.22, slider.getWidth()*0.56f, slider.getHeight()*0.56f, 0.4f);
+		g.drawEllipse(ellipseX +(min*0.2f), ellipseY +(min*0.2f), min*0.6, min*0.6f, 0.4f);
+		g.drawEllipse(ellipseX +(min*0.22f), ellipseY +(min*0.22f), min*0.56f, min*0.56f, 0.4f);
 					
-		const float radius = jmin (width / 2, height / 2) - 5.0f;
 		const float centreX = x + width * 0.5f;
 		const float centreY = y + height * 0.5f;
 		const float rx = centreX - radius;
 		const float ry = centreY - radius;
 		const float rw = radius * 2.0f;
 		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-		const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-		
-//			if (slider.isEnabled())
-//				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (isMouseOver ? 0.7f : 1.0f));
-//			else
-//				g.setColour (Colour (0x80808080));
-		
 		const float thickness = 0.7f;
 		
 		{
@@ -167,31 +203,72 @@ public:
 										   float sliderPos, float minSliderPos, float maxSliderPos,
 										   const Slider::SliderStyle style, Slider& slider)
 	{
-		g.fillAll (slider.findColour (Slider::backgroundColourId));
-		const float fx = (float) x, fy = (float) y, fw = (float) width, fh = (float) height;
-		Path p;
+		drawLinearSliderBackground (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+		drawLinearSliderThumb (g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+	}
+	
+	void drawLinearSliderBackground (Graphics& g, int x, int y, int width, int height,
+													 float /*sliderPos*/,
+													 float /*minSliderPos*/,
+													 float /*maxSliderPos*/,
+													 const Slider::SliderStyle /*style*/, Slider& slider)
+	{
+		const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
 		
-		if (style == Slider::LinearBarVertical)
-			p.addRectangle (fx, sliderPos, fw, 1.0f + fh - sliderPos);
+		const Colour trackColour (slider.findColour (Slider::trackColourId));
+		const Colour gradCol1 (trackColour.overlaidWith (Colour (slider.isEnabled() ? 0x13000000 : 0x09000000)));
+		const Colour gradCol2 (trackColour.overlaidWith (Colour (0x06000000)));
+		Path indent;
+		
+		if (slider.isHorizontal())
+		{
+			const float iy = y + height * 0.5f - sliderRadius * 0.5f;
+			
+			g.setGradientFill (ColourGradient (gradCol1, 0.0f, iy,
+											   gradCol2, 0.0f, iy + sliderRadius, false));
+			
+			indent.addRoundedRectangle (x - sliderRadius * 0.5f, iy, width + sliderRadius, sliderRadius, 5.0f);
+		}
 		else
-			p.addRectangle (fx, fy, sliderPos - fx, fh);
+		{
+			const float ix = x + width * 0.5f - sliderRadius * 0.5f;
+			
+			g.setGradientFill (ColourGradient (gradCol1, ix, 0.0f,
+											   gradCol2, ix + sliderRadius, 0.0f, false));
+			
+			indent.addRoundedRectangle (ix, y - sliderRadius * 0.5f, sliderRadius, height + sliderRadius, 5.0f);
+		}
 		
-		Colour baseColour (slider.findColour (Slider::thumbColourId)
-						   .withMultipliedSaturation (slider.isEnabled() ? 1.0f : 0.5f)
-						   .withMultipliedAlpha (0.8f));
+		g.fillPath (indent);
 		
-		g.setGradientFill (ColourGradient (baseColour.brighter (0.08f), 0.0f, 0.0f,
-										   baseColour.darker (0.08f), 0.0f, (float) height, false));
-		g.fillPath (p);
-		
-		g.setColour (baseColour.darker (0.2f));
-		
-		if (style == Slider::LinearBarVertical)
-			g.fillRect (fx, sliderPos, fw, 1.0f);
-		else
-			g.fillRect (sliderPos, fy, 1.0f, fh);
-		
-		g.drawRect(slider.getLocalBounds());
+		g.setColour (trackColour.contrasting (0.5f));
+		g.strokePath (indent, PathStrokeType (0.5f));
+	}
+	
+	void drawLinearSliderThumb (Graphics& g, int x, int y, int width, int height,
+												float sliderPos, float minSliderPos, float maxSliderPos,
+												const Slider::SliderStyle style, Slider& slider)
+	{
+		const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
+				
+		if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
+		{
+			float kx, ky;
+			
+			if (style == Slider::LinearVertical)
+			{
+				kx = x + width * 0.5f;
+				ky = sliderPos;
+			}
+			else
+			{
+				kx = sliderPos;
+				ky = y + height * 0.5f;
+			}
+			Colour cl = slider.findColour (Slider::thumbColourId);
+			g.setColour(cl);
+			g.fillEllipse(kx - sliderRadius, ky - sliderRadius, sliderRadius * 2.0f, sliderRadius * 2.0f);
+		}
 	}
 	
 	static Colour getColour(const SequencerColours colour, float alpha=1.0f)

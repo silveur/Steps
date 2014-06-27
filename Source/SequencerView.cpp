@@ -53,7 +53,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
 		theDecaySliders[i]->setSliderStyle(Slider::LinearHorizontal);
-		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
 		theDecaySliders[i]->setScrollWheelEnabled(false);
 		theDecaySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
@@ -101,7 +101,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theImportButton->addListener(this);
 	
-	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
+	addAndMakeVisible(theDeleteButton = new DeleteButton("Delete"));
 	theDeleteButton->addListener(this);
 	int sensitivity = 100;
 	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
@@ -257,7 +257,7 @@ void SequencerView::resized()
 	theMidiOutputList->setBounds(widthDiv * 95, heigthDiv, widthDiv * 16, heigthDiv * 4);
 	theChannelList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 6, heigthDiv * 4);
 	theOnOffButton->setBounds(widthDiv * 121, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theDeleteButton->setBounds(widthDiv * 127, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theDeleteButton->setBounds(widthDiv * 126, heigthDiv, widthDiv * 4, heigthDiv * 4);
 
 	for(int i=0;i<16;i++)
 	{
