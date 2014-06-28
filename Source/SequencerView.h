@@ -106,6 +106,7 @@ private:
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;
 	int thePosition;
+	int thePreviousStepPosition;
 };
 
 #endif  // MAINCOMPONENT_H_INCLUDED

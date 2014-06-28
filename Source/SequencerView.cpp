@@ -14,7 +14,7 @@
 
 extern File thePresetFolder;
 
-SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView)
+SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView), thePreviousStepPosition(-1)
 {
 	theUndoManager = new UndoManager();
 	theSequencerTree = sequencerTree;
@@ -203,20 +203,10 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-	if (thePosition < 16)
-	{
-		theLEDs[thePosition]->update(true);
-		if (thePosition != 0) theLEDs[thePosition-1]->update(false);
-		else theLEDs[15]->update(false);
-		if (thePosition == 0) theLEDs[31]->update(false);
-	}
-	else
-	{
-		theLEDs[thePosition]->update(true);
-		if (thePosition != 16) theLEDs[thePosition-1]->update(false);
-		else theLEDs[31]->update(false);
-		if (thePosition == 16) theLEDs[15]->update(false);
-	}
+
+	theLEDs[thePosition]->update(true);
+	if (thePreviousStepPosition != -1) theLEDs[thePreviousStepPosition]->update(false);
+	thePreviousStepPosition = thePosition;
 }
 
 void SequencerView::refreshMidiList()

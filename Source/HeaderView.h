@@ -198,6 +198,7 @@ public:
 		if (String(property) == "BPM")
 		{
 			theBPMSlider->setValue(tree.getProperty(property));
+			repaint();
 		}
 		else if (String(property) == "MasterClock")
 		{

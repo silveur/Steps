@@ -41,7 +41,7 @@ public:
 		URL serverURL(theServerURL);
 		InputStream* response = serverURL.createInputStream(false, nullptr, nullptr,
 															"",
-															0, nullptr);
+															100, nullptr);
 		if (response != nullptr)
 		{
 			String responseString = response->readString();
@@ -57,7 +57,10 @@ public:
 			delete response;
 		}
 		else
+		{
 			std::cout << "No Internet" << std::endl;
+			deleteMe();
+		}
 	}
 	void downloadUpdate(String url)
 	{
