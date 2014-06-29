@@ -70,7 +70,6 @@ public:
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
 		theBPMSlider->addListener(this);
-		theBPMSlider->setVisible(clockMode);
 		
 		setInterceptsMouseClicks(false, true);
 		thePreferenceTree.addListener(this);
@@ -166,13 +165,11 @@ public:
 		
 		g.setColour(Colours::black);
 		
-		float heigthDiv = getHeight() / 8.0f;
+		float heigthDiv = getHeight() / 4.0f;
 		float widthDiv = getWidth() / 132.0f;
 		
-		g.setFont(11);
-		g.drawFittedText("Clock output", widthDiv * 88, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText(String(theBPMSlider->getValue()), widthDiv * 107, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Clock source", widthDiv * 113, heigthDiv * 5, widthDiv * 17, heigthDiv * 2, Justification::centred, 1);
+		g.setFont(14);
+		g.drawFittedText(String( String(theBPMSlider->getValue()) + String(" bpm")), widthDiv * 111.5f, heigthDiv , widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		
 		g.setColour(Colours::grey);
 		g.drawLine(0, getHeight(), getWidth(), getHeight(), 1.0f);
@@ -180,16 +177,16 @@ public:
 	
 	void resized()
 	{
-		float heigthDiv = getHeight() / 8.0f;
+		float heigthDiv = getHeight() / 4.0f;
 		float widthDiv = getWidth() / 132.0f;
 		
-		theAddSequencerButton->setBounds(widthDiv * 2, heigthDiv, widthDiv * 12, heigthDiv * 4);
-		theImportAllButton->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 4);
-		theExportAllButton->setBounds(widthDiv * 28, heigthDiv, widthDiv * 10, heigthDiv * 4);
+		theAddSequencerButton->setBounds(widthDiv * 2, heigthDiv, widthDiv * 12, heigthDiv * 2);
+		theImportAllButton->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 2);
+		theExportAllButton->setBounds(widthDiv * 28, heigthDiv, widthDiv * 10, heigthDiv * 2);
 		
-		theMasterClockList->setBounds(widthDiv * 88, heigthDiv, widthDiv * 17, heigthDiv * 4);
-		theBPMSlider->setBounds(widthDiv * 107, heigthDiv, widthDiv * 4, heigthDiv * 4);
-		theClockSourceList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 17, heigthDiv * 4);
+		theMasterClockList->setBounds(widthDiv * 95, heigthDiv, widthDiv * 13, heigthDiv * 2);
+		theBPMSlider->setBounds(widthDiv * 108, heigthDiv, widthDiv * 4, heigthDiv * 2);
+		theClockSourceList->setBounds(widthDiv * 117, heigthDiv, widthDiv * 13, heigthDiv * 2);
 		repaint();
 	}
 	

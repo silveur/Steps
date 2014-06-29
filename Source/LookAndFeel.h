@@ -208,9 +208,11 @@ public:
 		g.setColour(Colour::fromRGB(83, 17, 21));
 		g.fillEllipse(ellipseX + (min*0.05),ellipseY +(min*0.05), min*0.9, min*0.9);
 		
+//		g.drawRect(ellipseX, ellipseY, min, min);
+		
 		g.setColour(Colours::white);
 		g.drawEllipse(ellipseX +(min*0.2f), ellipseY +(min*0.2f), min*0.6, min*0.6f, 0.4f);
-		g.drawEllipse(ellipseX +(min*0.22f), ellipseY +(min*0.22f), min*0.56f, min*0.56f, 0.4f);
+		g.drawEllipse(ellipseX +(min*0.25f), ellipseY +(min*0.25f), min*0.5f, min*0.5f, 0.4f);
 					
 		const float centreX = x + width * 0.5f;
 		const float centreY = y + height * 0.5f;
@@ -229,6 +231,10 @@ public:
 			filledArc.addPieSegment (rx, ry, rw, rw, begin, angle, thickness);
 			g.fillPath (filledArc);
 		}
+//		float xPos = centreX * cosf(angle);
+//		float yPos = centreY * sinf(angle);
+		
+//		g.fillEllipse(centreX + xPos, centreY + yPos, 10, 10);
 	}
 	
 	void drawLinearSlider (Graphics& g, int x, int y, int width, int height,
@@ -359,7 +365,7 @@ public:
 			
 			g.setFont (font);
 			
-			Rectangle<float> iconArea (r.removeFromLeft ((r.getHeight() * 3) / 4).reduced (5).toFloat());
+			Rectangle<float> iconArea (r.removeFromLeft ((r.getHeight() * 3) / 4).reduced (4).toFloat());
 			
 			if (icon != nullptr)
 			{
@@ -368,7 +374,8 @@ public:
 			else if (isTicked)
 			{
 				const Path tick (getTickShape (1.0f));
-				g.fillPath (tick, tick.getTransformToScaleToFit (iconArea, true));
+				float width = (iconArea.getWidth() > iconArea.getHeight() ? iconArea.getHeight() : iconArea.getWidth());
+				g.fillEllipse(iconArea.getX(), iconArea.getY() + width /2.0f, width, width);
 			}
 			
 			if (hasSubMenu)

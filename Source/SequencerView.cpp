@@ -223,16 +223,17 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	float heigthDiv = getHeight() / 40.0f;
+	float heigthDiv = getHeight() / 38.0f;
 	float widthDiv = getWidth() / 132.0f;
+	float mainSliderDivs = 6.0f;
 	
-	theRootNoteList->setBounds(widthDiv * 2, heigthDiv, widthDiv * 6, heigthDiv * 4);
-	theRootOctaveList->setBounds(widthDiv * 8, heigthDiv, widthDiv * 6, heigthDiv * 4);
+	theRootNoteList->setBounds(widthDiv * 2, heigthDiv, widthDiv * 6, heigthDiv * 2);
+	theRootOctaveList->setBounds(widthDiv * 8, heigthDiv, widthDiv * 6, heigthDiv * 2);
 	
-	theScaleList->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 4);
-	theSpeedList->setBounds(widthDiv * 28, heigthDiv, widthDiv * 6, heigthDiv * 4);
+	theScaleList->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 2);
+	theSpeedList->setBounds(widthDiv * 28, heigthDiv, widthDiv * 6, heigthDiv * 2);
 	
-	theRandomiser->setBounds(widthDiv * 36, heigthDiv, widthDiv * 21, heigthDiv * 6);
+	theRandomiser->setBounds(widthDiv * 36, heigthDiv, widthDiv * 21, heigthDiv * 5);
 	
 	theShuffleSlider->setBounds(widthDiv * 59, heigthDiv, widthDiv * 4, heigthDiv * 4);
 	theRangeSlider->setBounds(widthDiv * 65, heigthDiv, widthDiv * 4, heigthDiv * 4);
@@ -244,26 +245,26 @@ void SequencerView::resized()
 	thePasteButton->setBounds(widthDiv * 88, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	theExportButton->setBounds(widthDiv * 88, heigthDiv * 3, widthDiv * 5, heigthDiv * 2);
 	
-	theMidiOutputList->setBounds(widthDiv * 95, heigthDiv, widthDiv * 16, heigthDiv * 4);
-	theChannelList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 6, heigthDiv * 4);
+	theMidiOutputList->setBounds(widthDiv * 95, heigthDiv, widthDiv * 13, heigthDiv * 2);
+	theChannelList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 6, heigthDiv * 2);
 	theOnOffButton->setBounds(widthDiv * 121, heigthDiv, widthDiv * 4, heigthDiv * 4);
 	theDeleteButton->setBounds(widthDiv * 126, heigthDiv, widthDiv * 4, heigthDiv * 4);
 
 	for(int i=0;i<16;i++)
 	{
-		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 8, widthDiv * 8, heigthDiv * 8);
-		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 16.5, widthDiv * 6, heigthDiv * 1.5);
-		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 18.5, widthDiv * 6, heigthDiv * 1.5);
-		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 20, widthDiv * 6, heigthDiv * 2);
-		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 22, widthDiv * 8, heigthDiv * 2);
+		theStepSliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 6, widthDiv * mainSliderDivs, heigthDiv * mainSliderDivs);
+		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 14.5, widthDiv * 6, heigthDiv * 1.5);
+		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 16.5, widthDiv * 6, heigthDiv * 1.5);
+		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 18.5, widthDiv * 6, heigthDiv * 2);
+		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 20.5, widthDiv * 8, heigthDiv * 2);
 	}
 	for(int i=16;i<theSequencerTree.getNumChildren();i++)
 	{
-		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 24, widthDiv * 8, heigthDiv * 8);
-		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 32.5, widthDiv * 6, heigthDiv * 1.5);
-		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 34.5, widthDiv * 6, heigthDiv * 1.5);
-		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 36, widthDiv * 6, heigthDiv * 2);
-		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 38, widthDiv * 8, heigthDiv * 2);
+		theStepSliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 23, widthDiv * mainSliderDivs, heigthDiv * mainSliderDivs);
+		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 29.5, widthDiv * 6, heigthDiv * 1.5);
+		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 31.5, widthDiv * 6, heigthDiv * 1.5);
+		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 33.5, widthDiv * 6, heigthDiv * 2);
+		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 35.5, widthDiv * 8, heigthDiv * 2);
 	}
 }
 

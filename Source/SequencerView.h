@@ -62,6 +62,7 @@ public:
 		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("On / Off", widthDiv * 121, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Delete", widthDiv * 126, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		
 	}
 	static ValueTree& getCopyTree()
 	{

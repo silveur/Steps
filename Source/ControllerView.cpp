@@ -50,14 +50,15 @@ void ControllerView::resized()
 
 void ControllerView::refreshView()
 {
-	float heightDiv = getHeight() / (8.0f + (theMasterTree.getNumChildren() * 40.0f));
-	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * 8);
+	float headerHeight = 4.0f; float sequencerHeigth = 38.0f;
+	
+	float heightDiv = getHeight() / (headerHeight + (theMasterTree.getNumChildren() * sequencerHeigth));
+	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * headerHeight);
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
-		theSequencerViews[i]->setBounds(0, (heightDiv*8) + (i * (heightDiv*40)), getWidth(), heightDiv*40);
+		theSequencerViews[i]->setBounds(0, (heightDiv * headerHeight) + (i * (heightDiv * sequencerHeigth)), getWidth(), heightDiv * sequencerHeigth);
 	}
 	theAboutView->setBounds(getBounds());
-//	setSize(getWidth(), (heightDiv*40) * theMasterTree.getNumChildren());
 }
 
 void ControllerView::kickBack()
