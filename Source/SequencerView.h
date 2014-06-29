@@ -12,7 +12,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
-#include "ComboBox.h"
 
 class ControllerView;
 class SeqSlider;
@@ -41,7 +40,7 @@ public:
 	}
 	void paint(Graphics& g)
 	{
-		g.setFont (Font ("Helvetica neue",12.0000f, Font::plain));
+		g.setFont (Font ("Helvetica Neue",12.0000f, Font::plain));
 		
 		g.setColour(Colour::fromRGB(198, 201, 180));
 		g.fillAll();
@@ -60,9 +59,8 @@ public:
 		g.drawFittedText("Octave range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Offset", widthDiv * 52, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Length", widthDiv * 56, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 11, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("On / Off", widthDiv * 118, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);		
+		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 13, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Channel", widthDiv * 115, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 	}
 	static ValueTree& getCopyTree()
 	{
@@ -79,12 +77,12 @@ private:
 	void updateNotesAndOctaves();
 	void loadScales();
 	String isOnScale(int value);
-	ScopedPointer<SeqComboBox> theMidiOutputList;
-	ScopedPointer<SeqComboBox> theChannelList;
-	ScopedPointer<SeqComboBox> theRootNoteList;
-	ScopedPointer<SeqComboBox> theRootOctaveList;
-	ScopedPointer<SeqComboBox> theScaleList;
-	ScopedPointer<SeqComboBox> theSpeedList;
+	ScopedPointer<ComboBox> theMidiOutputList;
+	ScopedPointer<ComboBox> theChannelList;
+	ScopedPointer<ComboBox> theRootNoteList;
+	ScopedPointer<ComboBox> theRootOctaveList;
+	ScopedPointer<ComboBox> theScaleList;
+	ScopedPointer<ComboBox> theSpeedList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theOffsetSlider;
 	OwnedArray<SeqSlider> theStepSliders;
@@ -99,8 +97,8 @@ private:
 	ScopedPointer<TextButton> theDeleteButton;
 	OwnedArray<TextButton> theShuffleButtons;
 	OwnedArray<TextButton> theRangeButtons;
-	ScopedPointer<TextButton> theRandomButton;
-	ScopedPointer<TextButton> theResetButton;
+	ScopedPointer<Randomiser> theRandomiser;
+
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;

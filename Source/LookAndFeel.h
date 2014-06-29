@@ -50,38 +50,43 @@ public:
 	void drawToggleButton (Graphics& g, ToggleButton& button,
 										   bool isMouseOverButton, bool isButtonDown)
 	{
-		float min, radius; float offset = 3.0f;
-		float width = button.getWidth(); float height = button.getHeight();
-		if (width < height ? min = width : min = height);
-		radius = min / 2.0f;
-		min -= offset;
-		
-		float ellipseX = (width / 2.0f) - radius + (offset/2.0f);
-		float ellipseY = (height / 2.0f) - radius + (offset/2.0f);
-		
-		g.fillEllipse(ellipseX, ellipseY, min, min);
-		g.setColour(Colours::white);
-		Path p;
+		Colour back = button.findColour (button.getToggleState() ? TextButton::textColourOnId
+										 : TextButton::textColourOffId);
 		if (button.getToggleState())
-		{
-			p.startNewSubPath (ellipseX + (min/3.0f), ellipseY + (min/2.0f));
-			p.lineTo (ellipseX + (min/2.0f), ellipseY + (min*0.7f));
-			p.startNewSubPath (ellipseX + (min/2.2f),ellipseY + (min*0.7f));
-			p.lineTo (ellipseX + (min*0.7f), ellipseY + (min*0.3f));
-			p.closeSubPath();
-			g.strokePath(p, PathStrokeType (3.0f));
-		}
+			back = getColour(SequencerColours::ColourBlueGrey);
 		else
+			back = getColour(SequencerColours::ColourLightGrey);
+		Colour baseColour (back.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+						   .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
+		
+		if (button.isMouseOver())
+			baseColour = baseColour.contrasting (0.1f);
+		
+		const float width  = button.getWidth() - 1.0f;
+		const float height = button.getHeight() - 1.0f;
+		
+		if (width > 0 && height > 0)
 		{
-			p.startNewSubPath (ellipseX + (min/3.0f), ellipseY + (min/3.0f));
-			p.lineTo (ellipseX + (min*0.666f), ellipseY + (min*0.666f));
+			Path outline;
+			outline.addRectangle (0.5f, 0.5f, width, height);
+			const float mainBrightness = baseColour.getBrightness();
+			const float mainAlpha = baseColour.getFloatAlpha();
 			
-			p.startNewSubPath (ellipseX + (min/3.0f), ellipseY + (min*0.666f));
-			p.lineTo (ellipseX + (min*0.666f), ellipseY + (min/3.0f));
-
-			p.closeSubPath();
-			g.strokePath(p, PathStrokeType (3.0f));
+			g.setGradientFill (ColourGradient (baseColour.brighter (0.2f), 0.0f, 0.0f,
+											   baseColour.darker (0.25f), 0.0f, height, false));
+			g.fillPath (outline);
+			
+			g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
+			g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
+						  .scaled (1.0f, (height - 1.6f) / height));
+			
+			g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
+			g.strokePath (outline, PathStrokeType (1.0f));
 		}
+		
+		String text(button.getName().getCharPointer(), 1);
+		g.setColour(Colours::black);
+		g.drawFittedText(text, 0, 0, button.getWidth(), button.getHeight(), Justification::centred, 1);
 	}
 	
 	void drawComboBox (Graphics& g, int _width, int _height, const bool /*isButtonDown*/,

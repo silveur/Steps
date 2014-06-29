@@ -10,6 +10,7 @@
 #include "ControllerView.h"
 #include "Slider.h"
 #include "LookAndFeel.h"
+#include "Randomiser.h"
 
 extern File thePresetFolder;
 
@@ -26,7 +27,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
 		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
-		theStepSliders[i]->setDoubleClickReturnValue(false, 0);
+		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
@@ -35,6 +36,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextBoxIsEditable(false);
 		theVelocitySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theVelocitySliders[i]->setRange(0, 127, 1);
+		theVelocitySliders[i]->setDoubleClickReturnValue(true, 127);
 		theVelocitySliders[i]->setScrollWheelEnabled(false);
 		theVelocitySliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
 		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
@@ -55,7 +57,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 		theDecaySliders[i]->setTextBoxIsEditable(false);
 		theDecaySliders[i]->setScrollWheelEnabled(false);
-		theDecaySliders[i]->setDoubleClickReturnValue(true, 0);
+		theDecaySliders[i]->setDoubleClickReturnValue(true, 40);
 		theDecaySliders[i]->setTextValueSuffix(" ms Decay");
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theDecaySliders[i]->setRange(1, 200, 1);
@@ -80,13 +82,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
 	theSequencerLength->addListener(this);
 	
-	addAndMakeVisible(theRandomButton = new TextButton("Randomise"));
-	theRandomButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theRandomButton->addListener(this);
-	
-	addAndMakeVisible(theResetButton = new TextButton("Reset"));
-	theResetButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theResetButton->addListener(this);
+	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
 	addAndMakeVisible(theCopyButton = new TextButton("Copy"));
 	theCopyButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
@@ -141,7 +137,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	}
 	buttonClicked(theRangeButtons[(int)theSequencerTree.getProperty("Range") - 1]);
 	
-	addAndMakeVisible(theSpeedList = new SeqComboBox("Speed"));
+	addAndMakeVisible(theSpeedList = new ComboBox("Speed"));
 	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theSpeedList->addSectionHeading("Speed");
 	theSpeedList->addItem("1/1", 1);
@@ -156,12 +152,12 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
 	theOnOffButton->addListener(this);
 
-	addAndMakeVisible(theMidiOutputList = new SeqComboBox("Midi Output list"));
+	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	theMidiOutputList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	
-	addAndMakeVisible(theChannelList = new SeqComboBox("Channel"));
+	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	theChannelList->addSectionHeading("Midi channel");
 	theChannelList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	for (int i=1;i<=16;i++)
@@ -170,13 +166,13 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theChannelList->addListener(this);
 	
 	refreshMidiList();
-	addAndMakeVisible(theRootNoteList = new SeqComboBox("RootNoteList"));
+	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
 	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	addAndMakeVisible(theRootOctaveList = new SeqComboBox("RootOctaveList"));
+	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
 	theRootOctaveList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theRootOctaveList->addSectionHeading("Root octave");
-	addAndMakeVisible(theScaleList = new SeqComboBox("Scale"));
+	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
 	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theScaleList->addSectionHeading("Scales");
 	loadScales();
@@ -191,7 +187,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theScaleList->addListener(this);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
-	setInterceptsMouseClicks(false, true);
+	setInterceptsMouseClicks(true, true);
 	addKeyListener(this);
 }
 
@@ -236,8 +232,7 @@ void SequencerView::resized()
 	theScaleList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
 	theSpeedList->setBounds(widthDiv * 26, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	
-	theRandomButton->setBounds(widthDiv * 61, heigthDiv, widthDiv * 8, heigthDiv * 2);
-	theResetButton->setBounds(theRandomButton->getRight(), heigthDiv, widthDiv * 8, heigthDiv * 2);
+	theRandomiser->setBounds(widthDiv * 61, heigthDiv, widthDiv * 16.0f, heigthDiv * 2);
 	
 	theShuffleButtons[0]->setBounds(widthDiv * 33, heigthDiv, widthDiv * 2, heigthDiv * 2);
 	for (int i=1;i<5;i++)
@@ -259,10 +254,9 @@ void SequencerView::resized()
 	thePasteButton->setBounds(theCopyButton->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
 	theExportButton->setBounds(theImportButton->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
 	
-	theMidiOutputList->setBounds(widthDiv * 102, heigthDiv, widthDiv * 11, heigthDiv * 2);
-	theChannelList->setBounds(theMidiOutputList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
-	theOnOffButton->setBounds(widthDiv * 119, heigthDiv, widthDiv * 2, heigthDiv * 2);
-	theDeleteButton->setBounds(widthDiv * 123, heigthDiv, widthDiv * 5, heigthDiv * 2);
+	theMidiOutputList->setBounds(widthDiv * 102, heigthDiv, widthDiv * 13, heigthDiv * 2);
+	theChannelList->setBounds(theMidiOutputList->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
+	theDeleteButton->setBounds(widthDiv * 122, heigthDiv, widthDiv * 6, heigthDiv * 2);
 
 	for(int i=0;i<16;i++)
 	{
@@ -369,22 +363,7 @@ void SequencerView::buttonClicked(Button* button)
 			theSequencerTree.writeToStream(outputStream);
 		}
 	}
-	else if (button == theRandomButton)
-	{
-		randomiseAll();
-	}
-	else if (button == theResetButton)
-	{
-		FileInputStream inputStream(theDefaultPreset);
-		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
-		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
-		{
-			ValueTree sourceChild = treeToLoad.getChild(i);
-			ValueTree destinationChild = theSequencerTree.getChild(i);
-			destinationChild.copyPropertiesFrom(sourceChild, nullptr);
-		}
-	}
+
 	else if (button->getName().contains("Shuffle"))
 	{
 		int index = button->getButtonText().getIntValue();
