@@ -12,6 +12,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
+#include "LookAndFeel.h"
 
 class ControllerView;
 class SeqSlider;
@@ -41,9 +42,6 @@ public:
 	void paint(Graphics& g)
 	{
 		g.setFont (Font ("Helvetica Neue",12.0000f, Font::plain));
-		
-		g.setColour(Colour::fromRGB(198, 201, 180));
-		g.fillAll();
 
 		float heigthDiv;
 		if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 19.0f;

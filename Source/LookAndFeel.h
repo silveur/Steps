@@ -119,21 +119,7 @@ public:
 			g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
 			g.strokePath (outline, PathStrokeType (1.0f));
 		}
-//		g.fillAll (box.findColour (ComboBox::backgroundColourId));
-//		
-//		const Colour buttonColour (box.findColour (ComboBox::buttonColourId));
-//		
-//		if (box.isEnabled() && box.hasKeyboardFocus (false))
-//		{
-//			g.setColour (buttonColour);
-////			g.drawRect (0, 0, width, height, 2);
-//		}
-//		else
-//		{
-//			g.setColour (box.findColour (ComboBox::outlineColourId));
-////			g.drawRect (0, 0, width, height);
-//		}
-//		
+
 		const float arrowX = 0.3f;
 		const float arrowH = 0.2f;
 		
@@ -144,12 +130,6 @@ public:
 		
 		g.setColour (box.findColour (ComboBox::arrowColourId).withMultipliedAlpha (box.isEnabled() ? 1.0f : 0.3f));
 		g.fillPath (p);
-//
-//		float rounding = 0.4f;
-//		float lineThickness = 1.0f;
-////		g.setColour(SeqLookAndFeel::getColour(backgroundColourId));
-////		g.drawRoundedRectangle(lineThickness, lineThickness, box.getWidth()-2*lineThickness, box.getHeight()-2*lineThickness, 1.5*rounding, lineThickness);
-//		g.drawRect(box.getLocalBounds(), lineThickness);
 	}
 
 	void drawDocumentWindowTitleBar (DocumentWindow& window, Graphics& g, int, int, int, int, const Image*, bool)
@@ -231,26 +211,26 @@ public:
 		interval = slider.getInterval();
 		numPositions = abs(slider.getMinimum()) + slider.getMaximum();
 		if ((slider.getMinimum() + slider.getMaximum()) == 0 ? isSym = true : isSym = false);
-		
+
 		float min, radius; float offset = 3.0f;
 		float _width = slider.getWidth(); float _height = slider.getHeight();
 		if (_width < _height ? min = _width : min = _height);
-		radius = min / 2.0f;
+		radius = min / 2.1f;
 		min -= offset;
 		
-		float ellipseX = (width / 2.0f) - radius + (offset/2.0f);
-		float ellipseY = (height / 2.0f) - radius + (offset/2.0f);
+		float ellipseX = (width / 2.1f) - radius + (offset/2.1f);
+		float ellipseY = (height / 2.1f) - radius + (offset/2.1f);
 		
-		g.setColour(Colours::black);
-		g.drawEllipse(ellipseX, ellipseY, min, min, 1.0f);
-		g.setColour(Colour::fromRGB(83, 17, 21));
-		g.fillEllipse(ellipseX + (min*0.05),ellipseY +(min*0.05), min*0.9, min*0.9);
+//		g.setColour(Colours::black);
+//		g.drawEllipse(ellipseX, ellipseY, min, min, 2.0f);
+//		g.setColour(Colour::fromRGB(83, 17, 21));
+//		g.fillEllipse(ellipseX + (min*0.05),ellipseY +(min*0.05), min*0.9, min*0.9);
 		
 //		g.drawRect(ellipseX, ellipseY, min, min);
 		
-		g.setColour(Colours::white);
-		g.drawEllipse(ellipseX +(min*0.2f), ellipseY +(min*0.2f), min*0.6, min*0.6f, 0.4f);
-		g.drawEllipse(ellipseX +(min*0.25f), ellipseY +(min*0.25f), min*0.5f, min*0.5f, 0.4f);
+//		g.setColour(findColour(Slider::rotarySliderFillColourId));
+//		g.drawEllipse(ellipseX +(min*0.2f), ellipseY +(min*0.2f), min*0.6, min*0.6f, 2.0f);
+//		g.drawEllipse(ellipseX +(min*0.25f), ellipseY +(min*0.25f), min*0.5f, min*0.5f, 0.4f);
 					
 		const float centreX = x + width * 0.5f;
 		const float centreY = y + height * 0.5f;
@@ -259,20 +239,60 @@ public:
 		const float rw = radius * 2.0f;
 		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 		const float thickness = 0.85f;
-		
+		if (radius > 12.0f)
 		{
-			g.setColour(getColour(SequencerColours::ColourPurple));
-			Path filledArc;
-			float begin;
-			if (isSym) begin = 6.28319;
-			else begin = rotaryStartAngle;
-			filledArc.addPieSegment (rx, ry, rw, rw, begin, angle, thickness);
-			g.fillPath (filledArc);
+			if (slider.isEnabled())
+				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 1.0f : 0.7f));
+			else
+				g.setColour (Colour (0x80808080));
+			
+			const float thickness = 0.7f;
+			
+			{
+				Path filledArc;
+				filledArc.addPieSegment (rx, ry, rw, rw, 6.28319f, angle, thickness);
+				g.fillPath (filledArc);
+			}
+			
+			if (thickness > 0)
+			{
+				const float innerRadius = radius * 0.2f;
+				Path p;
+				p.addTriangle (-innerRadius, 0.0f,
+							   0.0f, -radius * thickness * 1.1f,
+							   innerRadius, 0.0f);
+				
+				p.addEllipse (-innerRadius, -innerRadius, innerRadius * 2.0f, innerRadius * 2.0f);
+				
+				g.fillPath (p, AffineTransform::rotation (angle).translated (centreX, centreY));
+			}
+			
+			if (slider.isEnabled())
+				g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
+			else
+				g.setColour (Colour (0x80808080));
+			
+			Path outlineArc;
+			outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
+			outlineArc.closeSubPath();
+			
+			g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (slider.isMouseOver() ? 2.0f : 1.2f) : 0.3f));
 		}
-//		float xPos = centreX * cosf(angle);
-//		float yPos = centreY * sinf(angle);
-		
-//		g.fillEllipse(centreX + xPos, centreY + yPos, 10, 10);
+		else
+		{
+			if (slider.isEnabled())
+				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 1.0f : 0.7f));
+			else
+				g.setColour (Colour (0x80808080));
+			
+			Path p;
+			p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
+			PathStrokeType (rw * 0.1f).createStrokedPath (p, p);
+			
+			p.addLineSegment (Line<float> (0.0f, 0.0f, 0.0f, -radius), rw * 0.2f);
+			
+			g.fillPath (p, AffineTransform::rotation (angle).translated (centreX, centreY));
+		}
 	}
 	
 	void drawLinearSlider (Graphics& g, int x, int y, int width, int height,
@@ -452,7 +472,7 @@ public:
 		switch (colour)
 		{
 			case ColourDarkGrey: return Colour::fromRGBA(47, 46, 47, intAlpha);
-			case ColourLightGrey: return Colour::fromRGBA(209, 211, 211, intAlpha);
+			case ColourLightGrey: return Colour::fromRGBA(186, 186, 186, intAlpha);
 			case ColourBlueGrey: return Colour::fromRGBA(81, 117, 139, intAlpha);
 			case ColourLightBlue: return Colour::fromRGBA(156, 183, 211, intAlpha);
 			case ColourRed: return Colour::fromRGBA(230, 63, 82, intAlpha);

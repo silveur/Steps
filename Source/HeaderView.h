@@ -159,9 +159,6 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.setColour(Colour::fromRGB(198, 201, 180));
-		g.fillAll();
-		
 		g.setColour(Colours::black);
 		
 		float heigthDiv = getHeight() / 4.0f;
