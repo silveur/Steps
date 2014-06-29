@@ -30,14 +30,11 @@
         <FILE id="iJ5flK" name="MenuBar.cpp" compile="1" resource="0" file="Source/MenuBar.cpp"/>
         <FILE id="ZrIhjz" name="MenuBar.h" compile="0" resource="0" file="Source/MenuBar.h"/>
         <FILE id="tVk1yJ" name="HeaderView.h" compile="0" resource="0" file="Source/HeaderView.h"/>
-        <FILE id="CGlaOZ" name="Randomiser.cpp" compile="1" resource="0" file="Source/Randomiser.cpp"/>
-        <FILE id="A0GNQ9" name="Randomiser.h" compile="0" resource="0" file="Source/Randomiser.h"/>
         <FILE id="QaPSxK" name="StepsView.h" compile="0" resource="0" file="Source/StepsView.h"/>
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
         <FILE id="NLibsS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
         <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
         <FILE id="R4OpUQ" name="ComboBox.h" compile="0" resource="0" file="Source/ComboBox.h"/>
-        <FILE id="vbr21x" name="DeleteButton.h" compile="0" resource="0" file="Source/DeleteButton.h"/>
         <FILE id="bAnKhN" name="AboutView.h" compile="0" resource="0" file="Source/AboutView.h"/>
         <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images"/>
       </GROUP>

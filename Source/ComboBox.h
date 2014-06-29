@@ -24,24 +24,14 @@ public:
 	
 	~SeqComboBox() {}
 	
-	void paint(Graphics &g)
-	{
-		ComboBox::paint(g);
-		
-		float rounding = 0.4f;
-		float lineThickness;
-		if (active)
-		{
-			lineThickness = 1.0f;
-			g.setColour(SeqLookAndFeel::getColour(ColourBlue));
-		}
-		else
-		{
-			lineThickness = 0.5f;
-			g.setColour(Colours::black);
-		}
-		g.drawRoundedRectangle(lineThickness, lineThickness, getWidth()-2*lineThickness, getHeight()-2*lineThickness, 1.5*rounding, lineThickness);
-	}
+//	void paint(Graphics &g)
+//	{
+//		ComboBox::paint(g);
+//		float rounding = 0.4f;
+//		float lineThickness = 1.0f;
+//		g.setColour(SeqLookAndFeel::getColour(ColourBlue));
+//		g.drawRoundedRectangle(lineThickness, lineThickness, getWidth()-2*lineThickness, getHeight()-2*lineThickness, 1.5*rounding, lineThickness);
+//	}
 	
 private:
 	bool active;

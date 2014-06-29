@@ -84,24 +84,51 @@ public:
 		}
 	}
 	
-	void drawComboBox (Graphics& g, int width, int height, const bool /*isButtonDown*/,
+	void drawComboBox (Graphics& g, int _width, int _height, const bool /*isButtonDown*/,
 									   int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box)
 	{
-		g.fillAll (box.findColour (ComboBox::backgroundColourId));
+		Colour baseColour (box.findColour (ComboBox::backgroundColourId).withMultipliedSaturation (box.hasKeyboardFocus (true) ? 1.3f : 0.9f)
+						   .withMultipliedAlpha (box.isEnabled() ? 0.9f : 0.5f));
 		
-		const Colour buttonColour (box.findColour (ComboBox::buttonColourId));
+		if (box.isMouseOver())
+			baseColour = baseColour.contrasting (0.1f);
 		
-		if (box.isEnabled() && box.hasKeyboardFocus (false))
+		const float width  = box.getWidth() - 1.0f;
+		const float height = box.getHeight() - 1.0f;
+		
+		if (width > 0 && height > 0)
 		{
-			g.setColour (buttonColour);
-			g.drawRect (0, 0, width, height, 2);
+			Path outline;
+			outline.addRectangle (0.5f, 0.5f, width, height);
+			const float mainBrightness = baseColour.getBrightness();
+			const float mainAlpha = baseColour.getFloatAlpha();
+			
+			g.setGradientFill (ColourGradient (baseColour.brighter (0.2f), 0.0f, 0.0f,
+											   baseColour.darker (0.25f), 0.0f, height, false));
+			g.fillPath (outline);
+			
+			g.setColour (Colours::white.withAlpha (0.4f * mainAlpha * mainBrightness * mainBrightness));
+			g.strokePath (outline, PathStrokeType (1.0f), AffineTransform::translation (0.0f, 1.0f)
+						  .scaled (1.0f, (height - 1.6f) / height));
+			
+			g.setColour (Colours::black.withAlpha (0.4f * mainAlpha));
+			g.strokePath (outline, PathStrokeType (1.0f));
 		}
-		else
-		{
-			g.setColour (box.findColour (ComboBox::outlineColourId));
-			g.drawRect (0, 0, width, height);
-		}
-		
+//		g.fillAll (box.findColour (ComboBox::backgroundColourId));
+//		
+//		const Colour buttonColour (box.findColour (ComboBox::buttonColourId));
+//		
+//		if (box.isEnabled() && box.hasKeyboardFocus (false))
+//		{
+//			g.setColour (buttonColour);
+////			g.drawRect (0, 0, width, height, 2);
+//		}
+//		else
+//		{
+//			g.setColour (box.findColour (ComboBox::outlineColourId));
+////			g.drawRect (0, 0, width, height);
+//		}
+//		
 		const float arrowX = 0.3f;
 		const float arrowH = 0.2f;
 		
@@ -112,6 +139,12 @@ public:
 		
 		g.setColour (box.findColour (ComboBox::arrowColourId).withMultipliedAlpha (box.isEnabled() ? 1.0f : 0.3f));
 		g.fillPath (p);
+//
+//		float rounding = 0.4f;
+//		float lineThickness = 1.0f;
+////		g.setColour(SeqLookAndFeel::getColour(backgroundColourId));
+////		g.drawRoundedRectangle(lineThickness, lineThickness, box.getWidth()-2*lineThickness, box.getHeight()-2*lineThickness, 1.5*rounding, lineThickness);
+//		g.drawRect(box.getLocalBounds(), lineThickness);
 	}
 
 	void drawDocumentWindowTitleBar (DocumentWindow& window, Graphics& g, int, int, int, int, const Image*, bool)
@@ -287,7 +320,7 @@ public:
 												float sliderPos, float minSliderPos, float maxSliderPos,
 												const Slider::SliderStyle style, Slider& slider)
 	{
-		const float sliderRadius = (float) (getSliderThumbRadius (slider));
+		const float sliderRadius = (float) (getSliderThumbRadius (slider)) * 0.9f;
 				
 		if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
 		{
@@ -305,7 +338,7 @@ public:
 			}
 			Colour cl = slider.findColour (Slider::thumbColourId);
 			g.setColour(cl);
-			g.fillEllipse(0.5f + kx - sliderRadius, 1 + ky - sliderRadius, -2.5 +  sliderRadius * 2.0f, -2.5 + sliderRadius * 2.0f);
+			g.fillEllipse(kx - sliderRadius, 1 + ky - sliderRadius, -2.5 +  sliderRadius * 2.0f, -2.5 + sliderRadius * 2.0f);
 		}
 	}
 	

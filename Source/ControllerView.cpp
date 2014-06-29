@@ -49,15 +49,15 @@ void ControllerView::resized()
 
 void ControllerView::refreshView()
 {
-	float headerHeight = 4.0f; float totalDiv; float pixelsPerDiv = 11.0f;
+	float headerHeight = 4.0f; float totalDiv = 0.0f; float pixelsPerDiv = 11.0f;
 	theHeaderView->setBounds(0, 0, getWidth(), headerHeight * pixelsPerDiv);
 	totalDiv += theHeaderView->getHeight();
 	
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		float sequencerHeigth;
-		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) sequencerHeigth = 20.0f * pixelsPerDiv;
-		else sequencerHeigth = 34.0f * pixelsPerDiv;
+		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) sequencerHeigth = 19.0f * pixelsPerDiv;
+		else sequencerHeigth = 33.0f * pixelsPerDiv;
 		
 		theSequencerViews[i]->setBounds(0, totalDiv, getWidth(), sequencerHeigth);
 		totalDiv += theSequencerViews[i]->getHeight();

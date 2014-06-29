@@ -12,7 +12,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
 #include "Scales.h"
-#include "DeleteButton.h"
 #include "ComboBox.h"
 
 class ControllerView;
@@ -48,8 +47,8 @@ public:
 		g.fillAll();
 
 		float heigthDiv;
-		if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 20.0f;
-		else heigthDiv = getHeight() / 34.0f;
+		if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 19.0f;
+		else heigthDiv = getHeight() / 33.0f;
 		float widthDiv = getWidth() / 130.0f;
 		
 		g.setColour(Colours::black);
@@ -100,7 +99,8 @@ private:
 	ScopedPointer<TextButton> theDeleteButton;
 	OwnedArray<TextButton> theShuffleButtons;
 	OwnedArray<TextButton> theRangeButtons;
-	ScopedPointer<Randomiser> theRandomiser;
+	ScopedPointer<TextButton> theRandomButton;
+	ScopedPointer<TextButton> theResetButton;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;
 	OwnedArray<Scale> theScales;

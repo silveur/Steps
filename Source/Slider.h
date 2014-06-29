@@ -14,13 +14,14 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SequencerView.h"
 
-class SeqSlider: public Slider
+class SeqSlider: public Slider, SliderListener
 {
 public:
-	SeqSlider(const String& name, SequencerView* seqView): Slider(name), theSequencerView(seqView)
+	SeqSlider(const String& name, SequencerView* seqView): Slider(name), theSequencerView(seqView), isBeingDragged(false)
 	{
 		theCurrentBubbleMessage = new BubbleMessageComponent();
 		theMessage = String(getValue());
+		addListener(this);
 	}
 	
 	~SeqSlider() {}
@@ -32,16 +33,19 @@ public:
 	
 	void mouseUp(const MouseEvent& event) override
 	{
-		if (event.mouseWasClicked())
-		{
-			int index = getName().getTrailingIntValue();
-			theSequencerView->trigMidiNote(index);
-		}
+		isBeingDragged = false;
 	}
+	
+	void sliderDragStarted (Slider*)
+	{
+		isBeingDragged = true;
+	}
+
+	void sliderValueChanged (Slider* slider) {}
 
 	void valueChanged()
 	{
-		if (getThumbBeingDragged() != -1)
+		if (isBeingDragged)
 			showBubbleMessage(this, theMessage);
 	}
 	
@@ -70,6 +74,7 @@ private:
 	ScopedPointer<BubbleMessageComponent> theCurrentBubbleMessage;
 	SequencerView* theSequencerView;
 	String theMessage;
+	bool isBeingDragged;
 };
 
 
