@@ -50,7 +50,7 @@ void ControllerView::resized()
 
 void ControllerView::refreshView()
 {
-	float headerHeight = 4.0f; float sequencerHeigth = 38.0f;
+	float headerHeight = 4.0f; float sequencerHeigth = 34.0f;
 	
 	float heightDiv = getHeight() / (headerHeight + (theMasterTree.getNumChildren() * sequencerHeigth));
 	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * headerHeight);

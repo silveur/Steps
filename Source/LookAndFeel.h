@@ -265,7 +265,7 @@ public:
 			g.setGradientFill (ColourGradient (gradCol1, 0.0f, iy,
 											   gradCol2, 0.0f, iy + sliderRadius, false));
 			
-			indent.addRoundedRectangle (x - sliderRadius * 0.5f, iy, width + sliderRadius, sliderRadius, 5.0f);
+			indent.addRoundedRectangle (0, iy, x + width + sliderRadius, sliderRadius, 5.0f);
 		}
 		else
 		{
@@ -287,7 +287,7 @@ public:
 												float sliderPos, float minSliderPos, float maxSliderPos,
 												const Slider::SliderStyle style, Slider& slider)
 	{
-		const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
+		const float sliderRadius = (float) (getSliderThumbRadius (slider));
 				
 		if (style == Slider::LinearHorizontal || style == Slider::LinearVertical)
 		{
@@ -305,13 +305,13 @@ public:
 			}
 			Colour cl = slider.findColour (Slider::thumbColourId);
 			g.setColour(cl);
-			g.fillEllipse(kx - sliderRadius, ky - sliderRadius, sliderRadius * 2.0f, sliderRadius * 2.0f);
+			g.fillEllipse(0.5f + kx - sliderRadius, 1 + ky - sliderRadius, -2.5 +  sliderRadius * 2.0f, -2.5 + sliderRadius * 2.0f);
 		}
 	}
 	
 	Font getPopupMenuFont()
 	{
-		return Font (15.0f);
+		return (Font ("Helvetica neue",15.0000f, Font::plain));
 	}
 	
 	void drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,

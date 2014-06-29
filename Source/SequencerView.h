@@ -19,7 +19,7 @@ class ControllerView;
 class SeqSlider;
 class Randomiser;
 
-class SequencerView: public Component, SliderListener, ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
+class SequencerView: public Component, SliderListener, public ButtonListener, AsyncUpdater, public ValueTree::Listener, public ComboBoxListener,public KeyListener
 {
 public:
 	SequencerView(ValueTree& sequencerTree, ControllerView* rootView);
@@ -42,26 +42,27 @@ public:
 	}
 	void paint(Graphics& g)
 	{
-		g.setFont(11);
+		g.setFont (Font ("Helvetica neue",12.0000f, Font::plain));
+		
 		g.setColour(Colour::fromRGB(198, 201, 180));
 		g.fillAll();
 
-		float heigthDiv = getHeight() / 40.0f;
-		float widthDiv = getWidth() / 132.0f;
+		float heigthDiv = getHeight() / 34.0f;
+		float widthDiv = getWidth() / 130.0f;
 		
 		g.setColour(Colours::black);
-		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Scale", widthDiv * 16, heigthDiv * 5, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Division", widthDiv * 28, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Shuffle", widthDiv * 59, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Range", widthDiv * 65, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Offset", widthDiv * 71, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Length", widthDiv * 77, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Midi output", widthDiv * 95, heigthDiv * 5, widthDiv * 16, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 5, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("On / Off", widthDiv * 121, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Delete", widthDiv * 126, heigthDiv * 5, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Scale", widthDiv * 14, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Octave range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Offset", widthDiv * 52, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Length", widthDiv * 56, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 11, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("On / Off", widthDiv * 118, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Delete", widthDiv * 123, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		
 	}
 	static ValueTree& getCopyTree()
@@ -86,8 +87,6 @@ private:
 	ScopedPointer<SeqComboBox> theScaleList;
 	ScopedPointer<SeqComboBox> theSpeedList;
 	ScopedPointer<Slider> theSequencerLength;
-	ScopedPointer<Slider> theShuffleSlider;
-	ScopedPointer<Slider> theRangeSlider;
 	ScopedPointer<Slider> theOffsetSlider;
 	OwnedArray<SeqSlider> theStepSliders;
 	OwnedArray<Slider> theVelocitySliders;
@@ -99,6 +98,8 @@ private:
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
 	ScopedPointer<DeleteButton> theDeleteButton;
+	OwnedArray<TextButton> theShuffleButtons;
+	OwnedArray<TextButton> theRangeButtons;
 	ScopedPointer<Randomiser> theRandomiser;
 	UndoManager* theUndoManager;
 	Scale* theCurrentScale;

@@ -104,16 +104,16 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theDeleteButton = new DeleteButton("Delete"));
 	theDeleteButton->addListener(this);
 	int sensitivity = 100;
-	addAndMakeVisible(theShuffleSlider = new Slider("Shuffle"));
-	theShuffleSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theShuffleSlider->setRange(0, 5, 1);
-	theShuffleSlider->setTextValueSuffix(" Shuffle");
-	theShuffleSlider->setMouseDragSensitivity(sensitivity);
-	theShuffleSlider->setScrollWheelEnabled(false);
-	theShuffleSlider->setSliderStyle(Slider::RotaryVerticalDrag);
-	theShuffleSlider->setValue(theSequencerTree.getProperty("Shuffle"));
-	theShuffleSlider->setPopupDisplayEnabled(true, theControllerView);
-	theShuffleSlider->addListener(this);
+
+	for (int i=0;i<5;i++)
+	{
+		theShuffleButtons.add(new TextButton("Shuffle" + String(i)));
+		addAndMakeVisible(theShuffleButtons[i]);
+		theShuffleButtons[i]->addListener(this);
+		theShuffleButtons[i]->setButtonText(String(i));
+		theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
+	}
+	buttonClicked(theShuffleButtons[theSequencerTree.getProperty("Shuffle")]);
 	
 	addAndMakeVisible(theOffsetSlider = new Slider("Offset"));
 	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
@@ -127,17 +127,16 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	if (length > 16) theOffsetSlider->setRange(0, 31, 1);
 	else theOffsetSlider->setRange(0, 15, 1);
 	theOffsetSlider->addListener(this);
-	
-	addAndMakeVisible(theRangeSlider = new Slider("Range"));
-	theRangeSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
-	theRangeSlider->setRange(1, 3, 1);
-	theRangeSlider->setMouseDragSensitivity(sensitivity);
-	theRangeSlider->setScrollWheelEnabled(false);
-	theRangeSlider->setTextValueSuffix(" Range");
-	theRangeSlider->setSliderStyle(Slider::RotaryVerticalDrag);
-	theRangeSlider->setPopupDisplayEnabled(true, theControllerView);
-	theRangeSlider->setValue(theSequencerTree.getProperty("Range"));
-	theRangeSlider->addListener(this);
+
+	for (int i=0;i<3;i++)
+	{
+		theRangeButtons.add(new TextButton("Range" + String(i)));
+		addAndMakeVisible(theRangeButtons[i]);
+		theRangeButtons[i]->addListener(this);
+		theRangeButtons[i]->setButtonText(String(i + 1));
+		theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
+	}
+	buttonClicked(theRangeButtons[(int)theSequencerTree.getProperty("Range") - 1]);
 	
 	addAndMakeVisible(theSpeedList = new SeqComboBox("Speed"));
 	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
@@ -223,48 +222,58 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	float heigthDiv = getHeight() / 38.0f;
-	float widthDiv = getWidth() / 132.0f;
+	float heigthDiv = getHeight() / 34.0f;
+	float widthDiv = getWidth() / 130.0f;
 	float mainSliderDivs = 6.0f;
 	
 	theRootNoteList->setBounds(widthDiv * 2, heigthDiv, widthDiv * 6, heigthDiv * 2);
-	theRootOctaveList->setBounds(widthDiv * 8, heigthDiv, widthDiv * 6, heigthDiv * 2);
+	theRootOctaveList->setBounds(theRootNoteList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
 	
-	theScaleList->setBounds(widthDiv * 16, heigthDiv, widthDiv * 10, heigthDiv * 2);
-	theSpeedList->setBounds(widthDiv * 28, heigthDiv, widthDiv * 6, heigthDiv * 2);
+	theScaleList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
+	theSpeedList->setBounds(widthDiv * 26, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	
-	theRandomiser->setBounds(widthDiv * 36, heigthDiv, widthDiv * 21, heigthDiv * 5);
+	theRandomiser->setBounds(widthDiv * 62, heigthDiv, widthDiv * 15, heigthDiv * 4);
 	
-	theShuffleSlider->setBounds(widthDiv * 59, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theRangeSlider->setBounds(widthDiv * 65, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theOffsetSlider->setBounds(widthDiv * 71, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theSequencerLength->setBounds(widthDiv * 77, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theShuffleButtons[0]->setBounds(widthDiv * 33, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	for (int i=1;i<5;i++)
+	{
+		theShuffleButtons[i]->setBounds(theShuffleButtons[i-1]->getRight(), heigthDiv, widthDiv * 2, heigthDiv * 2);
+	}
 	
-	theCopyButton->setBounds(widthDiv * 83, heigthDiv, widthDiv * 5, heigthDiv * 2);
-	theImportButton->setBounds(widthDiv * 83, heigthDiv * 3, widthDiv * 5, heigthDiv * 2);
-	thePasteButton->setBounds(widthDiv * 88, heigthDiv, widthDiv * 5, heigthDiv * 2);
-	theExportButton->setBounds(widthDiv * 88, heigthDiv * 3, widthDiv * 5, heigthDiv * 2);
+	theRangeButtons[0]->setBounds(widthDiv * 45, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	for (int i=1;i<3;i++)
+	{
+		theRangeButtons[i]->setBounds(theRangeButtons[i-1]->getRight(), heigthDiv, widthDiv * 2, heigthDiv * 2);
+	}
 	
-	theMidiOutputList->setBounds(widthDiv * 95, heigthDiv, widthDiv * 13, heigthDiv * 2);
-	theChannelList->setBounds(widthDiv * 113, heigthDiv, widthDiv * 6, heigthDiv * 2);
-	theOnOffButton->setBounds(widthDiv * 121, heigthDiv, widthDiv * 4, heigthDiv * 4);
-	theDeleteButton->setBounds(widthDiv * 126, heigthDiv, widthDiv * 4, heigthDiv * 4);
+	theOffsetSlider->setBounds(widthDiv * 53, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theSequencerLength->setBounds(widthDiv * 57, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	
+	theCopyButton->setBounds(widthDiv * 90, heigthDiv, widthDiv * 5, heigthDiv * 2);
+	theImportButton->setBounds(widthDiv * 79, heigthDiv, widthDiv * 5, heigthDiv * 2);
+	thePasteButton->setBounds(theCopyButton->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
+	theExportButton->setBounds(theImportButton->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
+	
+	theMidiOutputList->setBounds(widthDiv * 102, heigthDiv, widthDiv * 11, heigthDiv * 2);
+	theChannelList->setBounds(theMidiOutputList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
+	theOnOffButton->setBounds(widthDiv * 119, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theDeleteButton->setBounds(widthDiv * 124, heigthDiv, widthDiv * 2, heigthDiv * 2);
 
 	for(int i=0;i<16;i++)
 	{
-		theStepSliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 6, widthDiv * mainSliderDivs, heigthDiv * mainSliderDivs);
-		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 14.5, widthDiv * 6, heigthDiv * 1.5);
-		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 16.5, widthDiv * 6, heigthDiv * 1.5);
-		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * i), heigthDiv * 18.5, widthDiv * 6, heigthDiv * 2);
-		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 20.5, widthDiv * 8, heigthDiv * 2);
+		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 6, widthDiv * mainSliderDivs, heigthDiv * mainSliderDivs);
+		theVelocitySliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 12.2, widthDiv * 6, heigthDiv * 1.5);
+		theDecaySliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 14.2, widthDiv * 6, heigthDiv * 1.5);
+		theStateButtons[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * i), heigthDiv * 16, widthDiv * 6, heigthDiv * 2);
+		theLEDs[i]->setBounds((widthDiv * 1) + (widthDiv * 8 * i), heigthDiv * 18, widthDiv * 8, heigthDiv * 2);
 	}
 	for(int i=16;i<theSequencerTree.getNumChildren();i++)
 	{
-		theStepSliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 23, widthDiv * mainSliderDivs, heigthDiv * mainSliderDivs);
-		theVelocitySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 29.5, widthDiv * 6, heigthDiv * 1.5);
-		theDecaySliders[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 31.5, widthDiv * 6, heigthDiv * 1.5);
-		theStateButtons[i]->setBounds((widthDiv * 3) + (widthDiv * 8 * (i-16)), heigthDiv * 33.5, widthDiv * 6, heigthDiv * 2);
-		theLEDs[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 35.5, widthDiv * 8, heigthDiv * 2);
+		theStepSliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 20, widthDiv * mainSliderDivs, heigthDiv * mainSliderDivs);
+		theVelocitySliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 26.2, widthDiv * 6, heigthDiv * 1.5);
+		theDecaySliders[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 28.3, widthDiv * 6, heigthDiv * 1.5);
+		theStateButtons[i]->setBounds((widthDiv * 2) + (widthDiv * 8 * (i-16)), heigthDiv * 30, widthDiv * 6, heigthDiv * 2);
+		theLEDs[i]->setBounds((widthDiv * 1) + (widthDiv * 8 * (i-16)), heigthDiv * 32, widthDiv * 8, heigthDiv * 2);
 	}
 }
 
@@ -355,6 +364,20 @@ void SequencerView::buttonClicked(Button* button)
 			theSequencerTree.writeToStream(outputStream);
 		}
 	}
+	else if (button->getName().contains("Shuffle"))
+	{
+		int index = button->getButtonText().getIntValue();
+		for (int i=0; i<5;i++) theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
+		button->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourBlueGrey));
+		theSequencerTree.setProperty("Shuffle", index, theUndoManager);
+	}
+	else if (button->getName().contains("Range"))
+	{
+		int index = button->getButtonText().getIntValue();
+		for (int i=0; i<3;i++) theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
+		button->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourBlueGrey));
+		theSequencerTree.setProperty("Range", index, theUndoManager);
+	}
 	else
 	{
 		int index = button->getName().getTrailingIntValue();
@@ -434,14 +457,10 @@ void SequencerView::sliderValueChanged(Slider* slider)
 		theOffsetSlider->setRange(0, length-1, 1);
 		theSequencerTree.setProperty("Length", slider->getValue(), theUndoManager);
 	}
-	else if(slider == theShuffleSlider)
-	{
-		theSequencerTree.setProperty("Shuffle", slider->getValue(), theUndoManager);
-	}
-	else if(slider == theRangeSlider)
-	{
-		theSequencerTree.setProperty("Range", slider->getValue(), theUndoManager);
-	}
+//	else if(slider == theRangeSlider)
+//	{
+//		theSequencerTree.setProperty("Range", slider->getValue(), theUndoManager);
+//	}
 	else if(slider == theOffsetSlider)
 	{
 		theSequencerTree.setProperty("Offset", slider->getValue(), theUndoManager);
@@ -514,11 +533,11 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 			theStepSliders[i]->setRange(0 - range, range, 1);
 			theStepSliders[i]->repaint();
 		}
-		theRangeSlider->setValue(tree.getProperty(property));
+		buttonClicked(theRangeButtons[(int)tree.getProperty(property) - 1]);
 	}
 	else if(String(property) == "Shuffle")
 	{
-		theShuffleSlider->setValue(tree.getProperty(property));
+		buttonClicked(theShuffleButtons[tree.getProperty(property)]);
 	}
 	else if(String(property) == "Length")
 	{

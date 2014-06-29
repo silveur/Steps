@@ -59,7 +59,7 @@ public:
 		{
 			theSequencerArray[i]->handleIncomingMidiMessage(message);
 		}
-		if (theMasterClockOutput != nullptr && outputClock)
+		if (theMasterClockOutput != nullptr && outputClock && (message.isMidiClock() || message.isMidiStart() || message.isMidiStop()))
 		{
 			theMasterClockOutput->sendMessageNow(message);
 		}
