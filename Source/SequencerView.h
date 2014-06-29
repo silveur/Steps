@@ -63,9 +63,7 @@ public:
 		g.drawFittedText("Length", widthDiv * 56, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 11, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Channel", widthDiv * 113, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("On / Off", widthDiv * 118, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Delete", widthDiv * 123, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		
+		g.drawFittedText("On / Off", widthDiv * 118, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);		
 	}
 	static ValueTree& getCopyTree()
 	{
@@ -99,7 +97,7 @@ private:
 	ScopedPointer<TextButton> thePasteButton;
 	ScopedPointer<TextButton> theExportButton;
 	ScopedPointer<TextButton> theImportButton;
-	ScopedPointer<DeleteButton> theDeleteButton;
+	ScopedPointer<TextButton> theDeleteButton;
 	OwnedArray<TextButton> theShuffleButtons;
 	OwnedArray<TextButton> theRangeButtons;
 	ScopedPointer<Randomiser> theRandomiser;

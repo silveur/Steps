@@ -28,7 +28,7 @@ ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree)
 	setInterceptsMouseClicks(false, true);
 	theMenuBar = new MenuBar(this);
 	theMenuBar->addCommandTarget(this, this);
-	adjustSize();
+	refreshView();
 }
 
 ControllerView::~ControllerView()
@@ -49,44 +49,24 @@ void ControllerView::resized()
 
 void ControllerView::refreshView()
 {
-	float headerHeight = 4.0f; float totalDiv; float heightInc = 0;
-	totalDiv += headerHeight;
-	for (int i=0; i<theMasterTree.getNumChildren(); i++)
-	{
-		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) totalDiv += 20.0f;
-		else totalDiv += 34.0f;
-	}
-	
-	float heightDiv = (float)getHeight() / totalDiv;
-		
-	theHeaderView->setBounds(0, 0, getWidth(), heightDiv * headerHeight);
-	heightInc += theHeaderView->getHeight();
+	float headerHeight = 4.0f; float totalDiv; float pixelsPerDiv = 11.0f;
+	theHeaderView->setBounds(0, 0, getWidth(), headerHeight * pixelsPerDiv);
+	totalDiv += theHeaderView->getHeight();
 	
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		float sequencerHeigth;
-		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) sequencerHeigth = 20.0f;
-		else sequencerHeigth = 34.0f;
+		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) sequencerHeigth = 20.0f * pixelsPerDiv;
+		else sequencerHeigth = 34.0f * pixelsPerDiv;
 		
-		theSequencerViews[i]->setBounds(0, heightInc, getWidth(), heightDiv * sequencerHeigth);
-		heightInc += theSequencerViews[i]->getHeight();
+		theSequencerViews[i]->setBounds(0, totalDiv, getWidth(), sequencerHeigth);
+		totalDiv += theSequencerViews[i]->getHeight();
 	}
 	
 	theAboutView->setBounds(getBounds());
+	setSize(1200, totalDiv);
 }
 
-void ControllerView::adjustSize()
-{
-	float headerHeight = 4.0f; float totalDiv;
-	totalDiv += headerHeight;
-	for (int i=0; i<theMasterTree.getNumChildren(); i++)
-	{
-		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) totalDiv += 20.0f;
-		else totalDiv += 34.0f;
-	}
-	setSize(theMainScreen.getWidth()*0.7f, totalDiv*10);
-	refreshView();
-}
 void ControllerView::kickBack()
 {
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
@@ -116,7 +96,7 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
 	}
-	adjustSize();
+	refreshView();
 }
 
 void ControllerView::removeSequencer(int i)
@@ -132,7 +112,7 @@ void ControllerView::removeSequencer(int i)
 		theMasterTree.removeChild(i, nullptr);
 		theSequencerViews.remove(i);
 	}
-	adjustSize();
+	refreshView();
 }
 
 bool ControllerView::perform(const InvocationInfo& info)

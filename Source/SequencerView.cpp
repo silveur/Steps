@@ -101,9 +101,9 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theImportButton->addListener(this);
 	
-	addAndMakeVisible(theDeleteButton = new DeleteButton("Delete"));
+	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
+	theDeleteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
 	theDeleteButton->addListener(this);
-	int sensitivity = 100;
 
 	for (int i=0;i<5;i++)
 	{
@@ -119,7 +119,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOffsetSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 	theOffsetSlider->setTextValueSuffix(" Offset");
 	theOffsetSlider->setScrollWheelEnabled(false);
-	theOffsetSlider->setMouseDragSensitivity(sensitivity);
+	theOffsetSlider->setMouseDragSensitivity(100);
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
@@ -258,7 +258,7 @@ void SequencerView::resized()
 	theMidiOutputList->setBounds(widthDiv * 102, heigthDiv, widthDiv * 11, heigthDiv * 2);
 	theChannelList->setBounds(theMidiOutputList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
 	theOnOffButton->setBounds(widthDiv * 119, heigthDiv, widthDiv * 2, heigthDiv * 2);
-	theDeleteButton->setBounds(widthDiv * 124, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theDeleteButton->setBounds(widthDiv * 123, heigthDiv, widthDiv * 5, heigthDiv * 2);
 
 	for(int i=0;i<16;i++)
 	{
@@ -544,7 +544,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		int length = tree.getProperty(property);
 		theSequencerLength->setValue(length);
-		theControllerView->adjustSize();
+		theControllerView->refreshView();
 	}
 	else if(String(property) == "Channel")
 	{
