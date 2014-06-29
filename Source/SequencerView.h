@@ -47,7 +47,9 @@ public:
 		g.setColour(Colour::fromRGB(198, 201, 180));
 		g.fillAll();
 
-		float heigthDiv = getHeight() / 34.0f;
+		float heigthDiv;
+		if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 20.0f;
+		else heigthDiv = getHeight() / 34.0f;
 		float widthDiv = getWidth() / 130.0f;
 		
 		g.setColour(Colours::black);

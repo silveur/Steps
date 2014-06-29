@@ -190,8 +190,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theUndoManager->clearUndoHistory();
 	setInterceptsMouseClicks(false, true);
 	addKeyListener(this);
-	
-	randomiseAll();
 }
 
 SequencerView::~SequencerView()
@@ -222,7 +220,10 @@ void SequencerView::refreshMidiList()
 
 void SequencerView::resized()
 {
-	float heigthDiv = getHeight() / 34.0f;
+	float heigthDiv;
+	if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 20.0f;
+	else heigthDiv = getHeight() / 34.0f;
+		
 	float widthDiv = getWidth() / 130.0f;
 	float mainSliderDivs = 6.0f;
 	
@@ -543,6 +544,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		int length = tree.getProperty(property);
 		theSequencerLength->setValue(length);
+		theControllerView->adjustSize();
 	}
 	else if(String(property) == "Channel")
 	{

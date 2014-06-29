@@ -28,6 +28,7 @@ public:
 	void kickBack();
 	void paint(Graphics& g);
 	void refreshView();
+	void adjustSize();
 	void addSequencer(ValueTree& sequencerTreeToAdd);
 	void removeSequencer(int index);
 	const int getNumOfSequencer() const;

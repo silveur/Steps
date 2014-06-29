@@ -32,8 +32,7 @@ public:
 		{
 			thePreferenceTree.copyPropertiesFrom(treeToLoad, nullptr);
 			int x = thePreferenceTree.getProperty("X", 50); int y = thePreferenceTree.getProperty("Y", 50);
-			int w = thePreferenceTree.getProperty("W"); int h = thePreferenceTree.getProperty("H");
-			setBounds(x, y, w, h);
+			setBounds(x, y, 0, 0);
 		}
 		else
 			setBounds(100, 100, 100, 100);
@@ -43,7 +42,6 @@ public:
 		theState = false;
 		setVisible(true);
 		addKeyListener(this);
-		setResizable(true, true);
 	}
 	
 	~MainWindow()
