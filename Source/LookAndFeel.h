@@ -85,7 +85,7 @@ public:
 		}
 		
 		String text(button.getName().getCharPointer(), 1);
-		g.setColour(Colours::black);
+		g.setColour(getColour(ColourDarkGrey));
 		g.drawFittedText(text, 0, 0, button.getWidth(), button.getHeight(), Justification::centred, 1);
 	}
 	
@@ -241,19 +241,26 @@ public:
 		const float thickness = 0.85f;
 		if (radius > 12.0f)
 		{
+			const float thickness = 0.6f;
+
+			if (slider.isEnabled())
+				g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
+			else
+				g.setColour (Colour (0x80808080));
+			Path outlineArc;
+			outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
+			outlineArc.closeSubPath();
+			g.fillPath(outlineArc);
+			
 			if (slider.isEnabled())
 				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 1.0f : 0.7f));
 			else
 				g.setColour (Colour (0x80808080));
 			
-			const float thickness = 0.7f;
-			
-			{
-				Path filledArc;
-				filledArc.addPieSegment (rx, ry, rw, rw, 6.28319f, angle, thickness);
-				g.fillPath (filledArc);
-			}
-			
+			Path filledArc;
+			filledArc.addPieSegment (rx, ry, rw, rw, 6.28319f, angle, thickness);
+			g.fillPath (filledArc);
+
 			if (thickness > 0)
 			{
 				const float innerRadius = radius * 0.2f;
@@ -272,11 +279,11 @@ public:
 			else
 				g.setColour (Colour (0x80808080));
 			
-			Path outlineArc;
-			outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
-			outlineArc.closeSubPath();
-			
-			g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (slider.isMouseOver() ? 2.0f : 1.2f) : 0.3f));
+//			Path outlineArc;
+//			outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
+//			outlineArc.closeSubPath();
+//			g.fillPath(outlineArc);
+//			g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (slider.isMouseOver() ? 2.0f : 1.2f) : 0.3f));
 		}
 		else
 		{
@@ -286,13 +293,27 @@ public:
 				g.setColour (Colour (0x80808080));
 			
 			Path p;
+			p.addEllipse (-0.2f * rw, -0.2f * rw, rw * 0.4f, rw * 0.4f);
+			PathStrokeType (rw * 0.1f).createStrokedPath (p, p);
+			
 			p.addEllipse (-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
 			PathStrokeType (rw * 0.1f).createStrokedPath (p, p);
 			
-			p.addLineSegment (Line<float> (0.0f, 0.0f, 0.0f, -radius), rw * 0.2f);
-			
 			g.fillPath (p, AffineTransform::rotation (angle).translated (centreX, centreY));
+			
+			Path p2;
+			if (slider.isEnabled())
+				g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
+			else
+				g.setColour (Colour (0x80808080));
+			float ellipseWidth = 4.0f;
+			p2.addLineSegment (Line<float> (0.0f, 0.0f, 0.0f, -radius * 0.9f), rw * 0.1f);
+//			p2.addEllipse(-ellipseWidth/2.0f, -radius, ellipseWidth, ellipseWidth);
+			g.fillPath (p2, AffineTransform::rotation (angle).translated (centreX, centreY));
 		}
+		
+//		g.setColour(Colours::black);
+//		g.drawRect(slider.getLocalBounds());
 	}
 	
 	void drawLinearSlider (Graphics& g, int x, int y, int width, int height,
@@ -369,7 +390,22 @@ public:
 	
 	Font getPopupMenuFont()
 	{
-		return (Font ("Helvetica neue",15.0000f, Font::plain));
+		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+	}
+	
+	Font getTextButtonFont (TextButton &)
+	{
+		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+	}
+	
+	Font getComboboxFont (ComboBox &)
+	{
+		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+	}
+	
+	Font getLabelFont (Label &)
+	{
+		return (Font ("Helvetica Neue",12.0000f, Font::plain));
 	}
 	
 	void drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,

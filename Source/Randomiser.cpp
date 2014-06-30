@@ -18,6 +18,7 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 {
 	addAndMakeVisible(theRandomAllButton = new TextButton("Randomise"));
 	theRandomAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theRandomAllButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theRandomAllButton->addListener(this);
 	
 	addAndMakeVisible(theVelocityButton = new ToggleButton("Velocity"));

@@ -26,10 +26,10 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
-		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourBlue));
+		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
 		theStepSliders[i]->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourBlue));
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
-		theStepSliders[i]->setRange(0- 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
+		theStepSliders[i]->setRange(0 - 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
 		theStepSliders[i]->addListener (this);
 		addAndMakeVisible(theVelocitySliders.add(new Slider("Velocity" + String(i))));
@@ -75,6 +75,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+	theSequencerLength->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourRedOrange));
+	theSequencerLength->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theSequencerLength->setRange(1, 32,1);
 	theSequencerLength->setScrollWheelEnabled(false);
 	theSequencerLength->setTextBoxStyle(Slider::NoTextBox, false, 30, 30);
@@ -87,22 +89,27 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theCopyButton = new TextButton("Copy"));
 	theCopyButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theCopyButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theCopyButton->addListener(this);
 	
 	addAndMakeVisible(thePasteButton = new TextButton("Paste"));
 	thePasteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	thePasteButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	thePasteButton->addListener(this);
 	
 	addAndMakeVisible(theExportButton = new TextButton("Export"));
 	theExportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theExportButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theExportButton->addListener(this);
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import"));
 	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theImportButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theImportButton->addListener(this);
 	
 	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
 	theDeleteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theDeleteButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theDeleteButton->addListener(this);
 
 	for (int i=0;i<5;i++)
@@ -123,6 +130,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
+	theOffsetSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourBlue));
+	theOffsetSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	int length = theSequencerTree.getProperty("Length");
 	if (length > 16) theOffsetSlider->setRange(0, 31, 1);
 	else theOffsetSlider->setRange(0, 15, 1);
@@ -140,6 +149,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theSpeedList = new ComboBox("Speed"));
 	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theSpeedList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theSpeedList->addSectionHeading("Speed");
 	theSpeedList->addItem("1/1", 1);
 	theSpeedList->addItem("1/2", 2);
@@ -161,6 +171,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	theChannelList->addSectionHeading("Midi channel");
 	theChannelList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theChannelList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	for (int i=1;i<=16;i++)
 		theChannelList->addItem(String(i), i);
 	theChannelList->setSelectedId(theSequencerTree.getProperty("Channel"));
@@ -170,11 +181,16 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
 	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theRootNoteList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
 	theRootOctaveList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 	theRootOctaveList->addSectionHeading("Root octave");
+	theRootOctaveList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	
 	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
 	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theScaleList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
 	theScaleList->addSectionHeading("Scales");
 	loadScales();
 	updateNotesAndOctaves();
@@ -222,7 +238,7 @@ void SequencerView::resized()
 {
 	float heigthDiv;
 	if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 19.0f;
-	else heigthDiv = getHeight() / 33.0f;
+	else heigthDiv = getHeight() / 34.0f;
 		
 	float widthDiv = getWidth() / 130.0f;
 	float mainSliderDivs = 6.0f;
@@ -233,7 +249,7 @@ void SequencerView::resized()
 	theScaleList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
 	theSpeedList->setBounds(widthDiv * 26, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	
-	theRandomiser->setBounds(widthDiv * 61, heigthDiv, widthDiv * 16.0f, heigthDiv * 2);
+	theRandomiser->setBounds(widthDiv * 63, heigthDiv, widthDiv * 14.0f, heigthDiv * 2);
 	
 	theShuffleButtons[0]->setBounds(widthDiv * 33, heigthDiv, widthDiv * 2, heigthDiv * 2);
 	for (int i=1;i<5;i++)
@@ -247,8 +263,8 @@ void SequencerView::resized()
 		theRangeButtons[i]->setBounds(theRangeButtons[i-1]->getRight(), heigthDiv, widthDiv * 2, heigthDiv * 2);
 	}
 	
-	theOffsetSlider->setBounds(widthDiv * 53, heigthDiv, widthDiv * 2, heigthDiv * 2);
-	theSequencerLength->setBounds(widthDiv * 57, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theOffsetSlider->setBounds(widthDiv * 54, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theSequencerLength->setBounds(widthDiv * 58, heigthDiv, widthDiv * 2, heigthDiv * 2);
 	
 	theCopyButton->setBounds(widthDiv * 90, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	theImportButton->setBounds(widthDiv * 79, heigthDiv, widthDiv * 5, heigthDiv * 2);
@@ -645,7 +661,7 @@ void SequencerView::updateNotesAndOctaves()
 
 void SequencerView::loadScales()
 {
-	theScaleList->addItem("No scaling", 1);
+	theScaleList->addItem("--", 1);
 	theScaleList->addItem("Major", 2);
 	theScaleList->addItem("Minor", 3);
 	theScaleList->addItem("Pentatonic Major", 4);

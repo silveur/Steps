@@ -12,6 +12,7 @@
 #define STEPSVIEW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "LookAndFeel.h"
 
 class StepView: public Component
 {
@@ -31,8 +32,8 @@ public:
 
 	void paint(Graphics& g)
 	{
-		if (theState) g.setColour (Colour::fromRGB(30, 31, 84));
-		else g.setColour (Colour::fromRGB(236, 235, 226));
+		if (theState) g.setColour (SeqLookAndFeel::getColour(ColourRedOrange).withAlpha(0.7f));
+		else g.setColour (SeqLookAndFeel::getColour(ColourDarkBlue));
         g.fillEllipse (getWidth()*0.4f, getHeight()*0.1f, getHeight()*0.8f, getHeight()*0.8f);
 	}
 

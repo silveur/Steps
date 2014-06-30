@@ -38,7 +38,7 @@ ControllerView::~ControllerView()
 
 void ControllerView::paint(Graphics& g)
 {
-	g.setColour(Colour::fromRGB(192, 173, 143));
+	g.setColour(SeqLookAndFeel::getColour(ColourLightBlue));
 	g.fillAll();
 }
 
@@ -49,7 +49,7 @@ void ControllerView::resized()
 
 void ControllerView::refreshView()
 {
-	float headerHeight = 4.0f; float totalDiv = 0.0f; float pixelsPerDiv = 11.0f;
+	float headerHeight = 4.0f; float totalDiv = 0.0f; float pixelsPerDiv = 9.0f;
 	theHeaderView->setBounds(0, 0, getWidth(), headerHeight * pixelsPerDiv);
 	totalDiv += theHeaderView->getHeight();
 	
@@ -57,7 +57,7 @@ void ControllerView::refreshView()
 	{
 		float sequencerHeigth;
 		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) sequencerHeigth = 19.0f * pixelsPerDiv;
-		else sequencerHeigth = 33.0f * pixelsPerDiv;
+		else sequencerHeigth = 34.0f * pixelsPerDiv;
 		
 		theSequencerViews[i]->setBounds(0, totalDiv, getWidth(), sequencerHeigth);
 		totalDiv += theSequencerViews[i]->getHeight();

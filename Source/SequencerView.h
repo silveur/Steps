@@ -42,21 +42,21 @@ public:
 	void paint(Graphics& g)
 	{
 		g.setFont (Font ("Helvetica Neue",12.0000f, Font::plain));
+		g.setColour(SeqLookAndFeel::getColour(ColourDarkGrey));
 
 		float heigthDiv;
 		if ((int)theSequencerTree.getProperty("Length") <= 16) heigthDiv = getHeight() / 19.0f;
-		else heigthDiv = getHeight() / 33.0f;
+		else heigthDiv = getHeight() / 34.0f;
 		float widthDiv = getWidth() / 130.0f;
 		
-		g.setColour(Colours::black);
 		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Scale", widthDiv * 14, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Octave range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Offset", widthDiv * 52, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Length", widthDiv * 56, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Offset", widthDiv * 53, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Length", widthDiv * 57, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 13, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Channel", widthDiv * 115, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 	}

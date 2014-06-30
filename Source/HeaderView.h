@@ -26,6 +26,7 @@ public:
 		thePreferenceTree = preferenceTree;
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
 		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+		theAddSequencerButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 		theAddSequencerButton->addListener(this);
 		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
 		theUndoButton->addListener(this);
@@ -33,9 +34,11 @@ public:
 		theRedoButton->addListener(this);
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
 		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+		theExportAllButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 		theExportAllButton->addListener(this);
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
 		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+		theImportAllButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
@@ -68,6 +71,8 @@ public:
 		theBPMSlider->setScrollWheelEnabled(false);
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
+		theBPMSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourBlue));
+		theBPMSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourLightGrey));
 		theBPMSlider->addListener(this);
 		
 		setInterceptsMouseClicks(false, true);
@@ -159,13 +164,13 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.setColour(Colours::black);
+		g.setColour(SeqLookAndFeel::getColour(ColourDarkGrey));
 		
 		float heigthDiv = getHeight() / 4.0f;
 		float widthDiv = getWidth() / 130.0f;
 		
 		g.setFont (Font ("Helvetica neue",16.0000f, Font::plain));
-		g.drawFittedText(String( String(theBPMSlider->getValue()) + String(" bpm")), widthDiv * 110, heigthDiv , widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText(String( String(theBPMSlider->getValue()) + String(" bpm")), widthDiv * 109, heigthDiv , widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		
 		g.setColour(Colours::grey);
 		g.drawLine(0, getHeight(), getWidth(), getHeight(), 1.0f);
@@ -181,7 +186,7 @@ public:
 		theExportAllButton->setBounds(widthDiv * 26, heigthDiv, widthDiv * 10, heigthDiv * 2);
 		
 		theMasterClockList->setBounds(widthDiv * 93, heigthDiv, widthDiv * 12, heigthDiv * 2);
-		theBPMSlider->setBounds(widthDiv * 106, heigthDiv, widthDiv * 4, heigthDiv * 2);
+		theBPMSlider->setBounds(widthDiv * 106, heigthDiv, heigthDiv * 2, heigthDiv * 2);
 		theClockSourceList->setBounds(widthDiv * 116, heigthDiv, widthDiv * 12, heigthDiv * 2);
 		repaint();
 	}
