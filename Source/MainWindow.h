@@ -23,7 +23,7 @@ public:
 	MainWindow(ValueTree& masterTree, ValueTree& preferenceTree): ResizableWindow("MainWindow", true)
 	{
 		LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
-		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
+		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Steps/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
 		thePreferenceTree = preferenceTree;
 		theMasterTree = masterTree;

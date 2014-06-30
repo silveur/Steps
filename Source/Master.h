@@ -26,7 +26,7 @@ public:
 		thePreferenceTree = preferenceTree;
 		thePreferenceTree.addListener(this);
 		thePresetFolder = File(thePreferenceTree.getProperty("PresetFolder", String("~/")));
-		theDefaultPreset = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/default.seq");
+		theDefaultPreset = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Steps/default.seq");
 		if (!thePresetFolder.exists()) thePresetFolder.createDirectory();
 		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
 		theMasterTree = ValueTree("MasterTree");

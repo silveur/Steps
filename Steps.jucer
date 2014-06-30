@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="Sequencer" projectType="guiapp" version="0.9"
-              bundleIdentifier="com.nummer.sequencer" includeBinaryInAppConfig="1"
-              jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
-              companyName="Nummer">
-  <MAINGROUP id="jYNjqi" name="Sequencer">
+<JUCERPROJECT id="i0GMhV" name="Steps" projectType="guiapp" version="0.9" bundleIdentifier="com.nummer.steps"
+              includeBinaryInAppConfig="1" jucerVersion="3.1.0" companyWebsite="www.nummermusic.com"
+              companyEmail="contact@nummermusic.com" companyName="Nummer">
+  <MAINGROUP id="jYNjqi" name="Steps">
     <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
       <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
@@ -63,9 +62,9 @@
                bigIcon="hGmLDV">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="Sequencer"/>
+                       isDebug="1" optimisation="1" targetName="Steps-debug"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="Sequencer" linkTimeOptimisation="1"/>
+                       isDebug="0" optimisation="3" targetName="Steps" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>
