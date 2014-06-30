@@ -41,7 +41,7 @@ public:
 		URL serverURL(theServerURL);
 		InputStream* response = serverURL.createInputStream(false, nullptr, nullptr,
 															"",
-															100, nullptr);
+															2000, nullptr);
 		if (response != nullptr)
 		{
 			String responseString = response->readString();

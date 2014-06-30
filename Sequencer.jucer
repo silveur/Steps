@@ -37,7 +37,10 @@
         <FILE id="lfOnGK" name="Randomiser.cpp" compile="1" resource="0" file="Source/Randomiser.cpp"/>
         <FILE id="goi1rD" name="Randomiser.h" compile="0" resource="0" file="Source/Randomiser.h"/>
         <FILE id="bAnKhN" name="AboutView.h" compile="0" resource="0" file="Source/AboutView.h"/>
-        <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images"/>
+        <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images">
+          <FILE id="hGmLDV" name="Icon.png" compile="0" resource="1" file="Designs/Icon.png"/>
+          <FILE id="XO7EGy" name="IconSmall.png" compile="0" resource="1" file="Designs/IconSmall.png"/>
+        </GROUP>
       </GROUP>
       <GROUP id="{177A0B3F-5BE4-D5E2-1D58-6B0272C73950}" name="Updater">
         <FILE id="CIsSIq" name="PackageHandler.h" compile="0" resource="0"
@@ -56,7 +59,8 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl" smallIcon="XO7EGy"
+               bigIcon="hGmLDV">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="Sequencer"/>
