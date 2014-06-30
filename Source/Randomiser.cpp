@@ -24,18 +24,22 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 	
 	addAndMakeVisible(theVelocityButton = new ToggleButton("Velocity"));
 	theVelocityButton->setToggleState(theSequencerTree.getProperty("RandVelocity"), dontSendNotification);
+	theVelocityButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	theVelocityButton->addListener(this);
 	
 	addAndMakeVisible(theDecayButton = new ToggleButton("Decay"));
 	theDecayButton->setToggleState(theSequencerTree.getProperty("RandDecay"), dontSendNotification);
+	theDecayButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	theDecayButton->addListener(this);
 	
 	addAndMakeVisible(thePitchButton = new ToggleButton("Pitch"));
 	thePitchButton->setToggleState(theSequencerTree.getProperty("RandPitch"), dontSendNotification);
+	thePitchButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	thePitchButton->addListener(this);
 	
 	addAndMakeVisible(theStateButton = new ToggleButton("OnOff"));
 	theStateButton->setToggleState(theSequencerTree.getProperty("RandState"), dontSendNotification);
+	theStateButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	theStateButton->addListener(this);
 	
 	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));

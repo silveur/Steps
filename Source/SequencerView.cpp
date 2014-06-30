@@ -80,7 +80,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	}
 	
 	int offset = theSequencerTree.getProperty("Offset");
-	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_5));
+	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_3));
 
 	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
@@ -116,7 +116,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theShuffleButtons[i]->addListener(this);
 		theShuffleButtons[i]->setButtonText(String(i));
 		theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4));
-		theShuffleButtons[i]->setColour(ComboBox::textColourId, textButtonTextColour);
+		theShuffleButtons[i]->setColour(TextButton::textColourOffId, textButtonTextColour);
 	}
 	buttonClicked(theShuffleButtons[theSequencerTree.getProperty("Shuffle")]);
 	
@@ -154,7 +154,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theRangeButtons[i]->addListener(this);
 		theRangeButtons[i]->setButtonText(String(i + 1));
 		theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4));
-		theRangeButtons[i]->setColour(ComboBox::textColourId, textButtonTextColour);
+		theRangeButtons[i]->setColour(TextButton::textColourOffId, textButtonTextColour);
 	}
 	buttonClicked(theRangeButtons[(int)theSequencerTree.getProperty("Range") - 1]);
 	
@@ -218,8 +218,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theUndoManager->clearUndoHistory();
 	setInterceptsMouseClicks(true, true);
 	addKeyListener(this);
-	
-	randomiseAll();
 }
 
 SequencerView::~SequencerView()
@@ -584,10 +582,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_3));
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_1));
 		}
 		int offset = tree.getProperty(property);
-		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_5));
+		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_3));
 		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "RootNote")

@@ -16,7 +16,6 @@
 
 File thePresetFolder;
 File theDefaultPreset;
-START_JUCE_APPLICATION (SequencerApplication)
 
 void SequencerApplication::initialise (const String& commandLine)
 {
@@ -39,3 +38,5 @@ void SequencerApplication::timerCallback()
 	#endif
 	stopTimer();
 }
+
+START_JUCE_APPLICATION (SequencerApplication)

@@ -41,13 +41,6 @@ public:
 	}
 	void paint(Graphics& g)
 	{
-//		Colour backColour;
-//		int sequencerIndex = String(theSequencerTree.getType()).getTrailingIntValue();
-//		if (!(sequencerIndex % 2)) backColour = SeqLookAndFeel::getColour(ColourLightBlue);
-//		else backColour = SeqLookAndFeel::getColour(COLOUR_1).withAlpha(0.2f);
-//		g.setColour(backColour);
-//		g.fillAll();
-		
 		g.setFont (Font ("Helvetica Neue",12.0000f, Font::plain));
 		g.setColour(SeqLookAndFeel::getColour(COLOUR_1));
 

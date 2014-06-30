@@ -12,12 +12,11 @@
 #include "HeaderView.h"
 #include "AboutView.h"
 
-ColourTheme theColourTheme;
+ColourTheme theColourTheme = DARK;
 Colour textButtonTextColour;
 
 ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree): theMasterTree(masterTree), thePreferenceTree(preferenceTree)
 {
-	theColourTheme = BRIGHT;//;preferenceTree.getProperty("ColourTheme", false);
 	textButtonTextColour = SeqLookAndFeel::getColour(COLOUR_1);
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
@@ -42,12 +41,6 @@ ControllerView::~ControllerView()
 	delete theHeaderView;
 }
 
-void ControllerView::paint(Graphics& g)
-{
-//	g.setColour(SeqLookAndFeel::getColour(ColourLightBlue));
-//	g.fillAll();
-}
-
 void ControllerView::resized()
 {
 	refreshView();
@@ -57,6 +50,7 @@ void ControllerView::refreshView()
 {
 	float headerHeight = 4.0f; float totalDiv = 0.0f; float pixelsPerDiv = 9.0f;
 	theHeaderView->setBounds(0, 0, getWidth(), headerHeight * pixelsPerDiv);
+	theHeaderView->repaint();
 	totalDiv += theHeaderView->getHeight();
 	
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
@@ -66,6 +60,7 @@ void ControllerView::refreshView()
 		else sequencerHeigth = 34.0f * pixelsPerDiv;
 		
 		theSequencerViews[i]->setBounds(0, totalDiv, getWidth(), sequencerHeigth);
+		theSequencerViews[i]->repaint();
 		totalDiv += theSequencerViews[i]->getHeight();
 	}
 	
@@ -159,6 +154,26 @@ bool ControllerView::perform(const InvocationInfo& info)
 			system("open http://www.nummermusic.com");
 			return true;
 		}
+		case COMMAND_ID_SKIN1:
+		{
+			thePreferenceTree.setProperty("ColourTheme", 0, nullptr);
+			return true;
+		}
+		case COMMAND_ID_SKIN2:
+		{
+			thePreferenceTree.setProperty("ColourTheme", 1, nullptr);
+			return true;
+		}
+		case COMMAND_ID_SKIN3:
+		{
+			thePreferenceTree.setProperty("ColourTheme", 2, nullptr);
+			return true;
+		}
+		case COMMAND_ID_SKIN4:
+		{
+			thePreferenceTree.setProperty("ColourTheme", 3, nullptr);
+			return true;
+		}
 		default: return false;
 	}
 }
@@ -240,7 +255,38 @@ void ControllerView::getCommandInfo(CommandID commandID, ApplicationCommandInfo&
 						   settingsCategory, 0);
 			break;
 		}
-
+		case COMMAND_ID_SKIN1:
+		{
+			result.setInfo("Dark",
+						   "Dark view",
+						   viewCategory, 0);
+			result.addDefaultKeypress('1', ModifierKeys::commandModifier);
+			break;
+		}
+		case COMMAND_ID_SKIN2:
+		{
+			result.setInfo("Bright",
+						   "Bright view",
+						   viewCategory, 0);
+			result.addDefaultKeypress('2', ModifierKeys::commandModifier);
+			break;
+		}
+		case COMMAND_ID_SKIN3:
+		{
+			result.setInfo("Wine",
+						   "Wine view",
+						   viewCategory, 0);
+			result.addDefaultKeypress('3', ModifierKeys::commandModifier);
+			break;
+		}
+		case COMMAND_ID_SKIN4:
+		{
+			result.setInfo("Etsy",
+						   "Etsy view",
+						   viewCategory, 0);
+			result.addDefaultKeypress('4', ModifierKeys::commandModifier);
+			break;
+		}
 		default: break;
 	}
 }

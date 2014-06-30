@@ -49,6 +49,7 @@ StringArray MenuBar::getMenuBarNames()
 {
 	StringArray names;
 	names.add("Edit");
+	names.add("View");
 	names.add("Help");
 	return names;
 }
@@ -66,6 +67,14 @@ PopupMenu MenuBar::getMenuForIndex(int topLevelMenuIndex, const juce::String &me
 			break;
 		}
 		case 1:
+		{
+			menu.addCommandItem(theCommandManager, COMMAND_ID_SKIN1);
+			menu.addCommandItem(theCommandManager, COMMAND_ID_SKIN2);
+			menu.addCommandItem(theCommandManager, COMMAND_ID_SKIN3);
+			menu.addCommandItem(theCommandManager, COMMAND_ID_SKIN4);
+			break;
+		}
+		case 2:
 		{
 			menu.addCommandItem(theCommandManager, COMMAND_ID_WEBSITE);
 			break;

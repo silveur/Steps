@@ -20,6 +20,10 @@ public:
 	Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree);
 	~Randomiser() {}
 	void resized();
+	void repaint()
+	{
+		DBG("REPAINT");
+	}
 	void buttonClicked(Button* button);
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}

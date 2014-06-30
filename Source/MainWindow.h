@@ -17,7 +17,7 @@
 
 extern File thePresetFolder;
 
-class MainWindow: public ResizableWindow, public KeyListener
+class MainWindow: public ResizableWindow, public KeyListener, public ValueTree::Listener
 {
 public:
 	MainWindow(ValueTree& masterTree, ValueTree& preferenceTree): ResizableWindow("MainWindow", true)
@@ -26,6 +26,7 @@ public:
 		thePreferenceFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Nummer/pref");
 		if (!thePreferenceFile.exists()) thePreferenceFile.create();
 		thePreferenceTree = preferenceTree;
+		theMasterTree = masterTree;
 		FileInputStream inputStream(thePreferenceFile);
 		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
 		if (treeToLoad.isValid())
@@ -33,13 +34,15 @@ public:
 			thePreferenceTree.copyPropertiesFrom(treeToLoad, nullptr);
 			int x = thePreferenceTree.getProperty("X", 50); int y = thePreferenceTree.getProperty("Y", 50);
 			setBounds(x, y, 0, 0);
+			theColourTheme = (ColourTheme)(int)preferenceTree.getProperty("ColourTheme");
 		}
 		else
 			setBounds(100, 100, 100, 100);
 		thePresetFolder = thePreferenceTree.getProperty("PresetFolder");
 		theControllerView = new ControllerView(masterTree, thePreferenceTree);
-		setContentOwned (theControllerView, true);
+		setContentOwned(theControllerView, true);
 		theState = false;
+		thePreferenceTree.addListener(this);
 		setVisible(true);
 		addKeyListener(this);
 	}
@@ -51,7 +54,7 @@ public:
 		thePreferenceTree.setProperty("W", getWidth(), nullptr);
 		thePreferenceTree.setProperty("H", getHeight(), nullptr);
 		thePreferenceTree.setProperty("State", false, nullptr);
-		thePreferenceTree.setProperty("ColourTheme", theColourTheme, nullptr);
+		thePreferenceTree.setProperty("ColourTheme", (int)theColourTheme, nullptr);
 		if (thePreferenceFile.exists()) thePreferenceFile.deleteFile();
 		FileOutputStream outputStream(thePreferenceFile);
 		thePreferenceTree.writeToStream(outputStream);
@@ -59,11 +62,9 @@ public:
 	
 	void paint(Graphics& g)
 	{
-//		g.setColour(SeqLookAndFeel::getColour(COLOUR_5));
-		g.setColour(Colours::white);
+		g.setColour(SeqLookAndFeel::getColour(COLOUR_BACKGROUND));
 		g.fillAll();
 	}
-	
 		
 	void closeButtonPressed()
 	{		
@@ -89,9 +90,25 @@ public:
 		return true;
 	}
 
+	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property)
+	{
+		if (String(property) == "ColourTheme")
+		{
+			theColourTheme = (ColourTheme)(int)tree.getProperty(property, false);
+			clearContentComponent();
+			theControllerView = new ControllerView(theMasterTree, thePreferenceTree);
+			setContentOwned(theControllerView, true);
+		}
+	}
+	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
+	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
+	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
+	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
+	
 private:
 	File thePreferenceFile;
 	ValueTree thePreferenceTree;
+	ValueTree theMasterTree;
 	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
 	ControllerView* theControllerView;
 	bool theState;

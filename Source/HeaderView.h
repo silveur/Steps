@@ -45,6 +45,7 @@ public:
 		theKickBackButton->addListener(this);
 		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
 		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theClockSourceList->setColour(ComboBox::textColourId, textButtonTextColour);
 		theClockSourceList->addSectionHeading("Clock source");
 		theClockSourceList->addItem("External", 1);
 		theClockSourceList->addItem("Internal", 2);
@@ -54,6 +55,7 @@ public:
 		
 		addAndMakeVisible(theMasterClockList = new ComboBox("MasterClock"));
 		theMasterClockList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theMasterClockList->setColour(ComboBox::textColourId, textButtonTextColour);
 		theMasterClockList->addSectionHeading("Clock output");
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
 		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");

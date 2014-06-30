@@ -20,12 +20,15 @@ enum SequencerColours
 	COLOUR_3,
 	COLOUR_4,
 	COLOUR_5,
+	COLOUR_BACKGROUND
 };
 
 enum ColourTheme
 {
 	DARK,
-	BRIGHT
+	BRIGHT,
+	WINE,
+	MORE
 };
 
 extern ColourTheme theColourTheme;
@@ -80,8 +83,9 @@ public:
 			g.strokePath (outline, PathStrokeType (1.0f));
 		}
 		
+		Colour textColour = button.findColour (ToggleButton::textColourId);
+		g.setColour(textColour);
 		String text(button.getName().getCharPointer(), 1);
-		g.setColour(getColour(COLOUR_1));
 		g.drawFittedText(text, 0, 0, button.getWidth(), button.getHeight(), Justification::centred, 1);
 	}
 	
@@ -500,9 +504,9 @@ public:
 	
 	static Colour getColour(const SequencerColours colour, float alpha=1.0f)
 	{
+		uint8 intAlpha = (int) (alpha * 255.0f);
 		if (theColourTheme == DARK)
 		{
-			uint8 intAlpha = (int) (alpha * 255.0f);
 			switch (colour)
 			{
 				case COLOUR_1: return Colour::fromRGBA(27, 29, 38, intAlpha);
@@ -510,13 +514,12 @@ public:
 				case COLOUR_3: return Colour::fromRGBA(119, 140, 122, intAlpha);
 				case COLOUR_4: return Colour::fromRGBA(241, 242, 216, intAlpha);
 				case COLOUR_5: return Colour::fromRGBA(191, 189, 159, intAlpha);
+				case COLOUR_BACKGROUND: return Colour::fromRGBA(191, 189, 159, intAlpha);
 				default: return Colour();
 			}
 		}
-		
 		else if (theColourTheme == BRIGHT)
 		{
-			uint8 intAlpha = (int) (alpha * 255.0f);
 			switch (colour)
 			{
 				case COLOUR_1: return Colour::fromRGBA(51, 77, 92, intAlpha);
@@ -524,10 +527,39 @@ public:
 				case COLOUR_3: return Colour::fromRGBA(239, 201, 76, intAlpha);
 				case COLOUR_4: return Colour::fromRGBA(226, 122, 63, intAlpha);
 				case COLOUR_5: return Colour::fromRGBA(223, 73, 73, intAlpha);
-			
+				case COLOUR_BACKGROUND: return Colours::white;
 				default: return Colour();
 			}
 		}
+		else if (theColourTheme == WINE)
+		{
+			switch (colour)
+			{
+				
+				case COLOUR_1: return Colour::fromRGBA(47, 52, 59, intAlpha);
+				case COLOUR_2: return Colour::fromRGBA(112, 48, 48, intAlpha);
+				case COLOUR_3: return Colour::fromRGBA(126, 130, 122, intAlpha);
+				case COLOUR_4: return Colour::fromRGBA(227, 205, 164, intAlpha);
+				case COLOUR_5: return Colour::fromRGBA(199, 121, 102, intAlpha);
+				case COLOUR_BACKGROUND: return Colour::fromRGBA(199, 121, 102, intAlpha);
+				default: return Colour();
+			}
+		}
+		else if (theColourTheme == MORE)
+		{
+			switch (colour)
+			{
+					
+				case COLOUR_2: return Colour::fromRGBA(173, 154, 39, intAlpha);
+				case COLOUR_1: return Colour::fromRGBA(48, 67, 69, intAlpha);
+				case COLOUR_3: return Colour::fromRGBA(120, 154, 161, intAlpha);
+				case COLOUR_4: return Colour::fromRGBA(160, 213, 214, intAlpha);
+				case COLOUR_5: return Colour::fromRGBA(220, 235, 221, intAlpha);
+				case COLOUR_BACKGROUND: return Colour::fromRGBA(220, 235, 221, intAlpha);
+				default: return Colour();
+			}
+		}
+
 		else
 			return Colour();
 	}

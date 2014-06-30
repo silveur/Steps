@@ -18,32 +18,56 @@ class AboutView: public Component
 public:
 	AboutView(ControllerView* view): theControllerView(view)
 	{
-		text.setText(String(" From classic four-to-the floor to outer-space arrangements, Nummer layout raw drum work and emotive atmospheres with finesse. After forming in 2010, the London-based duo hit record store catalogues for the first time in 2014 with their debut EP Beyond Time Interpretations on Peur Bleue records. "), NotificationType::dontSendNotification);
-		text.setJustificationType(Justification::centred);
-		addAndMakeVisible(&text);
-		text.addMouseListener(this, true);
+		theLogo = ImageFileFormat::loadFrom(BinaryData::IconSmall_png, BinaryData::IconSmall_pngSize);
+		addAndMakeVisible(theSlider = new Slider(""));
+		theSlider->setSliderStyle(Slider::RotaryVerticalDrag);
+		theSlider->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
+		theSlider->setTextBoxIsEditable(false);
+		theSlider->setScrollWheelEnabled(true);
+		theSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_1));
+		theSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(COLOUR_2));
+		theSlider->setDoubleClickReturnValue(true, 0);
+		theSlider->setRange(-12, 12);
+		theSlider->setValue(3);
+		
+		addAndMakeVisible(theWebSite = new HyperlinkButton("http://www.nummermusic.com", URL("http://www.nummermusic.com")));
+		theWebSite->setFont(Font ("Helvetica Neue",14.0000f, Font::plain), false, Justification::left);
+		theWebSite->setColour(HyperlinkButton::textColourId, SeqLookAndFeel::getColour(COLOUR_1));
 	}
 	
 	void paint(Graphics& g)
 	{
-//		g.setFont(12);
-//		g.drawText(, getWidth()/8, getHeight()/4, getWidth()/1.5, getHeight()/2, Justification::centred, true);
+		g.setFont (Font ("Helvetica Neue",14.0000f, Font::plain));
+		g.setColour(SeqLookAndFeel::getColour(COLOUR_1));
+		
+		float heigthDiv = getHeight() / 16.0f;
+		float widthDiv = getWidth() / 32.0f;
+		
+		g.drawFittedText("Steps V" + String(ProjectInfo::versionString), widthDiv * 14, heigthDiv * 4, widthDiv * 10, heigthDiv * 2, Justification::left, 1);
+		g.drawFittedText("Original idea & programming: Silvere Letellier", widthDiv * 14, heigthDiv * 5, widthDiv * 10, heigthDiv * 2, Justification::left, 1);
+		g.drawFittedText("With the help of: Danny White, Emmnanuel Corre, Guillaume De Oubeda, Julian Salaun", widthDiv * 14, heigthDiv * 6, widthDiv * 20, heigthDiv * 2, Justification::left, 2);
+		g.drawFittedText("Special thanks to Julian Storer", widthDiv * 14, heigthDiv * 8, widthDiv * 20, heigthDiv * 2, Justification::left, 2);
 	}
-	void resized()
-	
-	{
-		text.setBounds(getBounds());
-	}
+
 	void mouseDown (const MouseEvent &event)
 	{
 		theControllerView->aboutViewClicked();
 	}
+	
+	void resized()
+	{
+		float heigthDiv = getHeight() / 16.0f;
+		float widthDiv = getWidth() / 32.0f;
+		theSlider->setBounds(widthDiv * 10, heigthDiv * 3, widthDiv * 3, widthDiv * 3);
+		theWebSite->setBounds(widthDiv * 14, heigthDiv * 10, widthDiv * 20, heigthDiv * 2);
+	}
+	
 
 private:
-	Label text;
 	ControllerView* theControllerView;
+	ScopedPointer<Slider> theSlider;
+	Image theLogo;
+	ScopedPointer<HyperlinkButton> theWebSite;
 };
-
-
 
 #endif  // ABOUTVIEW_H_INCLUDED
