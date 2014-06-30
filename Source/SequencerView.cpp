@@ -43,7 +43,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
-		theVelocitySliders[i]->setColour(Slider::trackColourId, Colour::fromRGB(83, 85, 75));
+		theVelocitySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(ColourDarkGrey).withAlpha(0.7f));
 		theVelocitySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(ColourDarkBlue));
 		theVelocitySliders[i]->addListener(this);
 		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
@@ -63,7 +63,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
-		theDecaySliders[i]->setColour(Slider::trackColourId, Colour::fromRGB(83, 85, 75));
+		theDecaySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(ColourDarkGrey).withAlpha(0.5f));
 		theDecaySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(ColourGreen));
 		theDecaySliders[i]->addListener (this);
 		
@@ -71,7 +71,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	}
 	
 	int offset = theSequencerTree.getProperty("Offset");
-	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);
+	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
 	
 	addAndMakeVisible(theSequencerLength = new Slider("Length"));
 	theSequencerLength->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
@@ -570,10 +570,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, Colours::grey);
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
 		}
 		int offset = tree.getProperty(property);
-		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, Colours::green);
+		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
 		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "RootNote")

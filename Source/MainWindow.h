@@ -58,7 +58,7 @@ public:
 	
 	void paint(Graphics& g)
 	{
-		g.setColour(Colour::fromRGB(198, 201, 180));
+		g.setColour(SeqLookAndFeel::getColour(ColourLightBlue));
 		g.fillAll();
 	}
 	

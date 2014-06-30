@@ -38,8 +38,8 @@ ControllerView::~ControllerView()
 
 void ControllerView::paint(Graphics& g)
 {
-	g.setColour(SeqLookAndFeel::getColour(ColourLightBlue));
-	g.fillAll();
+//	g.setColour(SeqLookAndFeel::getColour(ColourLightBlue));
+//	g.fillAll();
 }
 
 void ControllerView::resized()
