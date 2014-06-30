@@ -12,8 +12,13 @@
 #include "HeaderView.h"
 #include "AboutView.h"
 
+ColourTheme theColourTheme;
+Colour textButtonTextColour;
+
 ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree): theMasterTree(masterTree), thePreferenceTree(preferenceTree)
 {
+	theColourTheme = BRIGHT;//;preferenceTree.getProperty("ColourTheme", false);
+	textButtonTextColour = SeqLookAndFeel::getColour(COLOUR_1);
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		ValueTree sequenceTree = theMasterTree.getChild(i);
@@ -28,6 +33,7 @@ ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree)
 	setInterceptsMouseClicks(false, true);
 	theMenuBar = new MenuBar(this);
 	theMenuBar->addCommandTarget(this, this);
+	
 	refreshView();
 }
 

@@ -13,12 +13,13 @@
 
 extern File thePresetFolder;
 extern File theDefaultPreset;
+extern Colour textButtonTextColour;
 
 Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): theSequencerView(sequencerView), theSequencerTree(sequencerTree)
 {
 	addAndMakeVisible(theRandomAllButton = new TextButton("Randomise"));
-	theRandomAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theRandomAllButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theRandomAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theRandomAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theRandomAllButton->addListener(this);
 	
 	addAndMakeVisible(theVelocityButton = new ToggleButton("Velocity"));
@@ -38,7 +39,7 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 	theStateButton->addListener(this);
 	
 	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
-	theResetAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreen));
+	theResetAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_5));
 	theResetAllButton->addListener(this);
 	
 	theSequencerTree.addListener(this);

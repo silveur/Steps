@@ -13,6 +13,7 @@
 #include "Randomiser.h"
 
 extern File thePresetFolder;
+extern Colour textButtonTextColour;
 
 SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controllerView): theControllerView(controllerView), thePreviousStepPosition(-1)
 {
@@ -26,8 +27,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theStepSliders[i]->setTextBoxStyle(Slider::NoTextBox, false, 50, 50);
 		theStepSliders[i]->setTextBoxIsEditable(false);
 		theStepSliders[i]->setScrollWheelEnabled(false);
-		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
-		theStepSliders[i]->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourBlue));
+		theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_1));
+		theStepSliders[i]->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(COLOUR_2));
 		theStepSliders[i]->setDoubleClickReturnValue(true, 0);
 		theStepSliders[i]->setRange(0 - 12 * (int)theSequencerTree.getProperty("Range"), 12 * (int)theSequencerTree.getProperty("Range"), 1);
 		theStepSliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Pitch"));
@@ -43,14 +44,22 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setTextValueSuffix(" Velocity");
 		theVelocitySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theVelocitySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Velocity"));
-		theVelocitySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(ColourDarkGrey).withAlpha(0.7f));
-		theVelocitySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(ColourDarkBlue));
+		theVelocitySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theVelocitySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(COLOUR_2));
 		theVelocitySliders[i]->addListener(this);
 		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i))));
 		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
-		if (state == ON) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
-		else if (state == OFF) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourRedOrange));
-		else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourPurple));
+		if (state == ON)
+		{
+			theStateButtons[i]->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(COLOUR_1));
+			theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		}
+		else if (state == OFF)
+		{
+			theStateButtons[i]->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(COLOUR_1));
+			theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_3));
+		}
+		else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_2));
 		theStateButtons[i]->setButtonText(getTextForEnum(state));
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
@@ -63,53 +72,41 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theDecaySliders[i]->setPopupDisplayEnabled(true, theControllerView);
 		theDecaySliders[i]->setRange(1, 200, 1);
 		theDecaySliders[i]->setValue((int)theSequencerTree.getChild(i).getProperty("Decay"));
-		theDecaySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(ColourDarkGrey).withAlpha(0.5f));
-		theDecaySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(ColourGreen));
+		theDecaySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theDecaySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(COLOUR_2));
 		theDecaySliders[i]->addListener (this);
 		
 		addAndMakeVisible(theLEDs.add(new StepView()));
 	}
 	
 	int offset = theSequencerTree.getProperty("Offset");
-	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
-	
-	addAndMakeVisible(theSequencerLength = new Slider("Length"));
-	theSequencerLength->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-	theSequencerLength->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourRedOrange));
-	theSequencerLength->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theSequencerLength->setRange(1, 32,1);
-	theSequencerLength->setScrollWheelEnabled(false);
-	theSequencerLength->setTextBoxStyle(Slider::NoTextBox, false, 30, 30);
-	theSequencerLength->setTextValueSuffix(" steps");
-	theSequencerLength->setPopupDisplayEnabled(true, theControllerView);
-	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
-	theSequencerLength->addListener(this);
-	
+	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_5));
+
 	addAndMakeVisible(theRandomiser = new Randomiser(this, theSequencerTree));
 	
 	addAndMakeVisible(theCopyButton = new TextButton("Copy"));
-	theCopyButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theCopyButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theCopyButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theCopyButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theCopyButton->addListener(this);
 	
 	addAndMakeVisible(thePasteButton = new TextButton("Paste"));
-	thePasteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	thePasteButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	thePasteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	thePasteButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	thePasteButton->addListener(this);
 	
 	addAndMakeVisible(theExportButton = new TextButton("Export"));
-	theExportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theExportButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theExportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theExportButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theExportButton->addListener(this);
 	
 	addAndMakeVisible(theImportButton = new TextButton("Import"));
-	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theImportButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theImportButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theImportButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theImportButton->addListener(this);
 	
 	addAndMakeVisible(theDeleteButton = new TextButton("Delete"));
-	theDeleteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theDeleteButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theDeleteButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theDeleteButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theDeleteButton->addListener(this);
 
 	for (int i=0;i<5;i++)
@@ -118,7 +115,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		addAndMakeVisible(theShuffleButtons[i]);
 		theShuffleButtons[i]->addListener(this);
 		theShuffleButtons[i]->setButtonText(String(i));
-		theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
+		theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4));
+		theShuffleButtons[i]->setColour(ComboBox::textColourId, textButtonTextColour);
 	}
 	buttonClicked(theShuffleButtons[theSequencerTree.getProperty("Shuffle")]);
 	
@@ -130,12 +128,24 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOffsetSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 	theOffsetSlider->setValue(theSequencerTree.getProperty("Offset"));
 	theOffsetSlider->setPopupDisplayEnabled(true, theControllerView);
-	theOffsetSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourBlue));
-	theOffsetSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theOffsetSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_2));
+	theOffsetSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(COLOUR_4));
 	int length = theSequencerTree.getProperty("Length");
 	if (length > 16) theOffsetSlider->setRange(0, 31, 1);
 	else theOffsetSlider->setRange(0, 15, 1);
 	theOffsetSlider->addListener(this);
+	
+	addAndMakeVisible(theSequencerLength = new Slider("Length"));
+	theSequencerLength->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
+	theSequencerLength->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_2));
+	theSequencerLength->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theSequencerLength->setRange(1, 32,1);
+	theSequencerLength->setScrollWheelEnabled(false);
+	theSequencerLength->setTextBoxStyle(Slider::NoTextBox, false, 30, 30);
+	theSequencerLength->setTextValueSuffix(" steps");
+	theSequencerLength->setPopupDisplayEnabled(true, theControllerView);
+	theSequencerLength->setValue(theSequencerTree.getProperty("Length"));
+	theSequencerLength->addListener(this);
 
 	for (int i=0;i<3;i++)
 	{
@@ -143,13 +153,14 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		addAndMakeVisible(theRangeButtons[i]);
 		theRangeButtons[i]->addListener(this);
 		theRangeButtons[i]->setButtonText(String(i + 1));
-		theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
+		theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4));
+		theRangeButtons[i]->setColour(ComboBox::textColourId, textButtonTextColour);
 	}
 	buttonClicked(theRangeButtons[(int)theSequencerTree.getProperty("Range") - 1]);
 	
 	addAndMakeVisible(theSpeedList = new ComboBox("Speed"));
-	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theSpeedList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theSpeedList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theSpeedList->setColour(ComboBox::textColourId, textButtonTextColour);
 	theSpeedList->addSectionHeading("Speed");
 	theSpeedList->addItem("1/1", 1);
 	theSpeedList->addItem("1/2", 2);
@@ -164,14 +175,15 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theOnOffButton->addListener(this);
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
-	theMidiOutputList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theMidiOutputList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theMidiOutputList->setColour(ComboBox::textColourId, textButtonTextColour);
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	theChannelList->addSectionHeading("Midi channel");
-	theChannelList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theChannelList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theChannelList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theChannelList->setColour(ComboBox::textColourId, textButtonTextColour);
 	for (int i=1;i<=16;i++)
 		theChannelList->addItem(String(i), i);
 	theChannelList->setSelectedId(theSequencerTree.getProperty("Channel"));
@@ -180,17 +192,17 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	refreshMidiList();
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
-	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theRootNoteList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theRootNoteList->setColour(ComboBox::textColourId, textButtonTextColour);
 	
 	addAndMakeVisible(theRootOctaveList = new ComboBox("RootOctaveList"));
-	theRootOctaveList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+	theRootOctaveList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
 	theRootOctaveList->addSectionHeading("Root octave");
-	theRootOctaveList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theRootOctaveList->setColour(ComboBox::textColourId, textButtonTextColour);
 	
 	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
-	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-	theScaleList->setColour(ComboBox::textColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theScaleList->setColour(ComboBox::textColourId, textButtonTextColour);
 	theScaleList->addSectionHeading("Scales");
 	loadScales();
 	updateNotesAndOctaves();
@@ -206,6 +218,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theUndoManager->clearUndoHistory();
 	setInterceptsMouseClicks(true, true);
 	addKeyListener(this);
+	
+	randomiseAll();
 }
 
 SequencerView::~SequencerView()
@@ -384,15 +398,15 @@ void SequencerView::buttonClicked(Button* button)
 	else if (button->getName().contains("Shuffle"))
 	{
 		int index = button->getButtonText().getIntValue();
-		for (int i=0; i<5;i++) theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
-		button->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourBlueGrey));
+		for (int i=0; i<5;i++) theShuffleButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4));
+		button->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_3));
 		theSequencerTree.setProperty("Shuffle", index, theUndoManager);
 	}
 	else if (button->getName().contains("Range"))
 	{
 		int index = button->getButtonText().getIntValue();
-		for (int i=0; i<3;i++) theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourLightGrey));
-		button->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::ColourBlueGrey));
+		for (int i=0; i<3;i++) theRangeButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4));
+		button->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_3));
 		theSequencerTree.setProperty("Range", index, theUndoManager);
 	}
 	else
@@ -570,10 +584,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		for(int i=0;i<32;i++)
 		{
-			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourDarkGrey));
+			theStepSliders[i]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_3));
 		}
 		int offset = tree.getProperty(property);
-		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
+		theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_5));
 		theOffsetSlider->setValue(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "RootNote")
@@ -616,9 +630,17 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 				{
 					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
 					theStateButtons[i]->setButtonText(getTextForEnum(state));
-					if (state == ON) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourGreenBlue));
-					else if (state == OFF) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourRedOrange));
-					else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourPurple));
+					if (state == ON)
+					{
+						theStateButtons[i]->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(COLOUR_1));
+						theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+					}
+					else if (state == OFF)
+					{
+						theStateButtons[i]->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(COLOUR_1));
+						theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_3));
+					}
+					else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_2));
  				}
 				else if (String(property) == "Velocity")
 					theVelocitySliders[i]->setValue((int)tree.getProperty(property));

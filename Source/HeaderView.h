@@ -16,6 +16,7 @@
 #include "LookAndFeel.h"
 
 extern UndoManager* theUndoManager;
+extern Colour textButtonTextColour;
 
 class HeaderView: public Component, ButtonListener, public ComboBoxListener, public ValueTree::Listener, SliderListener
 {
@@ -25,25 +26,25 @@ public:
 		theMainLabel = "Sequencer";
 		thePreferenceTree = preferenceTree;
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
-		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-		theAddSequencerButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theAddSequencerButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theAddSequencerButton->addListener(this);
 		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
 		theUndoButton->addListener(this);
 		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
 		theRedoButton->addListener(this);
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
-		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-		theExportAllButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theExportAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theExportAllButton->addListener(this);
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
-		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(ColourLightGrey));
-		theImportAllButton->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(ColourDarkGrey));
+		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theImportAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theImportAllButton->addListener(this);
 		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
 		theKickBackButton->addListener(this);
 		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
-		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theClockSourceList->addSectionHeading("Clock source");
 		theClockSourceList->addItem("External", 1);
 		theClockSourceList->addItem("Internal", 2);
@@ -52,7 +53,7 @@ public:
 		theClockSourceList->addListener(this);
 		
 		addAndMakeVisible(theMasterClockList = new ComboBox("MasterClock"));
-		theMasterClockList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+		theMasterClockList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theMasterClockList->addSectionHeading("Clock output");
 		theMasterClockList->setTextWhenNothingSelected("Clock output");
 		theMasterClockList->setTextWhenNoChoicesAvailable("No midi output available");
@@ -71,8 +72,8 @@ public:
 		theBPMSlider->setScrollWheelEnabled(false);
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
-		theBPMSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(ColourBlue));
-		theBPMSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(ColourLightGrey));
+		theBPMSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_2));
+		theBPMSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theBPMSlider->addListener(this);
 		
 		setInterceptsMouseClicks(false, true);
@@ -164,7 +165,7 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.setColour(SeqLookAndFeel::getColour(ColourDarkGrey));
+		g.setColour(textButtonTextColour);
 		
 		float heigthDiv = getHeight() / 4.0f;
 		float widthDiv = getWidth() / 130.0f;

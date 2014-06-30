@@ -51,6 +51,7 @@ public:
 		thePreferenceTree.setProperty("W", getWidth(), nullptr);
 		thePreferenceTree.setProperty("H", getHeight(), nullptr);
 		thePreferenceTree.setProperty("State", false, nullptr);
+		thePreferenceTree.setProperty("ColourTheme", theColourTheme, nullptr);
 		if (thePreferenceFile.exists()) thePreferenceFile.deleteFile();
 		FileOutputStream outputStream(thePreferenceFile);
 		thePreferenceTree.writeToStream(outputStream);
@@ -58,7 +59,8 @@ public:
 	
 	void paint(Graphics& g)
 	{
-		g.setColour(SeqLookAndFeel::getColour(ColourLightBlue));
+//		g.setColour(SeqLookAndFeel::getColour(COLOUR_5));
+		g.setColour(Colours::white);
 		g.fillAll();
 	}
 	

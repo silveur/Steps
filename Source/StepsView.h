@@ -32,8 +32,8 @@ public:
 
 	void paint(Graphics& g)
 	{
-		if (theState) g.setColour (SeqLookAndFeel::getColour(ColourDarkGrey).withAlpha(0.7f));
-		else g.setColour (SeqLookAndFeel::getColour(ColourDarkGrey).withAlpha(0.2f));
+		if (theState) g.setColour (SeqLookAndFeel::getColour(COLOUR_1));
+		else g.setColour (SeqLookAndFeel::getColour(COLOUR_4));
         g.fillEllipse (getWidth()*0.4f, getHeight()*0.1f, getHeight()*0.8f, getHeight()*0.8f);
 	}
 

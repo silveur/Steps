@@ -15,24 +15,20 @@
 
 enum SequencerColours
 {
-	ColourDarkGrey = 0,
-	ColourLightGrey,
-	ColourBlueGrey,
-	ColourLightBlue,
-	ColourRed,
-	ColourViolet,
-	ColourBlue,
-	ColourDarkBlue,
-	ColourGreen,
-	ColourRedOrange,
-	ColourGreenBlue,
-	ColourOrange,
-	ColourOrangeYellow,
-	ColourRichBlue,
-	ColourYellow,
-	ColourPurple,
-	ColourYellowGreen,
+	COLOUR_1 = 0,
+	COLOUR_2,
+	COLOUR_3,
+	COLOUR_4,
+	COLOUR_5,
 };
+
+enum ColourTheme
+{
+	DARK,
+	BRIGHT
+};
+
+extern ColourTheme theColourTheme;
 
 class SeqLookAndFeel: public LookAndFeel_V3
 {
@@ -53,9 +49,9 @@ public:
 		Colour back = button.findColour (button.getToggleState() ? TextButton::textColourOnId
 										 : TextButton::textColourOffId);
 		if (button.getToggleState())
-			back = getColour(SequencerColours::ColourBlueGrey);
+			back = getColour(SequencerColours::COLOUR_3);
 		else
-			back = getColour(SequencerColours::ColourLightGrey);
+			back = getColour(SequencerColours::COLOUR_4);
 		Colour baseColour (back.withMultipliedSaturation (button.hasKeyboardFocus (true) ? 1.3f : 0.9f)
 						   .withMultipliedAlpha (button.isEnabled() ? 0.9f : 0.5f));
 		
@@ -85,7 +81,7 @@ public:
 		}
 		
 		String text(button.getName().getCharPointer(), 1);
-		g.setColour(getColour(ColourDarkGrey));
+		g.setColour(getColour(COLOUR_1));
 		g.drawFittedText(text, 0, 0, button.getWidth(), button.getHeight(), Justification::centred, 1);
 	}
 	
@@ -143,7 +139,7 @@ public:
 		p.addBubble (body.reduced (0.5f), body.getUnion (Rectangle<float> (tip.x, tip.y, 1.0f, 1.0f)),
 					 tip, 5.0f, jmin (15.0f, body.getWidth() * 0.2f, body.getHeight() * 0.2f));
 		
-		g.setColour (Colours::white);
+		g.setColour (getColour(COLOUR_4));
 		g.fillPath (p);
 	}
 	
@@ -253,7 +249,7 @@ public:
 			g.fillPath(outlineArc);
 			
 			if (slider.isEnabled())
-				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 1.0f : 0.7f));
+				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 0.7f : 1.0f));
 			else
 				g.setColour (Colour (0x80808080));
 			
@@ -288,7 +284,7 @@ public:
 		else
 		{
 			if (slider.isEnabled())
-				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 1.0f : 0.7f));
+				g.setColour (slider.findColour (Slider::rotarySliderFillColourId).withAlpha (slider.isMouseOver() ? 0.7f : 1.0f));
 			else
 				g.setColour (Colour (0x80808080));
 			
@@ -504,29 +500,38 @@ public:
 	
 	static Colour getColour(const SequencerColours colour, float alpha=1.0f)
 	{
-		uint8 intAlpha = (int) (alpha * 255.0f);
-		switch (colour)
+		if (theColourTheme == DARK)
 		{
-			case ColourDarkGrey: return Colour::fromRGBA(47, 46, 47, intAlpha);
-			case ColourLightGrey: return Colour::fromRGBA(186, 186, 186, intAlpha);
-			case ColourBlueGrey: return Colour::fromRGBA(81, 117, 139, intAlpha);
-			case ColourLightBlue: return Colour::fromRGBA(156, 183, 211, intAlpha);
-			case ColourRed: return Colour::fromRGBA(230, 63, 82, intAlpha);
-			case ColourViolet: return Colour::fromRGBA(180, 87, 161, intAlpha);
-			case ColourBlue: return Colour::fromRGBA(57, 127, 186, intAlpha);
-			case ColourDarkBlue: return Colour::fromRGBA(30, 40, 40, intAlpha);
-			case ColourGreen: return Colour::fromRGBA(101, 180, 72, intAlpha);
-			case ColourRedOrange: return Colour::fromRGBA(228, 118, 72, intAlpha);
-			case ColourGreenBlue: return Colour::fromRGBA(63, 180, 165, intAlpha);
-			case ColourOrange: return Colour::fromRGBA(227, 157, 69, intAlpha);
-			case ColourOrangeYellow: return Colour::fromRGBA(225, 186, 64, intAlpha);
-			case ColourRichBlue: return Colour::fromRGBA(38, 84, 165, intAlpha);
-			case ColourYellow: return Colour::fromRGBA(227, 215, 67, intAlpha);
-			case ColourPurple: return Colour::fromRGBA(101, 86, 165, intAlpha);
-			case ColourYellowGreen: return Colour::fromRGBA(186, 203, 64, intAlpha);
-			default: return Colour();
+			uint8 intAlpha = (int) (alpha * 255.0f);
+			switch (colour)
+			{
+				case COLOUR_1: return Colour::fromRGBA(27, 29, 38, intAlpha);
+				case COLOUR_2: return Colour::fromRGBA(66, 89, 85, intAlpha);
+				case COLOUR_3: return Colour::fromRGBA(119, 140, 122, intAlpha);
+				case COLOUR_4: return Colour::fromRGBA(241, 242, 216, intAlpha);
+				case COLOUR_5: return Colour::fromRGBA(191, 189, 159, intAlpha);
+				default: return Colour();
+			}
 		}
+		
+		else if (theColourTheme == BRIGHT)
+		{
+			uint8 intAlpha = (int) (alpha * 255.0f);
+			switch (colour)
+			{
+				case COLOUR_1: return Colour::fromRGBA(51, 77, 92, intAlpha);
+				case COLOUR_2: return Colour::fromRGBA(69, 178, 157, intAlpha);
+				case COLOUR_3: return Colour::fromRGBA(239, 201, 76, intAlpha);
+				case COLOUR_4: return Colour::fromRGBA(226, 122, 63, intAlpha);
+				case COLOUR_5: return Colour::fromRGBA(223, 73, 73, intAlpha);
+			
+				default: return Colour();
+			}
+		}
+		else
+			return Colour();
 	}
+	
 };
 
 
