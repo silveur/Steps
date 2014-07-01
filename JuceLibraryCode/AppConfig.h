@@ -53,6 +53,24 @@ enum ClockMode
 	INTERNAL
 };
 
+enum SequencerColours
+{
+	COLOUR_1 = 0,
+	COLOUR_2,
+	COLOUR_3,
+	COLOUR_4,
+	COLOUR_5,
+	COLOUR_BACKGROUND
+};
+
+enum ColourTheme
+{
+	DARK,
+	BRIGHT,
+	WINE,
+	ETSI
+};
+
 // [END_USER_CODE_SECTION]
 
 //==============================================================================

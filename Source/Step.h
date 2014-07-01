@@ -90,19 +90,17 @@ private:
 		}
 	}
 	
-	int theVelocity;
-	int thePitch;
-	int theDecay;
-	StepStates theState;
-	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-
-	ValueTree theStepTree;
+	
 	friend class Sequencer;
-
+	ValueTree theStepTree;
+	StepStates theState;
+	int theVelocity;
+	int thePitch;
+	int theDecay;
 };
 
 #endif  // STEP_H_INCLUDED

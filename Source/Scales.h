@@ -56,10 +56,7 @@ public:
 		}
 	}
 	
-	~Scale()
-	{
-		
-	}
+	~Scale() {}
 	
 	Array<int>& getNotes()
 	{
@@ -75,7 +72,5 @@ private:
 	String theScaleName;
 	Array<int> theNotes;
 };
-
-
 
 #endif  // SCALES_H_INCLUDED

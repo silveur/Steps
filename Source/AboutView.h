@@ -26,6 +26,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "ControllerView.h"
+
 class AboutView: public Component
 {
 public:

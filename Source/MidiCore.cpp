@@ -55,30 +55,6 @@ MidiCore::~MidiCore()
 	}
 }
 
-StringArray MidiCore::getMidiDevicesList()
-{
-	StringArray list = MidiOutput::getDevices();
-	return list;
-}
-
-void MidiCore::noteOn(int noteNumber,uint8 velocity, int channel)
-{
-	if (theMidiOutput != nullptr)
-	{
-		const MidiMessage midiMessage(MidiMessage::noteOn(channel, noteNumber, (uint8)velocity));
-		outputMidi(midiMessage);
-	}
-}
-
-void MidiCore::noteOff(int noteNumber)
-{
-	if (theMidiOutput != nullptr)
-	{
-		const MidiMessage midiMessage(0x80,noteNumber,127,0);
-		outputMidi(midiMessage);
-	}
-}
-
 void MidiCore::killNotes()
 {
 	if (theMidiOutput != nullptr)

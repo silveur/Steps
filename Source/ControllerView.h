@@ -57,6 +57,4 @@ private:
 	ValueTree thePreferenceTree;
 };
 
-
-
 #endif  // ROOTVIEW_H_INCLUDED

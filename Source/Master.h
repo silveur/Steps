@@ -141,6 +141,7 @@ private:
 			}
 		}
 	}
+	
 	void valueTreeRedirected (ValueTree &treeWhichHasBeenChanged){}
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}

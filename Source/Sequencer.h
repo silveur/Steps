@@ -36,7 +36,7 @@ class Sequencer: public ValueTree::Listener
 {
 public:
 	Sequencer(ValueTree& sequencerTree);
-	~Sequencer();
+	~Sequencer() {}
 	void handleIncomingMidiMessage (const MidiMessage& message);
 	void stop();
 	void start();
@@ -73,6 +73,5 @@ private:
 	bool waitForShuffle;
 	friend class Master;
 };
-
 
 #endif  // SEQUENCER_H_INCLUDED

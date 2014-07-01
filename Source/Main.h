@@ -36,7 +36,7 @@ public:
 	
 	const String getApplicationName() override       { return ProjectInfo::projectName; }
 	const String getApplicationVersion() override    { return ProjectInfo::versionString; }
-	bool moreThanOneInstanceAllowed() override       { return true; }
+	bool moreThanOneInstanceAllowed() override       { return false; }
 	
 	void initialise (const String& commandLine) override;
 	void timerCallback();
@@ -50,19 +50,13 @@ public:
 		quit();
 	}
 	
-	void anotherInstanceStarted (const String& commandLine) override
-	{
-	}
-	
 	void updateCallback();
 	
 private:
 	ScopedPointer<MainWindow> mainWindow;
 	ScopedPointer<Master> theSequencerMaster;
 	ValueTree thePreferenceTree;
-	#ifndef OLD_MAC
 	PackageHandler* thePackageHandler;
-	#endif
 };
 
 #endif  // MAIN_H_INCLUDED

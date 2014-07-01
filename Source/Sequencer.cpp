@@ -55,10 +55,6 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 	theSequencerTree.addListener(this);
 }
 
-Sequencer::~Sequencer()
-{
-}
-
 void Sequencer::triggerNote(int stepIndex = -1)
 {
 	Step* step;
@@ -135,7 +131,7 @@ void Sequencer::carryOn()
 void Sequencer::triggerStep()
 {
 	thePosition = (thePosition+1) % theLength;
-	if (theStepArray[thePosition]->theState == JUMP)
+	while (theStepArray[thePosition]->theState == JUMP)
 		thePosition = (thePosition+1) % theLength;
 	if (theStepArray[thePosition]->theState == ON)
 	{
@@ -167,10 +163,6 @@ void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 		}
 	}
 	
-	else if(message.isSongPositionPointer())
-	{
-
-	}
 	else if (message.isMidiStart())
 	{
 		start();
@@ -227,11 +219,6 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	else if(String(property) == "Speed")
 	{
 		theSpeed = tree.getProperty(property);
-	}
-	else if(String(property) == "KickBack")
-	{
-		thePosition = -1;
-		tree.setProperty(property, 0, nullptr);
 	}
 	else if(String(property) == "Trigger")
 	{

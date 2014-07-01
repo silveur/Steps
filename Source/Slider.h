@@ -85,6 +85,4 @@ private:
 	bool isBeingDragged;
 };
 
-
-
 #endif  // SLIDER_H_INCLUDED

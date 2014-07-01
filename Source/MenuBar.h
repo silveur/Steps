@@ -28,7 +28,7 @@
 
 enum MenuBarCommandIDs
 {
-	COMMAND_ID_NULL = 1, // Application Cammand Targets must be non-zero
+	COMMAND_ID_NULL = 1,
 	COMMAND_ID_SHOW_ABOUT,
 	COMMAND_ID_EXPORTALL,
 	COMMAND_ID_IMPORT_ALL,

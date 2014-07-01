@@ -74,13 +74,6 @@ void Randomiser::resized()
 	theRandomAllButton->setBounds(theStateButton->getRight(), 0, widthDiv * 6, getHeight());
 }
 
-bool Randomiser::altModifyer()
-{
-//	if (key.isKeyCode(82)) randomiseAll();
-	DBG("KEY");
-	return false;
-}
-
 void Randomiser::buttonClicked(Button* button)
 {
 	if (button == theRandomAllButton)

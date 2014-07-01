@@ -38,24 +38,27 @@ public:
 	{
 		theMainLabel = "Sequencer";
 		thePreferenceTree = preferenceTree;
+		
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
 		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theAddSequencerButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theAddSequencerButton->addListener(this);
+		
 		addAndMakeVisible(theUndoButton = new TextButton("Undo"));
 		theUndoButton->addListener(this);
 		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
 		theRedoButton->addListener(this);
+		
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
 		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theExportAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theExportAllButton->addListener(this);
+		
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
 		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theImportAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theImportAllButton->addListener(this);
-		addAndMakeVisible(theKickBackButton = new TextButton("Rewind"));
-		theKickBackButton->addListener(this);
+
 		addAndMakeVisible(theClockSourceList = new ComboBox("Clock source"));
 		theClockSourceList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theClockSourceList->setColour(ComboBox::textColourId, textButtonTextColour);
@@ -94,10 +97,7 @@ public:
 		setInterceptsMouseClicks(false, true);
 		thePreferenceTree.addListener(this);
 	}
-	~HeaderView()
-	{
-		theControllerView = nullptr;
-	}
+	~HeaderView() {}
 	
 	void buttonClicked(Button* buttonThatWasClicked)
 	{
@@ -178,6 +178,7 @@ public:
 			theMasterClockList->setSelectedItemIndex(tree.getProperty(property));
 		}
 	}
+	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
@@ -189,7 +190,6 @@ private:
 	ScopedPointer<TextButton> theRedoButton;
 	ScopedPointer<TextButton> theExportAllButton;
 	ScopedPointer<TextButton> theImportAllButton;
-	ScopedPointer<TextButton> theKickBackButton;
 	ScopedPointer<Slider> theBPMSlider;
 	ScopedPointer<ComboBox> theClockSourceList;
 	ScopedPointer<ComboBox> theMasterClockList;
@@ -197,7 +197,5 @@ private:
 	ValueTree thePreferenceTree;
 	String theMainLabel;
 };
-
-
 
 #endif  // HEADERVIEW_H_INCLUDED

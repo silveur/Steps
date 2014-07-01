@@ -35,7 +35,7 @@ class PackageHandler: private CURLEasySession::Listener
 public:
 	PackageHandler()
 	{
-		theTempApp = File::getSpecialLocation(File::tempDirectory).getFullPathName() + String("/sequencer.zip");
+		theTempApp = File::getSpecialLocation(File::tempDirectory).getFullPathName() + String("/steps.zip");
 		theCurlSession = new CURLEasySession();
 		theCurlSession->addListener(this);
 		File tempAppFile = File(theTempApp); tempAppFile.deleteFile();
@@ -43,11 +43,13 @@ public:
 		theServerURL = "http://nummermusic.com/version-request.php?version=";
 		checkForUpdate();
 	}
+	
 	~PackageHandler()
 	{
 		File tempFolder = File::getSpecialLocation(File::tempDirectory).getFullPathName();
 		tempFolder.deleteRecursively();
 	}
+	
 	void checkForUpdate()
 	{
 		theServerURL = theServerURL + ProjectInfo::versionString;
@@ -75,22 +77,18 @@ public:
 			deleteMe();
 		}
 	}
+	
 	void downloadUpdate(String url)
 	{
 		url = url.trimStart().trimEnd();
-		DBG("Downloading: " << url);
 		theCurlSession->setRemotePath(url);
 		theCurlSession->beginTransfer(false, true);
 	}
 	
-	void transferAboutToStart(CURLEasySession* session)
-	{
-		
-	}
-	void transferProgressUpdate(CURLEasySession* session)
-	{
-		DBG("Progress: " << String(session->getProgress()));
-	}
+	void transferAboutToStart(CURLEasySession* session)	{}
+	
+	void transferProgressUpdate(CURLEasySession* session) {}
+	
 	void transferEnded(CURLEasySession* session)
 	{
 		ZipFile receivedZip(theTempApp);
@@ -98,8 +96,6 @@ public:
 		File contents(theTempApp.replace(".zip", ".app") + String("/Contents/"));
 		File destinationFolder = File(File::getSpecialLocation(File::currentApplicationFile).getFullPathName() + String("/Contents/"));
 		destinationFolder.deleteRecursively();
-		DBG("Source:" << contents.getFullPathName());
-		DBG("Destination: " << destinationFolder.getFullPathName());
 		contents.copyDirectoryTo(destinationFolder);
 		String chmod = ("chmod +x " + destinationFolder.getFullPathName() + "/MacOS/*");
 		system(chmod.toRawUTF8());
@@ -117,7 +113,5 @@ private:
 	String theTempApp;
 	ScopedPointer<CURLEasySession> theCurlSession;
 };
-
-
 
 #endif  // PACKAGEHANDLER_H_INCLUDED

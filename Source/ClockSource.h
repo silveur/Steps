@@ -31,8 +31,7 @@ class Master;
 class ClockSource: public Thread
 {
 public:
-	ClockSource(Master* master): Thread("ClockGenerator"), theMaster(master), theBPM(-1)
-	{}
+	ClockSource(Master* master): Thread("ClockGenerator"), theMaster(master), theBPM(-1) {}
 
 	~ClockSource()
 	{
@@ -49,7 +48,5 @@ private:
 	float theBPM;
 	friend class Master;
 };
-
-
 
 #endif  // CLOCKSOURCE_H_INCLUDED

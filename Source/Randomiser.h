@@ -33,17 +33,13 @@ public:
 	Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree);
 	~Randomiser() {}
 	void resized();
-	void repaint()
-	{
-		DBG("REPAINT");
-	}
 	void buttonClicked(Button* button);
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property);
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	bool altModifyer();
+	
 private:
 	SequencerView* theSequencerView;
 	ValueTree theSequencerTree;
