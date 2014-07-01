@@ -93,17 +93,13 @@ public:
 			ValueTree tree;
 			theControllerView->addSequencer(tree);
 		}
-		else if (buttonThatWasClicked == theKickBackButton)
-		{
-			theControllerView->kickBack();
-		}
 		else if (buttonThatWasClicked == theImportAllButton)
 		{
-			importAll();
+			theControllerView->importAll();
 		}
 		else if (buttonThatWasClicked == theExportAllButton)
 		{
-			exportAll();
+			theControllerView->exportAll();
 		}
 		repaint();
 	}
@@ -125,43 +121,6 @@ public:
 		if (slider == theBPMSlider)
 		{
 			thePreferenceTree.setProperty("BPM", slider->getValue(), nullptr);
-		}
-	}
-	
-	void exportAll()
-	{
-		FileChooser fileChooser ("Save as...",
-								 thePresetFolder,
-								 "*.masterseq");
-		if (fileChooser.browseForFileToSave(false))
-		{
-			File preset = File(fileChooser.getResult().getFullPathName());
-			FileOutputStream outputStream(preset);
-			ValueTree masterTree = theControllerView->getMasterTree();
-			masterTree.writeToStream(outputStream);
-		}
-	}
-	
-	void importAll()
-	{
-		FileChooser fileChooser ("Load preset file...",
-								 thePresetFolder,
-								 "*.masterseq");
-		if (fileChooser.browseForFileToOpen())
-		{
-			ValueTree masterTree = theControllerView->getMasterTree();
-			while (masterTree.getNumChildren())
-			{
-				theControllerView->removeSequencer(-1);
-			}
-			File presetToLoad = fileChooser.getResult();
-			FileInputStream inputStream(presetToLoad);
-			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-			for (int i=0;i<treeToLoad.getNumChildren();i++)
-			{
-				ValueTree treeToAdd = treeToLoad.getChild(i);
-				theControllerView->addSequencer(treeToAdd);
-			}
 		}
 	}
 

@@ -16,28 +16,22 @@
 #include "SequencerView.h"
 #include "MenuBar.h"
 
-class AboutView;
 class HeaderView;
 
-class ControllerView: public Component, public ValueTree::Listener, public ApplicationCommandTarget
+class ControllerView: public Component, public ValueTree::Listener
 {
 public:
 	ControllerView(ValueTree& masterTree, ValueTree& preferenceTree);
 	~ControllerView();
 	void resized();
-	void kickBack();
+	void exportAll();
+	void importAll();
 	void refreshView();
 	void addSequencer(ValueTree& sequencerTreeToAdd);
 	void removeSequencer(int index);
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
-	Rectangle<int>& getScreenSize() { return theMainScreen; }
-	bool perform(const InvocationInfo& info);
-	ApplicationCommandTarget* getNextCommandTarget();
-	void getAllCommands(Array <CommandID>& commands);
-	void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result);
-	void aboutViewClicked();
-	
+
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& child){}
@@ -45,9 +39,6 @@ private:
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
-	ScopedPointer<MenuBar> theMenuBar;
-	ScopedPointer<AboutView> theAboutView;
-	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
 	ValueTree theMasterTree;
 	ValueTree thePreferenceTree;

@@ -52,6 +52,4 @@ private:
 	#endif
 };
 
-
-
 #endif  // MAIN_H_INCLUDED
