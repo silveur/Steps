@@ -36,7 +36,6 @@ class HeaderView: public Component, ButtonListener, public ComboBoxListener, pub
 public:
 	HeaderView(ControllerView* controllerView, ValueTree& preferenceTree): theControllerView(controllerView)
 	{
-		theMainLabel = "Sequencer";
 		thePreferenceTree = preferenceTree;
 		
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
@@ -79,7 +78,7 @@ public:
 		theMasterClockList->addItem("--", 1);
 		for(int i=0;i<midiList.size();i++)
 		{
-			if (midiList[i] != "Sequencer") theMasterClockList->addItem(midiList[i], i+2);
+			if (midiList[i] != "Steps") theMasterClockList->addItem(midiList[i], i+2);
 		}
 		theMasterClockList->setSelectedItemIndex(thePreferenceTree.getProperty("MasterClock"));
 		theMasterClockList->addListener(this);
@@ -195,7 +194,6 @@ private:
 	ScopedPointer<ComboBox> theMasterClockList;
 	ControllerView* theControllerView;
 	ValueTree thePreferenceTree;
-	String theMainLabel;
 };
 
 #endif  // HEADERVIEW_H_INCLUDED

@@ -211,7 +211,7 @@ public:
 		{
 			case COMMAND_ID_SHOW_ABOUT:
 			{
-				result.setInfo("About Sequencer",
+				result.setInfo("About Steps",
 							   "About this software",
 							   settingsCategory, 0);
 				break;

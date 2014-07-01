@@ -38,19 +38,43 @@ public:
 	{
 		thePreferenceTree = preferenceTree;
 		thePreferenceTree.addListener(this);
+		
 		thePresetFolder = File(thePreferenceTree.getProperty("PresetFolder", String("~/")));
+		
 		theDefaultPreset = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Steps/default.seq");
+		theLastStateFile = File((File::getSpecialLocation(File::userApplicationDataDirectory)).getFullPathName()+"/Preferences/Steps/last.seq");
+		
 		if (!thePresetFolder.exists()) thePresetFolder.createDirectory();
-		theMidiInput = MidiInput::createNewDevice("Sequencer", this);
-		theMasterTree = ValueTree("MasterTree");
-		ValueTree defaultTree = ValueTree("Sequencer");
-		theSequencerArray.add(new Sequencer(defaultTree));
-		theMasterTree.addChild(defaultTree, -1, nullptr);
+		
+		theMidiInput = MidiInput::createNewDevice("Steps", this);
+		
+		
+		if (theLastStateFile.exists())
+		{
+			FileInputStream inputStream(theLastStateFile);
+			ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+			theMasterTree = treeToLoad.createCopy();
+			for (int i=0;i<theMasterTree.getNumChildren();i++)
+			{
+				ValueTree sequencerTree = theMasterTree.getChild(i);
+				theSequencerArray.add(new Sequencer(sequencerTree));
+			}
+		}
+		else
+		{
+			theMasterTree = ValueTree("MasterTree");
+			ValueTree defaultTree = ValueTree("Steps");
+			theSequencerArray.add(new Sequencer(defaultTree));
+			theMasterTree.addChild(defaultTree, -1, nullptr);
+			
+			theDefaultPreset.deleteFile();
+			FileOutputStream outputStream(theDefaultPreset);
+			defaultTree.writeToStream(outputStream);
+		}
+		
 		theClockSource = new ClockSource(this);
 		theClockSource->theBPM = preferenceTree.getProperty("BPM");
-		theDefaultPreset.deleteFile();
-		FileOutputStream outputStream(theDefaultPreset);
-		defaultTree.writeToStream(outputStream);
+		
 		theMasterTree.addListener(this);
 		theClockMode = (ClockMode)(bool)preferenceTree.getProperty("ClockMode");
 		if (theClockMode == EXTERNAL) theMidiInput->start();
@@ -64,6 +88,10 @@ public:
 			theSequencerArray[i]->stop();
 		}
 		theMidiInput->stop();
+		
+		if (theLastStateFile.exists()) theLastStateFile.deleteFile();
+		FileOutputStream outputStream(theLastStateFile);
+		theMasterTree.writeToStream(outputStream);
 	}
 
 	void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message)
@@ -150,6 +178,7 @@ private:
 	ScopedPointer<ClockSource> theClockSource;
 	ScopedPointer<MidiInput> theMidiInput;
 	ScopedPointer<MidiOutput> theMasterClockOutput;
+	File theLastStateFile;
 	ValueTree thePreferenceTree;
 	ValueTree theMasterTree;
 	ClockMode theClockMode;

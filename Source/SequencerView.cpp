@@ -256,7 +256,7 @@ void SequencerView::refreshMidiList()
 	theMidiOutputList->clear();
 	for(int i=0;i<midiList.size();i++)
 	{
-		if (midiList[i] != "Sequencer")
+		if (midiList[i] != "Steps")
 			theMidiOutputList->addItem(midiList[i], i+1);
 	}
 }
@@ -272,12 +272,9 @@ void SequencerView::resized()
 	
 	theRootNoteList->setBounds(widthDiv * 2, heigthDiv, widthDiv * 6, heigthDiv * 2);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
-	
 	theScaleList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
 	theSpeedList->setBounds(widthDiv * 26, heigthDiv, widthDiv * 5, heigthDiv * 2);
-	
 	theRandomiser->setBounds(widthDiv * 63, heigthDiv, widthDiv * 14.0f, heigthDiv * 2);
-	
 	theShuffleButtons[0]->setBounds(widthDiv * 33, heigthDiv, widthDiv * 2, heigthDiv * 2);
 	for (int i=1;i<5;i++)
 	{
