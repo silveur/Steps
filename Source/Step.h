@@ -1,12 +1,25 @@
-/*
-  ==============================================================================
-
-	Step.h
-	Created: 22 Dec 2013 12:32:36pm
-	Author:  silvere letellier
-
-  ==============================================================================
-*/
+/* =====================================================================
+ 
+ * Steps - Midi sequencer
+ * Copyright (C) 2014  Silvere Letellier for Nummer Music
+ * Contact: <silvere.letellier@gmail.com>
+ 
+ -----------------------------------------------------------------------
+ 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ 
+ ===================================================================== */
 
 #ifndef STEP_H_INCLUDED
 #define STEP_H_INCLUDED
@@ -77,19 +90,17 @@ private:
 		}
 	}
 	
-	int theVelocity;
-	int thePitch;
-	int theDecay;
-	StepStates theState;
-	
 	void valueTreeChildAdded (ValueTree& parentTree, ValueTree& childWhichHasBeenAdded){}
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-
-	ValueTree theStepTree;
+	
 	friend class Sequencer;
-
+	ValueTree theStepTree;
+	StepStates theState;
+	int theVelocity;
+	int thePitch;
+	int theDecay;
 };
 
 #endif  // STEP_H_INCLUDED

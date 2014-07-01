@@ -21,24 +21,32 @@
  
  ===================================================================== */
 
-#ifndef __MIDICORE_H_8D40ACBD__
-#define __MIDICORE_H_8D40ACBD__
+#ifndef CLOCKSOURCE_H_INCLUDED
+#define CLOCKSOURCE_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class MidiCore
+class Master;
+
+class ClockSource: public Thread
 {
 public:
-	MidiCore();
-	~MidiCore();
+	ClockSource(Master* master): Thread("ClockGenerator"), theMaster(master), theBPM(-1) {}
+
+	~ClockSource()
+	{
+		stopThread(200);
+	}
 	
-	void killNotes();
-	void outputMidi(const MidiMessage& msg);
-	void openMidiOutput(String& name);
-	void outputMidi(const MidiMessage &msg, int delayMs);
+	void run();
+	void send() const;
 	
 private:
-	MidiOutput* theMidiOutput;
+	Master* theMaster;
+	MidiMessage msg;
+	float theStepTime;
+	float theBPM;
+	friend class Master;
 };
 
-#endif  // __MIDICORE_H_8D40ACBD__
+#endif  // CLOCKSOURCE_H_INCLUDED

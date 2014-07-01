@@ -21,24 +21,42 @@
  
  ===================================================================== */
 
-#ifndef __MIDICORE_H_8D40ACBD__
-#define __MIDICORE_H_8D40ACBD__
+#ifndef MAIN_H_INCLUDED
+#define MAIN_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "MainWindow.h"
+#include "Master.h"
 
-class MidiCore
+class PackageHandler;
+class SequencerApplication  : public JUCEApplication, public Timer
 {
 public:
-	MidiCore();
-	~MidiCore();
+	SequencerApplication() {}
 	
-	void killNotes();
-	void outputMidi(const MidiMessage& msg);
-	void openMidiOutput(String& name);
-	void outputMidi(const MidiMessage &msg, int delayMs);
+	const String getApplicationName() override       { return ProjectInfo::projectName; }
+	const String getApplicationVersion() override    { return ProjectInfo::versionString; }
+	bool moreThanOneInstanceAllowed() override       { return false; }
+	
+	void initialise (const String& commandLine) override;
+	void timerCallback();
+	void shutdown() override
+	{
+		mainWindow = nullptr;
+	}
+	
+	void systemRequestedQuit() override
+	{
+		quit();
+	}
+	
+	void updateCallback();
 	
 private:
-	MidiOutput* theMidiOutput;
+	ScopedPointer<MainWindow> mainWindow;
+	ScopedPointer<Master> theSequencerMaster;
+	ValueTree thePreferenceTree;
+	PackageHandler* thePackageHandler;
 };
 
-#endif  // __MIDICORE_H_8D40ACBD__
+#endif  // MAIN_H_INCLUDED

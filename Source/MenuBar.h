@@ -21,24 +21,45 @@
  
  ===================================================================== */
 
-#ifndef __MIDICORE_H_8D40ACBD__
-#define __MIDICORE_H_8D40ACBD__
+#ifndef __MENUBAR_H_881DA458__
+#define __MENUBAR_H_881DA458__
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class MidiCore
+enum MenuBarCommandIDs
 {
-public:
-	MidiCore();
-	~MidiCore();
-	
-	void killNotes();
-	void outputMidi(const MidiMessage& msg);
-	void openMidiOutput(String& name);
-	void outputMidi(const MidiMessage &msg, int delayMs);
-	
-private:
-	MidiOutput* theMidiOutput;
+	COMMAND_ID_NULL = 1,
+	COMMAND_ID_SHOW_ABOUT,
+	COMMAND_ID_EXPORTALL,
+	COMMAND_ID_IMPORT_ALL,
+	COMMAND_ID_CHANGE_PRESET_FOLDER,
+	COMMAND_ID_WEBSITE,
+	COMMAND_ID_SKIN1,
+	COMMAND_ID_SKIN2,
+	COMMAND_ID_SKIN3,
+	COMMAND_ID_SKIN4,
+	COMMAND_NUM_IDS
 };
 
-#endif  // __MIDICORE_H_8D40ACBD__
+class MenuBar : public MenuBarModel, public Component
+{
+
+public:
+	MenuBar(ApplicationCommandTarget *mainTarget);
+	~MenuBar();
+
+	void addCommandTarget(ApplicationCommandTarget *target, Component *targetOwner);
+	
+private:
+	ScopedPointer<ApplicationCommandManager> theCommandManager;
+	ScopedPointer<PopupMenu> appDropDown;
+	
+	StringArray	getMenuBarNames();
+	void		constructApplicationMenuPopup();
+	PopupMenu	getMenuForIndex(int topLevelMenuIndex, const String& menuName);
+	void		menuItemSelected(int menuItemID, int topLevelMenuIndex);
+
+};
+
+
+#endif  // __MENUBAR_H_881DA458__

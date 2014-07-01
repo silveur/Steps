@@ -1,45 +1,57 @@
-/*
-  ==============================================================================
-
-    StepsView.h
-    Created: 24 Apr 2014 10:50:15am
-    Author:  Silvere Letellier
-
-  ==============================================================================
-*/
+/* =====================================================================
+ 
+ * Steps - Midi sequencer
+ * Copyright (C) 2014  Silvere Letellier for Nummer Music
+ * Contact: <silvere.letellier@gmail.com>
+ 
+ -----------------------------------------------------------------------
+ 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ 
+ ===================================================================== */
 
 #ifndef STEPSVIEW_H_INCLUDED
 #define STEPSVIEW_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "LookAndFeel.h"
 
 class StepView: public Component
 {
 public:
 	StepView()
 	{
-		theStepImage = ImageFileFormat::loadFrom(BinaryData::button_minus_png, BinaryData::button_minus_pngSize);
-	}
-	~StepView()
-	{
+		setInterceptsMouseClicks(false, true);
 	}
 	
-	void update(int x)
+	~StepView() {}
+	
+	void update(bool state)
 	{
-		X = x;
+		theState = state;
 		repaint();
 	}
-	
+
 	void paint(Graphics& g)
 	{
-		g.drawImageAt(theStepImage, X, 0);
+		if (theState) g.setColour (SeqLookAndFeel::getColour(COLOUR_1));
+		else g.setColour (SeqLookAndFeel::getColour(COLOUR_4));
+        g.fillEllipse (getWidth()*0.4f, getHeight()*0.1f, getHeight()*0.8f, getHeight()*0.8f);
 	}
-	
+
 private:
-	Image theStepImage;
-	int X;
+	bool theState;
 };
-
-
 
 #endif  // STEPSVIEW_H_INCLUDED

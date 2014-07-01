@@ -1,12 +1,25 @@
-/*
-  ==============================================================================
-
-	RootView.h
-	Created: 23 Apr 2014 12:15:42pm
-	Author:  Silvere Letellier
-
-  ==============================================================================
-*/
+/* =====================================================================
+ 
+ * Steps - Midi sequencer
+ * Copyright (C) 2014  Silvere Letellier for Nummer Music
+ * Contact: <silvere.letellier@gmail.com>
+ 
+ -----------------------------------------------------------------------
+ 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ 
+ ===================================================================== */
 
 #ifndef ROOTVIEW_H_INCLUDED
 #define ROOTVIEW_H_INCLUDED
@@ -14,23 +27,23 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Master.h"
 #include "SequencerView.h"
-#include "LookAndFeel.h"
+#include "MenuBar.h"
 
 class HeaderView;
 
 class ControllerView: public Component, public ValueTree::Listener
 {
 public:
-	ControllerView(ValueTree& masterTree);
+	ControllerView(ValueTree& masterTree, ValueTree& preferenceTree);
 	~ControllerView();
 	void resized();
-	void kickBack();
+	void exportAll();
+	void importAll();
+	void refreshView();
 	void addSequencer(ValueTree& sequencerTreeToAdd);
-	void removeSequencer();
-	void updatePositions();
+	void removeSequencer(int index);
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
-	Rectangle<int>& getScreenSize() { return theMainScreen; }
 
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
@@ -39,12 +52,9 @@ private:
 	void valueTreeChildOrderChanged (ValueTree& parent){}
 	void valueTreeParentChanged (ValueTree& tree){}
 	OwnedArray<SequencerView> theSequencerViews;
-	ScopedPointer<SeqLookAndFeel> theLookAndFeel;
-	Rectangle<int> theMainScreen;
 	HeaderView* theHeaderView;
 	ValueTree theMasterTree;
+	ValueTree thePreferenceTree;
 };
-
-
 
 #endif  // ROOTVIEW_H_INCLUDED

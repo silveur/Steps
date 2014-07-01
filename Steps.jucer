@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="Sequencer" projectType="guiapp" version="1.0.0"
-              bundleIdentifier="com.yourcompany.Sequencer" includeBinaryInAppConfig="1"
-              jucerVersion="3.1.0">
-  <MAINGROUP id="jYNjqi" name="Sequencer">
+<JUCERPROJECT id="i0GMhV" name="Steps" projectType="guiapp" version="1.0.0"
+              bundleIdentifier="com.nummer.steps" includeBinaryInAppConfig="1"
+              jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
+              companyName="Nummer">
+  <MAINGROUP id="jYNjqi" name="Steps">
     <GROUP id="{D44B7C58-A3A0-3AA7-D750-19A22D0FA9B4}" name="Source">
       <FILE id="VVinh0" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="o7hHyh" name="Main.h" compile="0" resource="0" file="Source/Main.h"/>
       <GROUP id="{4443E8B4-5C81-9C76-04CE-E6D7E1B32FC1}" name="Sequencer">
         <FILE id="g5QmNa" name="Master.h" compile="0" resource="0" file="Source/Master.h"/>
         <FILE id="NW2qIO" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
         <FILE id="obMuqf" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
+        <FILE id="nyNxY0" name="ClockSource.cpp" compile="1" resource="0" file="Source/ClockSource.cpp"/>
+        <FILE id="pKfJzS" name="ClockSource.h" compile="0" resource="0" file="Source/ClockSource.h"/>
         <FILE id="Q76wg2" name="MidiCore.cpp" compile="1" resource="0" file="Source/MidiCore.cpp"/>
         <FILE id="YlFytd" name="MidiCore.h" compile="0" resource="0" file="Source/MidiCore.h"/>
         <FILE id="xLbBQu" name="Step.h" compile="0" resource="0" file="Source/Step.h"/>
@@ -23,24 +27,45 @@
               file="Source/ControllerView.cpp"/>
         <FILE id="dVfxqR" name="ControllerView.h" compile="0" resource="0"
               file="Source/ControllerView.h"/>
+        <FILE id="iJ5flK" name="MenuBar.cpp" compile="1" resource="0" file="Source/MenuBar.cpp"/>
+        <FILE id="ZrIhjz" name="MenuBar.h" compile="0" resource="0" file="Source/MenuBar.h"/>
         <FILE id="tVk1yJ" name="HeaderView.h" compile="0" resource="0" file="Source/HeaderView.h"/>
         <FILE id="QaPSxK" name="StepsView.h" compile="0" resource="0" file="Source/StepsView.h"/>
         <FILE id="SSeeNH" name="MainWindow.h" compile="0" resource="0" file="Source/MainWindow.h"/>
         <FILE id="NLibsS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
+        <FILE id="KUd4I0" name="Slider.h" compile="0" resource="0" file="Source/Slider.h"/>
+        <FILE id="lfOnGK" name="Randomiser.cpp" compile="1" resource="0" file="Source/Randomiser.cpp"/>
+        <FILE id="goi1rD" name="Randomiser.h" compile="0" resource="0" file="Source/Randomiser.h"/>
+        <FILE id="bAnKhN" name="AboutView.h" compile="0" resource="0" file="Source/AboutView.h"/>
         <GROUP id="{A0B60EBD-FC96-6045-D8D6-E61D31B9DD72}" name="Images">
-          <FILE id="KfDVhB" name="button_minus.png" compile="0" resource="1"
-                file="Ressource/button_minus.png"/>
+          <FILE id="hGmLDV" name="Icon.png" compile="0" resource="1" file="Designs/Icon.png"/>
+          <FILE id="XO7EGy" name="IconSmall.png" compile="0" resource="1" file="Designs/IconSmall.png"/>
+        </GROUP>
+      </GROUP>
+      <GROUP id="{177A0B3F-5BE4-D5E2-1D58-6B0272C73950}" name="Updater">
+        <FILE id="CIsSIq" name="PackageHandler.h" compile="0" resource="0"
+              file="Source/PackageHandler.h"/>
+        <GROUP id="{E7DA2940-4994-5DF9-98B3-01FC4FF3AECC}" name="Network">
+          <FILE id="SUkoNr" name="dRowAudio_CURLEasySession.cpp" compile="1"
+                resource="0" file="Source/Network/dRowAudio_CURLEasySession.cpp"/>
+          <FILE id="fwdX0h" name="dRowAudio_CURLEasySession.h" compile="0" resource="0"
+                file="Source/Network/dRowAudio_CURLEasySession.h"/>
+          <FILE id="PXxjGB" name="dRowAudio_CURLManager.cpp" compile="1" resource="0"
+                file="Source/Network/dRowAudio_CURLManager.cpp"/>
+          <FILE id="Ty5h1F" name="dRowAudio_CURLManager.h" compile="0" resource="0"
+                file="Source/Network/dRowAudio_CURLManager.h"/>
         </GROUP>
       </GROUP>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="curl" smallIcon="XO7EGy"
+               bigIcon="hGmLDV">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="Sequencer"/>
-        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.5 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="Sequencer"/>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="Steps-debug"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.7 SDK" osxArchitecture="default"
+                       isDebug="0" optimisation="3" targetName="Steps" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="Libraries/JUCE/modules"/>

@@ -1,12 +1,25 @@
-/*
-  ==============================================================================
-
-	Sequencer.cpp
-	Created: 22 Dec 2013 11:52:14pm
-	Author:  silvere letellier
-
-  ==============================================================================
-*/
+/* =====================================================================
+ 
+ * Steps - Midi sequencer
+ * Copyright (C) 2014  Silvere Letellier for Nummer Music
+ * Contact: <silvere.letellier@gmail.com>
+ 
+ -----------------------------------------------------------------------
+ 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ 
+ ===================================================================== */
 
 #include "Sequencer.h"
 
@@ -28,6 +41,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 		theShuffle = 0;
 		theRange = 1;
 		theOffset = 0;
+		theSpeed = 1;
 		theOnOffStatus = ON;
 		initSequencerTree();
 		for (int i=0; i<32; i++)
@@ -41,8 +55,16 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 	theSequencerTree.addListener(this);
 }
 
-Sequencer::~Sequencer()
+void Sequencer::triggerNote(int stepIndex = -1)
 {
+	Step* step;
+	if (stepIndex == -1) step = theStepArray[thePosition];
+	else step = theStepArray[stepIndex];
+	
+	MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+	MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
+	theMidiCore->outputMidi(onMsg);
+	theMidiCore->outputMidi(offMsg, step->theDecay);
 }
 
 void Sequencer::initSequencerTree()
@@ -56,6 +78,11 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
 	theSequencerTree.setProperty("Scale", 1, nullptr);
+	theSequencerTree.setProperty("Speed", theSpeed, nullptr);
+	theSequencerTree.setProperty("RandVelocity", true, nullptr);
+	theSequencerTree.setProperty("RandDecay", true, nullptr);
+	theSequencerTree.setProperty("RandPitch", true, nullptr);
+	theSequencerTree.setProperty("RandState", true, nullptr);
 }
 
 void Sequencer::loadFromTree()
@@ -68,6 +95,7 @@ void Sequencer::loadFromTree()
 	theChannel = theSequencerTree.getProperty("Channel");
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
+	theSpeed = theSequencerTree.getProperty("Speed");
 	for (int i=0; i<32; i++)
 	{
 		ValueTree stepTree = theSequencerTree.getChild(i);
@@ -103,15 +131,11 @@ void Sequencer::carryOn()
 void Sequencer::triggerStep()
 {
 	thePosition = (thePosition+1) % theLength;
-	if (theStepArray[thePosition]->theState == JUMP)
+	while (theStepArray[thePosition]->theState == JUMP)
 		thePosition = (thePosition+1) % theLength;
 	if (theStepArray[thePosition]->theState == ON)
 	{
-		Step* step = theStepArray[thePosition];
-		MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-		MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-		theMidiCore->outputMidi(onMsg);
-		theMidiCore->outputMidi(offMsg, step->theDecay);
+		triggerNote();
 	}
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }
@@ -120,7 +144,7 @@ void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 {
 	if (message.isMidiClock() && !isIdle && theOnOffStatus)
 	{
-		thePpqCount = (thePpqCount+1) % 6;
+		thePpqCount = (thePpqCount+1) % (int)(6.0f/theSpeed);
 		if( waitForShuffle && (thePpqCount == theShuffle))
 		{
 			triggerStep();
@@ -139,10 +163,6 @@ void Sequencer::handleIncomingMidiMessage(const MidiMessage& message)
 		}
 	}
 	
-	else if(message.isSongPositionPointer())
-	{
-
-	}
 	else if (message.isMidiStart())
 	{
 		start();
@@ -196,9 +216,17 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		theOnOffStatus = tree.getProperty(property);
 	}
-	else if(String(property) == "KickBack")
+	else if(String(property) == "Speed")
 	{
-		thePosition = -1;
-		tree.setProperty(property, 0, nullptr);
+		theSpeed = tree.getProperty(property);
+	}
+	else if(String(property) == "Trigger")
+	{
+		int index= tree.getProperty(property);
+		if (index != -1)
+		{
+			triggerNote(index);
+			tree.setProperty(property, -1, nullptr);
+		}
 	}
 }

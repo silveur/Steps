@@ -1,29 +1,46 @@
-/*
-  ==============================================================================
-
-	RootView.cpp
-	Created: 23 Apr 2014 12:15:42pm
-	Author:  Silvere Letellier
-
-  ==============================================================================
-*/
+/* =====================================================================
+ 
+ * Steps - Midi sequencer
+ * Copyright (C) 2014  Silvere Letellier for Nummer Music
+ * Contact: <silvere.letellier@gmail.com>
+ 
+ -----------------------------------------------------------------------
+ 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ 
+ ===================================================================== */
 
 #include "ControllerView.h"
 #include "HeaderView.h"
+#include "AboutView.h"
 
-ControllerView::ControllerView(ValueTree& masterTree): theMasterTree(masterTree)
+ColourTheme theColourTheme = DARK;
+Colour textButtonTextColour;
+
+ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree): theMasterTree(masterTree), thePreferenceTree(preferenceTree)
 {
-	LookAndFeel::setDefaultLookAndFeel(theLookAndFeel = new SeqLookAndFeel());
+	textButtonTextColour = SeqLookAndFeel::getColour(COLOUR_1);
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
 		ValueTree sequenceTree = theMasterTree.getChild(i);
 		theSequencerViews.add(new SequencerView(sequenceTree, this));
 		addAndMakeVisible(theSequencerViews[i]);
 	}
-	theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-	addAndMakeVisible(theHeaderView = new HeaderView(this));
-	updatePositions();
+	addAndMakeVisible(theHeaderView = new HeaderView(this, preferenceTree));
 	theMasterTree.addListener(this);
+	setInterceptsMouseClicks(false, true);
+	refreshView();
 }
 
 ControllerView::~ControllerView()
@@ -31,40 +48,65 @@ ControllerView::~ControllerView()
 	delete theHeaderView;
 }
 
-void ControllerView::updatePositions()
-{
-	int sequencer16Height = theMainScreen.getHeight() / 4.5;
-	int sequencer32Height = theMainScreen.getHeight() / 2.6;
-	int totalHeigth = 0;
-	int sequencerWidth = theMainScreen.getWidth() / 1.5;
-	theHeaderView->setBounds(0, 0, sequencerWidth, theMainScreen.getHeight() / 24);
-	totalHeigth += theHeaderView->getHeight();
-	for (int i=0; i<theMasterTree.getNumChildren(); i++)
-	{
-		if ((int)theMasterTree.getChild(i).getProperty("Length") > 16)
-		{
-			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer32Height);
-		}
-		else if ((int)theMasterTree.getChild(i).getProperty("Length") < 17)
-		{
-			theSequencerViews[i]->setBounds(0, totalHeigth, sequencerWidth, sequencer16Height);
-		}
-		totalHeigth += theSequencerViews[i]->getHeight();
-	}
-	if (theMasterTree.getNumChildren() != 0)
-		setSize(sequencerWidth, totalHeigth);
-}
-
 void ControllerView::resized()
 {
-	updatePositions();
+	refreshView();
 }
 
-void ControllerView::kickBack()
+void ControllerView::refreshView()
 {
+	float headerHeight = 4.0f; float totalDiv = 0.0f; float pixelsPerDiv = 9.0f;
+	theHeaderView->setBounds(0, 0, getWidth(), headerHeight * pixelsPerDiv);
+	theHeaderView->repaint();
+	totalDiv += theHeaderView->getHeight();
+	
 	for (int i=0; i<theMasterTree.getNumChildren(); i++)
 	{
-		theMasterTree.getChild(i).setProperty("KickBack", 1, nullptr);
+		float sequencerHeigth;
+		if ((int)theMasterTree.getChild(i).getProperty("Length") <= 16) sequencerHeigth = 19.0f * pixelsPerDiv;
+		else sequencerHeigth = 34.0f * pixelsPerDiv;
+		
+		theSequencerViews[i]->setBounds(0, totalDiv, getWidth(), sequencerHeigth);
+		theSequencerViews[i]->repaint();
+		totalDiv += theSequencerViews[i]->getHeight();
+	}
+	setSize(1200, totalDiv);
+}
+
+void ControllerView::exportAll()
+{
+	FileChooser fileChooser ("Save as...",
+							 thePresetFolder,
+							 "*.masterseq");
+	if (fileChooser.browseForFileToSave(false))
+	{
+		File preset = File(fileChooser.getResult().getFullPathName());
+		FileOutputStream outputStream(preset);
+		ValueTree masterTree = getMasterTree();
+		masterTree.writeToStream(outputStream);
+	}
+}
+
+void ControllerView::importAll()
+{
+	FileChooser fileChooser ("Load preset file...",
+							 thePresetFolder,
+							 "*.masterseq");
+	if (fileChooser.browseForFileToOpen())
+	{
+		ValueTree masterTree = getMasterTree();
+		while (masterTree.getNumChildren())
+		{
+			removeSequencer(-1);
+		}
+		File presetToLoad = fileChooser.getResult();
+		FileInputStream inputStream(presetToLoad);
+		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
+		for (int i=0;i<treeToLoad.getNumChildren();i++)
+		{
+			ValueTree treeToAdd = treeToLoad.getChild(i);
+			addSequencer(treeToAdd);
+		}
 	}
 }
 
@@ -81,7 +123,6 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		theMasterTree.addChild(copiedTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(copiedTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
-		updatePositions();
 	}
 	else
 	{
@@ -89,14 +130,22 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 		theMasterTree.addChild(sequencerTree, -1, nullptr);
 		theSequencerViews.add(new SequencerView(sequencerTree, this));
 		addAndMakeVisible(theSequencerViews.getLast());
-		updatePositions();
 	}
+	refreshView();
 }
 
-void ControllerView::removeSequencer()
+void ControllerView::removeSequencer(int i)
 {
-	int index = theMasterTree.getNumChildren()-1;
-	theMasterTree.removeChild(index, nullptr);
-	theSequencerViews.remove(index);
-	updatePositions();
+	if (i == -1)
+	{
+		int index = theMasterTree.getNumChildren()-1;
+		theMasterTree.removeChild(index, nullptr);
+		theSequencerViews.remove(index);
+	}
+	else
+	{
+		theMasterTree.removeChild(i, nullptr);
+		theSequencerViews.remove(i);
+	}
+	refreshView();
 }

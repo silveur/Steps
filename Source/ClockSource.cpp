@@ -21,24 +21,25 @@
  
  ===================================================================== */
 
-#ifndef __MIDICORE_H_8D40ACBD__
-#define __MIDICORE_H_8D40ACBD__
+#include "ClockSource.h"
+#include "Master.h"
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
-class MidiCore
+void ClockSource::run()
 {
-public:
-	MidiCore();
-	~MidiCore();
-	
-	void killNotes();
-	void outputMidi(const MidiMessage& msg);
-	void openMidiOutput(String& name);
-	void outputMidi(const MidiMessage &msg, int delayMs);
-	
-private:
-	MidiOutput* theMidiOutput;
-};
+	msg = MidiMessage::midiStart();
+	send();
+	while(!threadShouldExit())
+	{
+		msg = MidiMessage::midiClock();
+		send();
+		theStepTime = 1.0 / (theBPM / 15.0f);
+		wait(1000 * (theStepTime/6.0f));
+	}
+	msg = MidiMessage::midiStop();
+	send();
+}
 
-#endif  // __MIDICORE_H_8D40ACBD__
+void ClockSource::send() const
+{
+	theMaster->handleIncomingMidiMessage(nullptr, msg);
+}
