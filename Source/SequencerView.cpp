@@ -194,6 +194,9 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theMidiOutputList->setColour(ComboBox::textColourId, textButtonTextColour);
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
+	String midiOutput = theSequencerTree.getProperty("MidiOutput").toString();
+	refreshMidiList();
+	updateSelectedMidiOut(midiOutput);
 	
 	addAndMakeVisible(theChannelList = new ComboBox("Channel"));
 	theChannelList->addSectionHeading("Midi channel");
@@ -204,7 +207,6 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theChannelList->setSelectedId(theSequencerTree.getProperty("Channel"));
 	theChannelList->addListener(this);
 	
-	refreshMidiList();
 	addAndMakeVisible(theRootNoteList = new ComboBox("RootNoteList"));
 	theRootNoteList->addSectionHeading("Root note");
 	theRootNoteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
@@ -231,7 +233,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theScaleList->addListener(this);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
-	setInterceptsMouseClicks(true, true);
+	setInterceptsMouseClicks(false, true);
 	addKeyListener(this);
 }
 

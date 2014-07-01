@@ -42,8 +42,8 @@ public:
 			theState = ON;
 			theDecay = 40;
 			initStepTree();
-			theStepTree.addListener(this);
 		}
+		theStepTree.addListener(this);
 	}
 	
 	~Step() {}
