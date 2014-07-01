@@ -200,7 +200,7 @@ public:
 			{
 				result.setInfo("About Sequencer",
 							   "About this software",
-							   "", 0);
+							   settingsCategory, 0);
 				break;
 			}
 			case COMMAND_ID_EXPORTALL:

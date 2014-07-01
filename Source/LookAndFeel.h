@@ -28,23 +28,18 @@ enum ColourTheme
 	DARK,
 	BRIGHT,
 	WINE,
-	MORE
+	ETSI
 };
 
 extern ColourTheme theColourTheme;
+extern Colour textButtonTextColour;
 
 class SeqLookAndFeel: public LookAndFeel_V3
 {
 public:
-	SeqLookAndFeel()
-	{
-		
-	}
+	SeqLookAndFeel() {}
 	
-	~SeqLookAndFeel()
-	{
-		
-	}
+	~SeqLookAndFeel() {}
 	
 	void drawToggleButton (Graphics& g, ToggleButton& button,
 										   bool isMouseOverButton, bool isButtonDown)
@@ -92,6 +87,9 @@ public:
 	void drawComboBox (Graphics& g, int _width, int _height, const bool /*isButtonDown*/,
 									   int buttonX, int buttonY, int buttonW, int buttonH, ComboBox& box)
 	{
+		setColour (PopupMenu::backgroundColourId, SeqLookAndFeel::getColour(SequencerColours::COLOUR_4).darker(0.25f).withMultipliedAlpha(0.95f));
+		setColour (PopupMenu::textColourId, textButtonTextColour);
+		
 		Colour baseColour (box.findColour (ComboBox::backgroundColourId).withMultipliedSaturation (box.hasKeyboardFocus (true) ? 1.3f : 0.9f)
 						   .withMultipliedAlpha (box.isEnabled() ? 0.9f : 0.5f));
 		
@@ -217,28 +215,12 @@ public:
 		if (_width < _height ? min = _width : min = _height);
 		radius = min / 2.1f;
 		min -= offset;
-		
-		float ellipseX = (width / 2.1f) - radius + (offset/2.1f);
-		float ellipseY = (height / 2.1f) - radius + (offset/2.1f);
-		
-//		g.setColour(Colours::black);
-//		g.drawEllipse(ellipseX, ellipseY, min, min, 2.0f);
-//		g.setColour(Colour::fromRGB(83, 17, 21));
-//		g.fillEllipse(ellipseX + (min*0.05),ellipseY +(min*0.05), min*0.9, min*0.9);
-		
-//		g.drawRect(ellipseX, ellipseY, min, min);
-		
-//		g.setColour(findColour(Slider::rotarySliderFillColourId));
-//		g.drawEllipse(ellipseX +(min*0.2f), ellipseY +(min*0.2f), min*0.6, min*0.6f, 2.0f);
-//		g.drawEllipse(ellipseX +(min*0.25f), ellipseY +(min*0.25f), min*0.5f, min*0.5f, 0.4f);
-					
 		const float centreX = x + width * 0.5f;
 		const float centreY = y + height * 0.5f;
 		const float rx = centreX - radius;
 		const float ry = centreY - radius;
 		const float rw = radius * 2.0f;
 		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-		const float thickness = 0.85f;
 		if (radius > 12.0f)
 		{
 			const float thickness = 0.6f;
@@ -278,12 +260,6 @@ public:
 				g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
 			else
 				g.setColour (Colour (0x80808080));
-			
-//			Path outlineArc;
-//			outlineArc.addPieSegment (rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
-//			outlineArc.closeSubPath();
-//			g.fillPath(outlineArc);
-//			g.strokePath (outlineArc, PathStrokeType (slider.isEnabled() ? (slider.isMouseOver() ? 2.0f : 1.2f) : 0.3f));
 		}
 		else
 		{
@@ -306,14 +282,9 @@ public:
 				g.setColour (slider.findColour (Slider::rotarySliderOutlineColourId));
 			else
 				g.setColour (Colour (0x80808080));
-			float ellipseWidth = 4.0f;
 			p2.addLineSegment (Line<float> (0.0f, 0.0f, 0.0f, -radius * 0.9f), rw * 0.1f);
-//			p2.addEllipse(-ellipseWidth/2.0f, -radius, ellipseWidth, ellipseWidth);
 			g.fillPath (p2, AffineTransform::rotation (angle).translated (centreX, centreY));
 		}
-		
-//		g.setColour(Colours::black);
-//		g.drawRect(slider.getLocalBounds());
 	}
 	
 	void drawLinearSlider (Graphics& g, int x, int y, int width, int height,
@@ -545,7 +516,7 @@ public:
 				default: return Colour();
 			}
 		}
-		else if (theColourTheme == MORE)
+		else if (theColourTheme == ETSI)
 		{
 			switch (colour)
 			{

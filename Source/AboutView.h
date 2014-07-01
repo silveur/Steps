@@ -63,7 +63,6 @@ public:
 	
 
 private:
-	ControllerView* theControllerView;
 	ScopedPointer<Slider> theSlider;
 	Image theLogo;
 	ScopedPointer<HyperlinkButton> theWebSite;
@@ -72,7 +71,7 @@ private:
 class AboutWindow: public DocumentWindow
 {
 public:
-	AboutWindow():DocumentWindow("About",SeqLookAndFeel::getColour(SequencerColours::COLOUR_BACKGROUND), 4)
+	AboutWindow():DocumentWindow("About",SeqLookAndFeel::getColour(SequencerColours::COLOUR_BACKGROUND), DocumentWindow::closeButton)
 	{
 		setUsingNativeTitleBar(true);
 		theAboutView = new AboutView();
