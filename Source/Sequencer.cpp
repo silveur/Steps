@@ -96,6 +96,8 @@ void Sequencer::loadFromTree()
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
 	theSpeed = theSequencerTree.getProperty("Speed");
+	String midiOutput = theSequencerTree.getProperty("MidiOutput").toString();
+	theMidiCore->openMidiOutput(midiOutput);
 	for (int i=0; i<32; i++)
 	{
 		ValueTree stepTree = theSequencerTree.getChild(i);

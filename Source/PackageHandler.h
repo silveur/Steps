@@ -62,6 +62,7 @@ public:
 			String responseString = response->readString();
 			if (!responseString.contains("null"))
 			{
+				std::cout << "Downloading update..." << std::endl;
 				downloadUpdate(responseString);
 			}
 			else
