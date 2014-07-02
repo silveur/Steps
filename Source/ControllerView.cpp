@@ -117,6 +117,7 @@ const int ControllerView::getNumOfSequencer() const
 
 void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 {
+	if (theMasterTree.getNumChildren() >= 6) return;
 	if(sequencerTreeToAdd.isValid())
 	{
 		ValueTree copiedTree = sequencerTreeToAdd.createCopy();
@@ -136,9 +137,11 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 
 void ControllerView::removeSequencer(int i)
 {
-	if (i == -1)
+	if (theMasterTree.getNumChildren() == 1) return;
+	
+	else if (i == -1)
 	{
-		int index = theMasterTree.getNumChildren()-1;
+		int index = theMasterTree.getNumChildren() - 1;
 		theMasterTree.removeChild(index, nullptr);
 		theSequencerViews.remove(index);
 	}

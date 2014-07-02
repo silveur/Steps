@@ -374,6 +374,19 @@ public:
 		return (Font ("Helvetica Neue",12.0000f, Font::plain));
 	}
 	
+	void drawTooltip (Graphics& g, const String& text, int width, int height)
+	{
+		g.fillAll (SeqLookAndFeel::getColour(COLOUR_3));
+		
+#if ! JUCE_MAC // The mac windows already have a non-optional 1 pix outline, so don't double it here..
+		g.setColour (findColour (TooltipWindow::outlineColourId));
+		g.drawRect (0, 0, width, height, 1);
+#endif
+		g.setFont((Font ("Helvetica Neue",14.0000f, Font::plain)));
+		g.setColour(getColour(SequencerColours::COLOUR_4));
+		g.drawFittedText(text, 0, 0, width, height, Justification::centred, 1);
+	}
+	
 	void drawPopupMenuItem (Graphics& g, const Rectangle<int>& area,
 											const bool isSeparator, const bool isActive,
 											const bool isHighlighted, const bool isTicked,

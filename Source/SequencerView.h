@@ -70,7 +70,7 @@ public:
 		g.drawFittedText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Octave range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Offset", widthDiv * 53, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Start offset", widthDiv * 53, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Length", widthDiv * 57, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 13, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Channel", widthDiv * 115, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);

@@ -39,6 +39,7 @@ public:
 		thePreferenceTree = preferenceTree;
 		
 		addAndMakeVisible(theAddSequencerButton = new TextButton("Add Sequencer"));
+		theAddSequencerButton->setTooltip("Add a sequencer");
 		theAddSequencerButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theAddSequencerButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theAddSequencerButton->addListener(this);
@@ -49,12 +50,14 @@ public:
 		theRedoButton->addListener(this);
 		
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
+		theExportAllButton->setTooltip("Export mutiple sequences");
 		theExportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theExportAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theExportAllButton->addListener(this);
 		
 		addAndMakeVisible(theImportAllButton = new TextButton("Import all"));
 		theImportAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+		theImportAllButton->setTooltip("Import multiple sequences");
 		theImportAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 		theImportAllButton->addListener(this);
 
@@ -86,6 +89,7 @@ public:
 		addAndMakeVisible(theBPMSlider = new Slider("BPM"));
 		theBPMSlider->setTextBoxStyle(Slider::NoTextBox, false, 60, 50);
 		theBPMSlider->setRange(60, 180, 0.1);
+		theBPMSlider->setTooltip("Adjust tempo");
 		theBPMSlider->setScrollWheelEnabled(false);
 		theBPMSlider->setSliderStyle(Slider::RotaryVerticalDrag);
 		theBPMSlider->setValue(thePreferenceTree.getProperty("BPM", 120));
