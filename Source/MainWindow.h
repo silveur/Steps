@@ -47,11 +47,15 @@ public:
 		{
 			thePreferenceTree.copyPropertiesFrom(treeToLoad, nullptr);
 			int x = thePreferenceTree.getProperty("X", 50); int y = thePreferenceTree.getProperty("Y", 50);
-			setBounds(x, y, 0, 0);
+			setBounds(x, y > 20 ? y=y : y = 20, 0, 0);
 			theColourTheme = (ColourTheme)(int)preferenceTree.getProperty("ColourTheme");
+			updateToolTip((bool)preferenceTree.getProperty("ToolTip", true));
 		}
 		else
+		{
 			setBounds(100, 100, 100, 100);
+			updateToolTip(true);
+		}
 		theMainScreen = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
 		thePresetFolder = thePreferenceTree.getProperty("PresetFolder");
 		theControllerView = new ControllerView(masterTree, thePreferenceTree);
@@ -60,10 +64,12 @@ public:
 		setContentOwned(theControllerView, true);
 		theState = false;
 		thePreferenceTree.addListener(this);
-		setVisible(true);
 		addKeyListener(this);
 		theMenuBar = new MenuBar(this);
 		theMenuBar->addCommandTarget(this, this);
+		theTooltipWindow.setColour(TooltipWindow::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_BACKGROUND));
+		theTooltipWindow.setColour(TooltipWindow::textColourId, SeqLookAndFeel::getColour(COLOUR_5));
+		setVisible(true);
 	}
 	
 	~MainWindow()
@@ -72,13 +78,14 @@ public:
 		thePreferenceTree.setProperty("Y", getY(), nullptr);
 		thePreferenceTree.setProperty("W", getWidth(), nullptr);
 		thePreferenceTree.setProperty("H", getHeight(), nullptr);
+		thePreferenceTree.setProperty("ToolTip", theToolTipState, nullptr);
 		thePreferenceTree.setProperty("State", false, nullptr);
 		thePreferenceTree.setProperty("ColourTheme", (int)theColourTheme, nullptr);
 		if (thePreferenceFile.exists()) thePreferenceFile.deleteFile();
 		FileOutputStream outputStream(thePreferenceFile);
 		thePreferenceTree.writeToStream(outputStream);
 	}
-	
+
 	void paint(Graphics& g)
 	{
 		g.setColour(SeqLookAndFeel::getColour(COLOUR_BACKGROUND));
@@ -117,9 +124,16 @@ public:
 			clearContentComponent();
 			theControllerView = new ControllerView(theMasterTree, thePreferenceTree);
 			setContentOwned(theControllerView, true);
+			theAboutWindow->repaint();
 		}
 	}
 	
+	void updateToolTip(bool state)
+	{
+		theToolTipState = state;
+		if (!theToolTipState) {theTooltipWindow.setMillisecondsBeforeTipAppears(40000);}
+		else {theTooltipWindow.setMillisecondsBeforeTipAppears(300);}
+	}
 	bool perform(const InvocationInfo& info)
 	{
 		switch (info.commandID)
@@ -159,6 +173,11 @@ public:
 			case COMMAND_ID_WEBSITE:
 			{
 				system("open http://www.nummermusic.com");
+				return true;
+			}
+			case COMMAND_ID_TOOLTIP:
+			{
+				updateToolTip(!theToolTipState);
 				return true;
 			}
 			case COMMAND_ID_SKIN1:
@@ -234,7 +253,7 @@ public:
 			}
 			case COMMAND_ID_CHANGE_PRESET_FOLDER:
 			{
-				result.setInfo("Set Preset Folder",
+				result.setInfo("Change Preset Folder",
 							   "Select new preset folder",
 							   settingsCategory, 0);
 				break;
@@ -244,6 +263,14 @@ public:
 				result.setInfo("Visit our website",
 							   "Nummer website",
 							   settingsCategory, 0);
+				break;
+			}
+			case COMMAND_ID_TOOLTIP:
+			{
+				String tooltip;
+				if (theToolTipState) tooltip = "Hide tooltip";
+				else tooltip = "Show tooltip";
+				result.setInfo(tooltip, "Add or hide tooltip", settingsCategory, 0);
 				break;
 			}
 			case COMMAND_ID_SKIN1:
@@ -296,6 +323,8 @@ private:
 	ScopedPointer<AboutWindow> theAboutWindow;
 	ControllerView* theControllerView;
 	ScopedPointer<MenuBar> theMenuBar;
+	TooltipWindow theTooltipWindow;
+	bool theToolTipState;
 	bool theState;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
 };

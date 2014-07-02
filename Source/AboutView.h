@@ -51,20 +51,24 @@ public:
 	
 	void paint(Graphics& g)
 	{
-		g.setFont (Font ("Helvetica Neue",13.0000f, Font::plain));
+		g.setColour(SeqLookAndFeel::getColour(COLOUR_BACKGROUND));
+		g.fillAll();
+		g.setFont (Font ("Helvetica Neue",12.0000f, Font::plain));
 		g.setColour(SeqLookAndFeel::getColour(COLOUR_1));
 		
 		float heigthDiv = getHeight() / 16.0f;
 		
 		g.drawText("Steps V" + String(ProjectInfo::versionString), getWidth() / 3, heigthDiv * 1, getWidth()/3 * 2, heigthDiv * 2, Justification::left, 2);
-		g.drawText("Programming: Silvere Letellier", getWidth() / 3, heigthDiv * 3, (getWidth()/3) * 2, heigthDiv * 2, Justification::left, 3);
+		g.drawText("Programming & designs: Silvere Letellier", getWidth() / 3, heigthDiv * 3, (getWidth()/3) * 2, heigthDiv * 2, Justification::left, 3);
 		g.drawText("With the help of: Danny White,", getWidth()/3, heigthDiv * 4, (getWidth()/3) * 2, heigthDiv * 2, Justification::left, 2);
 		g.drawText("Emmnanuel Corre, Julian Salaun,", getWidth()/3, heigthDiv * 5, (getWidth()/3) * 2, heigthDiv * 2, Justification::left, 2);
-		g.drawText("Guillaume De Oubeda", getWidth()/3, heigthDiv * 6, (getWidth()/3) * 2, heigthDiv * 2, Justification::left, 2);
+		g.drawText("Guillaume De Ubeda", getWidth()/3, heigthDiv * 6, (getWidth()/3) * 2, heigthDiv * 2, Justification::left, 2);
 		g.drawText("Special thanks to Julian Storer", getWidth()/3, heigthDiv * 8, getWidth() / 2, heigthDiv * 2, Justification::left, 2);
 		g.drawText("Copyright 2014 Nummer Music", getWidth()/3, heigthDiv * 10, getWidth()/3 * 2, heigthDiv * 2, Justification::left, 2);
 		g.drawText("All rights reserved.", getWidth()/3, heigthDiv * 11, getWidth()/3 * 2, heigthDiv * 2, Justification::left, 2);
 		
+		theSlider->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_1));
+		theSlider->setColour(Slider::rotarySliderOutlineColourId, SeqLookAndFeel::getColour(COLOUR_2));
 	}
 
 	void resized()
@@ -75,7 +79,6 @@ public:
 		theWebSite->setBounds(getWidth() / 3, heigthDiv * 13, widthDiv * 20, heigthDiv * 2);
 	}
 	
-
 private:
 	ScopedPointer<Slider> theSlider;
 	Image theLogo;

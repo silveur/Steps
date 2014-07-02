@@ -90,6 +90,7 @@ PopupMenu MenuBar::getMenuForIndex(int topLevelMenuIndex, const juce::String &me
 		case 2:
 		{
 			menu.addCommandItem(theCommandManager, COMMAND_ID_WEBSITE);
+			menu.addCommandItem(theCommandManager, COMMAND_ID_TOOLTIP);
 			break;
 		}
 		default: break;
