@@ -23,14 +23,14 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Main.h"
-#include "PackageHandler.h"
+#include "Updater.h"
 
 File thePresetFolder;
 File theDefaultPreset;
 
 void SequencerApplication::initialise (const String& commandLine)
 {
-	thePackageHandler = new PackageHandler();
+	thePackageHandler = new Updater();
 	thePreferenceTree = ValueTree("Preferences");
 	theSequencerMaster = new Master(thePreferenceTree);
 	mainWindow = new MainWindow(theSequencerMaster->getMasterTree(), thePreferenceTree);

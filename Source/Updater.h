@@ -30,10 +30,10 @@
 
 class SequencerApplication;
 
-class PackageHandler: private CURLEasySession::Listener
+class Updater: private CURLEasySession::Listener, public Thread
 {
 public:
-	PackageHandler()
+	Updater(): Thread("Updater")
 	{
 		theTempApp = File::getSpecialLocation(File::tempDirectory).getFullPathName() + String("/steps.zip");
 		theCurlSession = new CURLEasySession();
@@ -41,42 +41,67 @@ public:
 		File tempAppFile = File(theTempApp); tempAppFile.deleteFile();
 		theCurlSession->setLocalFile(File(theTempApp));
 		theServerURL = "http://nummermusic.com/version-request.php?version=";
-		checkForUpdate();
+		theTrackerURL = "http://nummermusic.com/tracker.php";
+		startThread();
 	}
 	
-	~PackageHandler()
+	~Updater()
 	{
 		File tempFolder = File::getSpecialLocation(File::tempDirectory).getFullPathName();
 		tempFolder.deleteRecursively();
 	}
 	
-	void checkForUpdate()
+	void run()
 	{
-		theServerURL = theServerURL + ProjectInfo::versionString;
-		URL serverURL(theServerURL);
-		InputStream* response = serverURL.createInputStream(false, nullptr, nullptr,
-															"",
-															2000, nullptr);
-		if (response != nullptr)
+		URL google("http://google.com");
+		InputStream* stream = google.createInputStream(false);
+		bool hasInternet = (stream != nullptr);
+		delete stream;
+		
+		if (hasInternet)
 		{
-			String responseString = response->readString();
-			if (!responseString.contains("null"))
+			theServerURL = theServerURL + ProjectInfo::versionString;
+			URL serverURL(theServerURL);
+			InputStream* response = serverURL.createInputStream(false, nullptr, nullptr, "", 2000, nullptr);
+			if (response != nullptr)
 			{
-				std::cout << "Downloading update..." << std::endl;
-				downloadUpdate(responseString);
+				String responseString = response->readString();
+				
+				if (!responseString.contains("null"))
+				{
+					std::cout << "Downloading update..." << std::endl;
+					downloadUpdate(responseString);
+				}
+				
+				else std::cout << "Up to date" << std::endl;
+
+				delete response;
 			}
-			else
+
+			theTrackerInfos.OSVersion = SystemStats::getOperatingSystemName();
+			theTrackerInfos.StepsVersion = ProjectInfo::versionString;
+			theTrackerInfos.UserName = SystemStats::getLogonName();
+			theTrackerInfos.Location = SystemStats::getUserRegion();
+			
+			theTrackerURL += "?UserName=" + theTrackerInfos.UserName;
+			theTrackerURL += "&OSVersion=" + theTrackerInfos.OSVersion;
+			theTrackerURL += "&StepsVersion=" + theTrackerInfos.StepsVersion;
+			theTrackerURL += "&Location=" + theTrackerInfos.Location;
+			
+			URL trackerURL(theTrackerURL.trim());
+			InputStream* trackerResponse = trackerURL.createInputStream(false, nullptr, nullptr, "", 2000, nullptr);
+			if (trackerResponse != nullptr)
 			{
-				deleteMe();
-				std::cout << "Up to date" << std::endl;
+				String responseString = trackerResponse->readString();
+				std::cout << responseString << std::endl;
+				delete trackerResponse;
 			}
-			delete response;
 		}
 		else
 		{
 			std::cout << "No Internet" << std::endl;
-			deleteMe();
 		}
+		deleteMe();
 	}
 	
 	void downloadUpdate(String url)
@@ -109,9 +134,19 @@ public:
 		app->updateCallback();
 	}
 	
+	struct TrackerInfos
+	{
+		String OSVersion;
+		String StepsVersion;
+		String UserName;
+		String Location;
+	};
+	
 private:
 	String theServerURL;
+	String theTrackerURL;
 	String theTempApp;
+	TrackerInfos theTrackerInfos;
 	ScopedPointer<CURLEasySession> theCurlSession;
 };
 

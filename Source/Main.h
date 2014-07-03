@@ -28,7 +28,7 @@
 #include "MainWindow.h"
 #include "Master.h"
 
-class PackageHandler;
+class Updater;
 class SequencerApplication  : public JUCEApplication, public Timer
 {
 public:
@@ -56,7 +56,7 @@ private:
 	ScopedPointer<MainWindow> mainWindow;
 	ScopedPointer<Master> theSequencerMaster;
 	ValueTree thePreferenceTree;
-	PackageHandler* thePackageHandler;
+	Updater* thePackageHandler;
 };
 
 #endif  // MAIN_H_INCLUDED

@@ -43,8 +43,7 @@
         </GROUP>
       </GROUP>
       <GROUP id="{177A0B3F-5BE4-D5E2-1D58-6B0272C73950}" name="Updater">
-        <FILE id="CIsSIq" name="PackageHandler.h" compile="0" resource="0"
-              file="Source/PackageHandler.h"/>
+        <FILE id="CIsSIq" name="Updater.h" compile="0" resource="0" file="Source/Updater.h"/>
         <GROUP id="{E7DA2940-4994-5DF9-98B3-01FC4FF3AECC}" name="Network">
           <FILE id="SUkoNr" name="dRowAudio_CURLEasySession.cpp" compile="1"
                 resource="0" file="Source/Network/dRowAudio_CURLEasySession.cpp"/>
