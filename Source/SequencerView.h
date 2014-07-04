@@ -26,7 +26,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StepsView.h"
-#include "Scales.h"
+#include "Suite.h"
 #include "LookAndFeel.h"
 
 class ControllerView;
@@ -47,7 +47,6 @@ public:
 	void refreshMidiList();
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
-	const char * getTextForEnum(int enumVal);
 	void randomiseAll();
 	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
@@ -66,7 +65,7 @@ public:
 		
 		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Scale", widthDiv * 14, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawFittedText("Scales / Chords", widthDiv * 14, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Octave range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
@@ -87,14 +86,16 @@ private:
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	void updateNotesAndOctaves();
-	void loadScales();
+	static const char * getTextForOnOffEnum(int enumVal);
+	static const char * getTextForScalesAndChordsEnum(int enumVal);
+	void registerNotes();
+	void loadSuiteList();
 	String isOnScale(int value);
 	ScopedPointer<ComboBox> theMidiOutputList;
 	ScopedPointer<ComboBox> theChannelList;
 	ScopedPointer<ComboBox> theRootNoteList;
 	ScopedPointer<ComboBox> theRootOctaveList;
-	ScopedPointer<ComboBox> theScaleList;
+	ScopedPointer<ComboBox> theSuiteList;
 	ScopedPointer<ComboBox> theSpeedList;
 	ScopedPointer<Slider> theSequencerLength;
 	ScopedPointer<Slider> theOffsetSlider;
@@ -113,8 +114,7 @@ private:
 	ScopedPointer<Randomiser> theRandomiser;
 
 	UndoManager* theUndoManager;
-	Scale* theCurrentScale;
-	OwnedArray<Scale> theScales;
+	Suite* theCurrentSuite;
 	OwnedArray<StepView> theLEDs;
 	ValueTree theSequencerTree;
 	ControllerView* theControllerView;

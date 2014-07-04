@@ -71,6 +71,20 @@ enum ColourTheme
 	ETSI
 };
 
+enum SuiteType
+{
+	SCALE,
+	CHORD
+};
+
+enum Suites
+{
+	MAJOR,
+	MINOR,
+	PENTATONIC_MAJOR,
+	PENTATONIC_MINOR,
+};
+
 // [END_USER_CODE_SECTION]
 
 //==============================================================================

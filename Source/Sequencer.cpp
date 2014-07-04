@@ -23,6 +23,8 @@
 
 #include "Sequencer.h"
 
+OwnedArray<Suite> Suite::theSuites = OwnedArray<Suite>();
+
 Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
 {
 	theMidiCore = new MidiCore();
@@ -77,7 +79,7 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
-	theSequencerTree.setProperty("Scale", 1, nullptr);
+	theSequencerTree.setProperty("Suite", 1, nullptr);
 	theSequencerTree.setProperty("Speed", theSpeed, nullptr);
 	theSequencerTree.setProperty("RandVelocity", true, nullptr);
 	theSequencerTree.setProperty("RandDecay", true, nullptr);
@@ -96,6 +98,8 @@ void Sequencer::loadFromTree()
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
 	theSpeed = theSequencerTree.getProperty("Speed");
+	int suiteToFind = theSequencerTree.getProperty("Suite");
+	theCurrentSuite = Suite::getSuiteWithId(suiteToFind);
 	String midiOutput = theSequencerTree.getProperty("MidiOutput").toString();
 	theMidiCore->openMidiOutput(midiOutput);
 	for (int i=0; i<32; i++)
@@ -230,5 +234,10 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 			triggerNote(index);
 			tree.setProperty(property, -1, nullptr);
 		}
+	}
+	else if(String(property) == "Suite")
+	{
+		int suiteToFind = tree.getProperty(property);
+		theCurrentSuite = Suite::getSuiteWithId(suiteToFind);
 	}
 }

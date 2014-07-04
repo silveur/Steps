@@ -77,7 +77,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 			theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_3));
 		}
 		else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_2));
-		theStateButtons[i]->setButtonText(getTextForEnum(state));
+		theStateButtons[i]->setButtonText(getTextForOnOffEnum(state));
 		theStateButtons[i]->addListener(this);
 		addAndMakeVisible(theDecaySliders.add(new Slider("Decay" + String(i))));
 		theDecaySliders[i]->setSliderStyle(Slider::LinearHorizontal);
@@ -228,20 +228,22 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRootOctaveList->addSectionHeading("Root octave");
 	theRootOctaveList->setColour(ComboBox::textColourId, textButtonTextColour);
 	
-	addAndMakeVisible(theScaleList = new ComboBox("Scale"));
-	theScaleList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
-	theScaleList->setColour(ComboBox::textColourId, textButtonTextColour);
-	theScaleList->addSectionHeading("Scales");
-	loadScales();
-	updateNotesAndOctaves();
-	theCurrentScale = nullptr;
+	addAndMakeVisible(theSuiteList = new ComboBox("Scale"));
+	theSuiteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theSuiteList->setColour(ComboBox::textColourId, textButtonTextColour);
+	theSuiteList->addItem("--", 1);
+	loadSuiteList();
+	theSuiteList->setSelectedId(theSequencerTree.getProperty("ScaleChord", 1), dontSendNotification);
+	
+	registerNotes();
+	theCurrentSuite = nullptr;
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
 	theRootNoteList->addListener(this);
 	theRootOctaveList->addListener(this);
 	theSequencerTree.addListener(this);
 	theMidiOutputList->addListener(this);
-	theScaleList->addListener(this);
+	theSuiteList->addListener(this);
 	setSize(getWidth(), getHeight());
 	theUndoManager->clearUndoHistory();
 	setInterceptsMouseClicks(true, true);
@@ -251,7 +253,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 SequencerView::~SequencerView()
 {
 	delete theUndoManager;
-	theCurrentScale = nullptr;
+	theCurrentSuite = nullptr;
 }
 
 void SequencerView::handleAsyncUpdate()
@@ -285,7 +287,7 @@ void SequencerView::resized()
 	
 	theRootNoteList->setBounds(widthDiv * 2, heigthDiv, widthDiv * 6, heigthDiv * 2);
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
-	theScaleList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
+	theSuiteList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
 	theSpeedList->setBounds(widthDiv * 26, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	theRandomiser->setBounds(widthDiv * 63, heigthDiv, widthDiv * 14.0f, heigthDiv * 2);
 	theShuffleButtons[0]->setBounds(widthDiv * 33, heigthDiv, widthDiv * 2, heigthDiv * 2);
@@ -345,7 +347,7 @@ void SequencerView::randomiseAll()
 			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
 			int max = (int)theSequencerTree.getProperty("Range") * 12;
 			int pitch = theControllerView->randomise(min , max);
-			while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
+			while (isOnScale(pitch) == String() && theCurrentSuite != nullptr)
 			{
 				pitch = theControllerView->randomise(min, max);
 			}
@@ -447,16 +449,16 @@ void SequencerView::buttonClicked(Button* button)
 String SequencerView::isOnScale(int value)
 {
 	String returnedString;
-	if (theCurrentScale != nullptr)
+	if (theCurrentSuite != nullptr)
 	{
-		int* notes = theCurrentScale->getNotes().getRawDataPointer();
-		for(int j=0;j<theCurrentScale->getNotes().size();j++)
+		int* notes = theCurrentSuite->getNotes().getRawDataPointer();
+		for(int j=0;j<theCurrentSuite->getNotes().size();j++)
 		{
 			if (value >= 0)
 			{
 				if ((int)value % 12 == notes[j])
 				{
-					returnedString = theCurrentScale->getName();
+					returnedString = theCurrentSuite->getName();
 					break;
 				}
 			}
@@ -464,7 +466,7 @@ String SequencerView::isOnScale(int value)
 			{
 				if ((12 - (abs(value) % 12)) == notes[j])
 				{
-					returnedString = theCurrentScale->getName();
+					returnedString = theCurrentSuite->getName();
 					break;
 				}
 			}
@@ -547,14 +549,9 @@ void SequencerView::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 		else if (id == 4) speed = 0.125;
 		theSequencerTree.setProperty("Speed", speed, theUndoManager);
 	}
-	else if(comboBoxThatHasChanged == theScaleList)
+	else if(comboBoxThatHasChanged == theSuiteList)
 	{
-		int id = comboBoxThatHasChanged->getSelectedId();
-		if (id >= 2)
-			theCurrentScale = theScales[id-2];
-		else
-			theCurrentScale = nullptr;
-		theSequencerTree.setProperty("Scale", id, theUndoManager);
+		theSequencerTree.setProperty("Suite", theSuiteList->getSelectedItemIndex(), theUndoManager);
 	}
 }
 
@@ -620,19 +617,16 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	{
 		float speed = tree.getProperty(property); int index;
 		if (speed == 1) index = 1;
-		else if (speed == 0.5) index = 2;
-		else if (speed == 0.25) index = 3;
-		else if (speed == 0.125) index = 4;
+		else if (speed == 0.5f) index = 2;
+		else if (speed == 0.25f) index = 3;
+		else if (speed == 0.125f) index = 4;
 		theSpeedList->setSelectedId(index, dontSendNotification);
 	}
-	else if(String(property) == "Scale")
+	else if(String(property) == "Suite")
 	{
-		int id = tree.getProperty(property);
-		if (id >= 2)
-			theCurrentScale = theScales[id-2];
-		else
-			theCurrentScale = nullptr;
-		theScaleList->setSelectedId(id, dontSendNotification);
+		int index = tree.getProperty(property);
+		theCurrentSuite = Suite::getSuiteWithId(index-1);
+		theSuiteList->setSelectedItemIndex(index, dontSendNotification);
 	}
 	else
 	{
@@ -647,7 +641,7 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 				else if (String(property) == "State")
 				{
 					int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
-					theStateButtons[i]->setButtonText(getTextForEnum(state));
+					theStateButtons[i]->setButtonText(getTextForOnOffEnum(state));
 					if (state == ON)
 					{
 						theStateButtons[i]->setColour(TextButton::textColourOffId, SeqLookAndFeel::getColour(COLOUR_1));
@@ -681,7 +675,7 @@ void SequencerView::updateSelectedMidiOut(String& midiOut)
 	}
 }
 
-void SequencerView::updateNotesAndOctaves()
+void SequencerView::registerNotes()
 {
 	theRootNoteList->addItem("C",1);
 	theRootNoteList->addItem("C#",2);
@@ -699,22 +693,18 @@ void SequencerView::updateNotesAndOctaves()
 		theRootOctaveList->addItem(String(i), i+1);
 }
 
-void SequencerView::loadScales()
+void SequencerView::loadSuiteList()
 {
-	theScaleList->addItem("--", 1);
-	theScaleList->addItem("Major", 2);
-	theScaleList->addItem("Minor", 3);
-	theScaleList->addItem("Pentatonic Major", 4);
-	theScaleList->addItem("Pentatonic Minor", 5);
-	theScaleList->setSelectedId(theSequencerTree.getProperty("Scale"));
+	theSuiteList->addSectionHeading("Scales");
+	for (int i=0;i<Suite::theSuites.size();i++)
+		if (Suite::theSuites[i]->getSuiteType() == SCALE) theSuiteList->addItem(Suite::theSuites[i]->getName(), i+2);
 
-	for (int i=1;i<theScaleList->getNumItems();i++)
-	{
-		theScales.add(new Scale(theScaleList->getItemText(i)));
-	}
+	theSuiteList->addSectionHeading("Chords");
+	for (int i=theSuiteList->getNumItems()-1;i<Suite::theSuites.size();i++)
+		if (Suite::theSuites[i]->getSuiteType() == CHORD) theSuiteList->addItem(Suite::theSuites[i]->getName(), i+2);
 }
 
-const char* SequencerView::getTextForEnum(int enumVal)
+const char* SequencerView::getTextForOnOffEnum(int enumVal)
 {
 	static const char * stateStrings[] = { "OFF", "ON", "JUMP" };
 	return stateStrings[enumVal];

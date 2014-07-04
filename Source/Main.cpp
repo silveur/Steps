@@ -23,6 +23,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Main.h"
+#include "Suite.h"
 #include "Updater.h"
 
 File thePresetFolder;
@@ -31,7 +32,7 @@ File theDefaultPreset;
 void SequencerApplication::initialise (const String& commandLine)
 {
 	thePackageHandler = new Updater();
-	thePreferenceTree = ValueTree("Preferences");
+	thePreferenceTree = ValueTree("Preferences"); Suite::initialiseSuitesArray();
 	theSequencerMaster = new Master(thePreferenceTree);
 	mainWindow = new MainWindow(theSequencerMaster->getMasterTree(), thePreferenceTree);
 }
