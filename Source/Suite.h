@@ -69,6 +69,31 @@ public:
 				const int scale[3] ={0, 3, 7};
 				theNotes = Array<int>(scale, 3);
 			}
+			else if (name == "5")
+			{
+				const int scale[2] ={0, 7};
+				theNotes = Array<int>(scale, 2);
+			}
+			else if (name == "6")
+			{
+				const int scale[4] ={0, 4, 7 , 9};
+				theNotes = Array<int>(scale, 4);
+			}
+			else if (name == "Dominant 7th")
+			{
+				const int scale[4] ={0, 4, 7, 10};
+				theNotes = Array<int>(scale, 4);
+			}
+			else if (name == "Major 7th")
+			{
+				const int scale[4] ={0, 4, 7, 11};
+				theNotes = Array<int>(scale, 4);
+			}
+			else if (name == "Minor 7th")
+			{
+				const int scale[4] ={0, 3, 7, 10};
+				theNotes = Array<int>(scale, 4);
+			}
 		}
 	}
 	
@@ -77,7 +102,7 @@ public:
 	static void initialiseSuitesArray()
 	{
 		const char* const scaleStrings[] = {"Major", "Harmonic Minor", "Pentatonic Major", "Pentatonic Minor", nullptr};
-		const char* const chordStrings[] = {"Major", "Minor", nullptr};
+		const char* const chordStrings[] = {"Major", "Minor", "5", "6", "Dominant 7th", "Major 7th", "Minor 7th", nullptr};
 		StringArray scaleSuites(scaleStrings); StringArray chordSuites(chordStrings);
 		
 		for (int i=0;i<scaleSuites.size();i++) Suite::theSuites.add(new Suite(scaleSuites[i], SCALE));
