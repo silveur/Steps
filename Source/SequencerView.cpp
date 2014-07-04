@@ -228,15 +228,18 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theRootOctaveList->addSectionHeading("Root octave");
 	theRootOctaveList->setColour(ComboBox::textColourId, textButtonTextColour);
 	
-	addAndMakeVisible(theSuiteList = new ComboBox("Scale"));
+	addAndMakeVisible(theSuiteList = new ComboBox("Suites"));
 	theSuiteList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
 	theSuiteList->setColour(ComboBox::textColourId, textButtonTextColour);
 	theSuiteList->addItem("--", 1);
 	loadSuiteList();
-	theSuiteList->setSelectedId(theSequencerTree.getProperty("ScaleChord", 1), dontSendNotification);
+	theSuiteList->setSelectedItemIndex(theSequencerTree.getProperty("Suite", 0), dontSendNotification);
 	
 	registerNotes();
-	theCurrentSuite = nullptr;
+	
+	int suiteToFind = theSequencerTree.getProperty("Suite");
+	theCurrentSuite = Suite::getSuiteWithId(suiteToFind);
+	
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
 	theRootNoteList->addListener(this);
@@ -347,7 +350,7 @@ void SequencerView::randomiseAll()
 			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
 			int max = (int)theSequencerTree.getProperty("Range") * 12;
 			int pitch = theControllerView->randomise(min , max);
-			while (isOnScale(pitch) == String() && theCurrentSuite != nullptr)
+			while (isOnScale(pitch) == String() && theCurrentSuite != nullptr && theCurrentSuite->getSuiteType() == SCALE)
 			{
 				pitch = theControllerView->randomise(min, max);
 			}
@@ -449,7 +452,7 @@ void SequencerView::buttonClicked(Button* button)
 String SequencerView::isOnScale(int value)
 {
 	String returnedString;
-	if (theCurrentSuite != nullptr)
+	if (theCurrentSuite != nullptr && theCurrentSuite->getSuiteType() == SCALE)
 	{
 		int* notes = theCurrentSuite->getNotes().getRawDataPointer();
 		for(int j=0;j<theCurrentSuite->getNotes().size();j++)
@@ -654,10 +657,8 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 					}
 					else if (state == JUMP) theStateButtons[i]->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_2));
  				}
-				else if (String(property) == "Velocity")
-					theVelocitySliders[i]->setValue((int)tree.getProperty(property));
-				else if (String(property) == "Decay")
-					theDecaySliders[i]->setValue((int)tree.getProperty(property));
+				else if (String(property) == "Velocity") theVelocitySliders[i]->setValue((int)tree.getProperty(property));
+				else if (String(property) == "Decay") theDecaySliders[i]->setValue((int)tree.getProperty(property));
 			}
 		}
 	}

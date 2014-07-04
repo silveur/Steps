@@ -67,19 +67,23 @@ void MidiCore::killNotes()
 	}
 }
 
-void MidiCore::outputMidi(const MidiMessage &msg)
-{
-	if(theMidiOutput != nullptr)
-	{
-		theMidiOutput->sendMessageNow(msg);
-	}
-}
-
 void MidiCore::outputMidi(const MidiMessage &msg, int delayMs)
 {
 	if(theMidiOutput != nullptr)
 	{
 		MidiBuffer buff(msg);
 		theMidiOutput->sendBlockOfMessages(buff, Time::getMillisecondCounter() + delayMs, 44100);
+	}
+}
+
+void MidiCore::outputMidi(const Array<MidiMessage> &msgs, int delayMs)
+{
+	if(theMidiOutput != nullptr)
+	{
+		for (int i=0;i<msgs.size();i++)
+		{
+			MidiBuffer buff(msgs[i]);
+			theMidiOutput->sendBlockOfMessages(buff, Time::getMillisecondCounter() + delayMs, 44100);
+		}
 	}
 }
