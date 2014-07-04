@@ -330,11 +330,6 @@ void SequencerView::resized()
 	}
 }
 
-int randomise(int min, int max)
-{
-	return ((int)rand() % (max + abs(min))) - abs(min);
-}
-
 void SequencerView::trigMidiNote(int sliderIndex)
 {
 	theSequencerTree.setProperty("Trigger", sliderIndex, nullptr);
@@ -349,10 +344,10 @@ void SequencerView::randomiseAll()
 		{
 			int min = 0 - (int)theSequencerTree.getProperty("Range") * 12;
 			int max = (int)theSequencerTree.getProperty("Range") * 12;
-			int pitch = randomise(min , max);
+			int pitch = theControllerView->randomise(min , max);
 			while (isOnScale(pitch) == String() && theCurrentScale != nullptr)
 			{
-				pitch = randomise(min, max);
+				pitch = theControllerView->randomise(min, max);
 			}
 			child.setProperty("Pitch", pitch, theUndoManager);
 		}

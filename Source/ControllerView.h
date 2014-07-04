@@ -44,6 +44,11 @@ public:
 	void removeSequencer(int index);
 	const int getNumOfSequencer() const;
 	ValueTree& getMasterTree() { return theMasterTree; }
+	int randomise(int min, int max)
+	{
+		Range<int> range(min, max);
+		return theRandomGenerator->nextInt(range);
+	}
 
 private:
 	void valueTreePropertyChanged (ValueTree& tree, const Identifier& property){}
@@ -55,6 +60,7 @@ private:
 	HeaderView* theHeaderView;
 	ValueTree theMasterTree;
 	ValueTree thePreferenceTree;
+	ScopedPointer<Random> theRandomGenerator;
 };
 
 #endif  // ROOTVIEW_H_INCLUDED

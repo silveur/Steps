@@ -40,6 +40,7 @@ ControllerView::ControllerView(ValueTree& masterTree, ValueTree& preferenceTree)
 	addAndMakeVisible(theHeaderView = new HeaderView(this, preferenceTree));
 	theMasterTree.addListener(this);
 	setInterceptsMouseClicks(false, true);
+	theRandomGenerator = new Random (Time::currentTimeMillis());
 	refreshView();
 }
 
