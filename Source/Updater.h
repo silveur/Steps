@@ -42,7 +42,11 @@ public:
 		theCurlSession->setLocalFile(File(theTempApp));
 		theServerURL = "http://nummermusic.com/version-request.php?version=";
 		theTrackerURL = "http://nummermusic.com/tracker.php";
+		#ifndef DEBUG
 		startThread();
+		#else
+		deleteMe();
+		#endif
 	}
 	
 	~Updater()

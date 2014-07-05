@@ -27,6 +27,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Step.h"
 #include "MidiCore.h"
+#include "Suite.h"
 
 class SequencerAudioProcessor;
 class MidiCore;
@@ -56,6 +57,7 @@ private:
 	ScopedPointer<MidiCore> theMidiCore;
 	OwnedArray<Step> theStepArray;
 	ValueTree theSequencerTree;
+	Suite* theCurrentSuite;
 	
 	int theChannel;
 	int thePosition;

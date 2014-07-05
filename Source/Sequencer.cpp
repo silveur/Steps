@@ -23,7 +23,9 @@
 
 #include "Sequencer.h"
 
-Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
+OwnedArray<Suite> Suite::theSuites = OwnedArray<Suite>();
+
+Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree), theCurrentSuite(nullptr)
 {
 	theMidiCore = new MidiCore();
 	if (theSequencerTree.getNumProperties() > 0)
@@ -61,10 +63,26 @@ void Sequencer::triggerNote(int stepIndex = -1)
 	if (stepIndex == -1) step = theStepArray[thePosition];
 	else step = theStepArray[stepIndex];
 	
-	MidiMessage onMsg = MidiMessage::noteOn(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-	MidiMessage offMsg = MidiMessage::noteOff(theChannel, (24 + (step->thePitch) + theRootNote) + (12*theRootOctave), (uint8)step->theVelocity);
-	theMidiCore->outputMidi(onMsg);
-	theMidiCore->outputMidi(offMsg, step->theDecay);
+	int note = 24 + (step->thePitch) + theRootNote + (12*theRootOctave);
+	
+	if (theCurrentSuite != nullptr && theCurrentSuite->getSuiteType() == CHORD)
+	{
+		Array<MidiMessage> notesOn, notesOff;
+		for (int i=0;i<theCurrentSuite->getNotes().size();i++)
+			notesOn.add(MidiMessage::noteOn(theChannel, note + theCurrentSuite->getNotes()[i], (uint8)step->theVelocity));
+		theMidiCore->outputMidi(notesOn);
+		
+		for (int i=0;i<theCurrentSuite->getNotes().size();i++)
+			notesOff.add(MidiMessage::noteOff(theChannel, note + theCurrentSuite->getNotes()[i], (uint8)step->theVelocity));
+		theMidiCore->outputMidi(notesOff, step->theDecay);
+	}
+	else
+	{
+		MidiMessage onMsg = MidiMessage::noteOn(theChannel, note, (uint8)step->theVelocity);
+		MidiMessage offMsg = MidiMessage::noteOff(theChannel, note, (uint8)step->theVelocity);
+		theMidiCore->outputMidi(onMsg);
+		theMidiCore->outputMidi(offMsg, step->theDecay);
+	}
 }
 
 void Sequencer::initSequencerTree()
@@ -77,7 +95,7 @@ void Sequencer::initSequencerTree()
 	theSequencerTree.setProperty("Channel", theChannel, nullptr);
 	theSequencerTree.setProperty("Status", theOnOffStatus, nullptr);
 	theSequencerTree.setProperty("Offset", theOffset, nullptr);
-	theSequencerTree.setProperty("Scale", 1, nullptr);
+	theSequencerTree.setProperty("Suite", 0, nullptr);
 	theSequencerTree.setProperty("Speed", theSpeed, nullptr);
 	theSequencerTree.setProperty("RandVelocity", true, nullptr);
 	theSequencerTree.setProperty("RandDecay", true, nullptr);
@@ -96,6 +114,8 @@ void Sequencer::loadFromTree()
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
 	theSpeed = theSequencerTree.getProperty("Speed");
+	int suiteToFind = theSequencerTree.getProperty("Suite");
+	theCurrentSuite = Suite::getSuiteWithId(suiteToFind - 1);
 	String midiOutput = theSequencerTree.getProperty("MidiOutput").toString();
 	theMidiCore->openMidiOutput(midiOutput);
 	for (int i=0; i<32; i++)
@@ -133,12 +153,8 @@ void Sequencer::carryOn()
 void Sequencer::triggerStep()
 {
 	thePosition = (thePosition+1) % theLength;
-	while (theStepArray[thePosition]->theState == JUMP)
-		thePosition = (thePosition+1) % theLength;
-	if (theStepArray[thePosition]->theState == ON)
-	{
-		triggerNote();
-	}
+	while (theStepArray[thePosition]->theState == JUMP)	thePosition = (thePosition+1) % theLength;
+	if (theStepArray[thePosition]->theState == ON) triggerNote();
 	theSequencerTree.setProperty("Position", thePosition, nullptr);
 }
 
@@ -230,5 +246,11 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 			triggerNote(index);
 			tree.setProperty(property, -1, nullptr);
 		}
+	}
+	else if(String(property) == "Suite")
+	{
+		int suiteToFind = tree.getProperty(property);
+		if(suiteToFind > 0) theCurrentSuite = Suite::getSuiteWithId(suiteToFind-1);
+		else theCurrentSuite = nullptr;
 	}
 }

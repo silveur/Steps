@@ -33,9 +33,9 @@ public:
 	~MidiCore();
 	
 	void killNotes();
-	void outputMidi(const MidiMessage& msg);
 	void openMidiOutput(String& name);
-	void outputMidi(const MidiMessage &msg, int delayMs);
+	void outputMidi(const MidiMessage &msg, int delayMs = 0);
+	void outputMidi(const Array<MidiMessage>& msgs, int delayMS = 0);
 	
 private:
 	MidiOutput* theMidiOutput;

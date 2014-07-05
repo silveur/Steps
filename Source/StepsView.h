@@ -47,7 +47,7 @@ public:
 	{
 		if (theState) g.setColour (SeqLookAndFeel::getColour(COLOUR_1));
 		else g.setColour (SeqLookAndFeel::getColour(COLOUR_4));
-        g.fillEllipse (getWidth()*0.4f, getHeight()*0.1f, getHeight()*0.8f, getHeight()*0.8f);
+        g.fillEllipse (getWidth()*0.45f, getHeight()*0.2f, getHeight()*0.6f, getHeight()*0.6f);
 	}
 
 private:

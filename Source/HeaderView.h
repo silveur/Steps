@@ -31,7 +31,7 @@
 extern UndoManager* theUndoManager;
 extern Colour textButtonTextColour;
 
-class HeaderView: public Component, ButtonListener, public ComboBoxListener, public ValueTree::Listener, SliderListener
+class HeaderView: public Component, ButtonListener, public ComboBoxListener, public ValueTree::Listener, SliderListener, public Label::Listener
 {
 public:
 	HeaderView(ControllerView* controllerView, ValueTree& preferenceTree): theControllerView(controllerView)
@@ -48,6 +48,13 @@ public:
 		theUndoButton->addListener(this);
 		addAndMakeVisible(theRedoButton = new TextButton("Redo"));
 		theRedoButton->addListener(this);
+		
+		addAndMakeVisible(theBPMLabel = new Label("BPM"));
+		theBPMLabel->setFont(Font("Helvetica Neue",24.0000f, Font::plain));
+		theBPMLabel->setJustificationType(Justification::left);
+		theBPMLabel->setText(thePreferenceTree.getProperty("BPM").toString() + String(" bpm"), dontSendNotification);
+		theBPMLabel->setEditable(true);
+		theBPMLabel->addListener(this);
 		
 		addAndMakeVisible(theExportAllButton = new TextButton("Export all"));
 		theExportAllButton->setTooltip("Export mutiple sequences");
@@ -102,6 +109,17 @@ public:
 	}
 	~HeaderView() {}
 	
+	 void labelTextChanged(Label* labelThatHasChanged)
+	{
+		float bpm = (float)labelThatHasChanged->getTextValue().getValue();
+		theBPMSlider->setValue(bpm);
+	}
+	
+	void editorShown(Label*, TextEditor &textEditorShown)
+	{
+		textEditorShown.setText(textEditorShown.getText().removeCharacters("bpm"));
+	}
+	
 	void buttonClicked(Button* buttonThatWasClicked)
 	{
 		if (buttonThatWasClicked == theAddSequencerButton)
@@ -142,14 +160,6 @@ public:
 
 	void paint(Graphics& g)
 	{
-		g.setColour(textButtonTextColour);
-		
-		float heigthDiv = getHeight() / 4.0f;
-		float widthDiv = getWidth() / 130.0f;
-		
-		g.setFont (Font ("Helvetica neue",16.0000f, Font::plain));
-		g.drawFittedText(String( String(theBPMSlider->getValue()) + String(" bpm")), widthDiv * 109, heigthDiv , widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
-		
 		g.setColour(Colours::grey);
 		g.drawLine(0, getHeight(), getWidth(), getHeight(), 1.0f);
 	}
@@ -165,6 +175,7 @@ public:
 		
 		theMasterClockList->setBounds(widthDiv * 93, heigthDiv, widthDiv * 12, heigthDiv * 2);
 		theBPMSlider->setBounds(widthDiv * 106, heigthDiv, heigthDiv * 2, heigthDiv * 2);
+		theBPMLabel->setBounds(widthDiv * 108, heigthDiv , widthDiv * 7, heigthDiv * 2);
 		theClockSourceList->setBounds(widthDiv * 116, heigthDiv, widthDiv * 12, heigthDiv * 2);
 		repaint();
 	}
@@ -174,6 +185,7 @@ public:
 		if (String(property) == "BPM")
 		{
 			theBPMSlider->setValue(tree.getProperty(property));
+			theBPMLabel->setText(String(theBPMSlider->getValue()) + String(" bpm"), dontSendNotification);
 			repaint();
 		}
 		else if (String(property) == "MasterClock")
@@ -196,6 +208,7 @@ private:
 	ScopedPointer<Slider> theBPMSlider;
 	ScopedPointer<ComboBox> theClockSourceList;
 	ScopedPointer<ComboBox> theMasterClockList;
+	ScopedPointer<Label> theBPMLabel;
 	ControllerView* theControllerView;
 	ValueTree thePreferenceTree;
 };
