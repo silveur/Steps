@@ -25,7 +25,7 @@
 
 OwnedArray<Suite> Suite::theSuites = OwnedArray<Suite>();
 
-Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree)
+Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree), theCurrentSuite(nullptr)
 {
 	theMidiCore = new MidiCore();
 	if (theSequencerTree.getNumProperties() > 0)
@@ -251,5 +251,6 @@ void Sequencer::valueTreePropertyChanged (ValueTree& tree, const Identifier& pro
 	{
 		int suiteToFind = tree.getProperty(property);
 		if(suiteToFind > 0) theCurrentSuite = Suite::getSuiteWithId(suiteToFind-1);
+		else theCurrentSuite = nullptr;
 	}
 }
