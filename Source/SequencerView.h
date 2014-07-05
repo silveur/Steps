@@ -73,6 +73,14 @@ public:
 		g.drawFittedText("Length", widthDiv * 57, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 13, heigthDiv * 2, Justification::centred, 1);
 		g.drawFittedText("Channel", widthDiv * 115, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
+		
+		g.drawLine(widthDiv * 32.9f, heigthDiv * 15.1f, widthDiv * 32.9f, heigthDiv * 16.95f, 0.3f);
+		g.drawLine(widthDiv * 64.9f, heigthDiv * 15.1f, widthDiv * 64.9f, heigthDiv * 16.95f, 0.3f);
+		g.drawLine(widthDiv * 96.9f, heigthDiv * 15.1f, widthDiv * 96.9f, heigthDiv * 16.95f, 0.3f);
+		
+		g.drawLine(widthDiv * 32.9f, heigthDiv * 29.1f, widthDiv * 32.9f, heigthDiv * 30.95f, 0.3f);
+		g.drawLine(widthDiv * 64.9f, heigthDiv * 29.1f, widthDiv * 64.9f, heigthDiv * 30.95f, 0.3f);
+		g.drawLine(widthDiv * 96.9f, heigthDiv * 29.1f, widthDiv * 96.9f, heigthDiv * 30.95f, 0.3f);
 	}
 	static ValueTree& getCopyTree()
 	{

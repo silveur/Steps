@@ -64,7 +64,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		theVelocitySliders[i]->setColour(Slider::trackColourId, SeqLookAndFeel::getColour(COLOUR_4));
 		theVelocitySliders[i]->setColour(Slider::thumbColourId, SeqLookAndFeel::getColour(COLOUR_2));
 		theVelocitySliders[i]->addListener(this);
-		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i), "alt+click = Jump")));
+		addAndMakeVisible(theStateButtons.add(new TextButton("State" + String(i), "alt+click : Jump")));
 		int state = (int)theSequencerTree.getChild(i).getProperty("State", dontSendNotification);
 		if (state == ON)
 		{
@@ -205,6 +205,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	theMidiOutputList->setColour(ComboBox::textColourId, textButtonTextColour);
 	theMidiOutputList->setTextWhenNothingSelected("Select a midi output");
 	theMidiOutputList->setTextWhenNoChoicesAvailable("No midi output available");
+	theMidiOutputList->setTooltip("Create virtual midi from Audio Midi Setup");
 	String midiOutput = theSequencerTree.getProperty("MidiOutput").toString();
 	refreshMidiList();
 	updateSelectedMidiOut(midiOutput);
@@ -627,9 +628,10 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else if(String(property) == "Suite")
 	{
-		int index = tree.getProperty(property);
-		theCurrentSuite = Suite::getSuiteWithId(index-1);
-		theSuiteList->setSelectedItemIndex(index, dontSendNotification);
+		int suiteIndex = tree.getProperty(property);
+		if(suiteIndex > 0) theCurrentSuite = Suite::getSuiteWithId(suiteIndex-1);
+		else theCurrentSuite = nullptr;
+		theSuiteList->setSelectedItemIndex(suiteIndex, dontSendNotification);
 	}
 	else
 	{
@@ -690,8 +692,8 @@ void SequencerView::registerNotes()
 	theRootNoteList->addItem("A",10);
 	theRootNoteList->addItem("A#",11);
 	theRootNoteList->addItem("B",12);
-	for (int i=0;i<8;i++)
-		theRootOctaveList->addItem(String(i), i+1);
+	
+	for (int i=0;i<8;i++) theRootOctaveList->addItem(String(i), i+1);
 }
 
 void SequencerView::loadSuiteList()
