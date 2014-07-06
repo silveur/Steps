@@ -77,7 +77,11 @@ public:
 					downloadUpdate(responseString);
 				}
 				
-				else std::cout << "Up to date" << std::endl;
+				else
+				{
+					std::cout << "Up to date" << std::endl;
+					deleteMe();
+				}
 
 				delete response;
 			}
@@ -104,8 +108,8 @@ public:
 		else
 		{
 			std::cout << "No Internet" << std::endl;
+			deleteMe();
 		}
-		deleteMe();
 	}
 	
 	void downloadUpdate(String url)
