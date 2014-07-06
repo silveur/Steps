@@ -138,9 +138,7 @@ void ControllerView::addSequencer(ValueTree& sequencerTreeToAdd)
 
 void ControllerView::removeSequencer(int i)
 {
-	if (theMasterTree.getNumChildren() == 1) return;
-	
-	else if (i == -1)
+	if (i == -1)
 	{
 		int index = theMasterTree.getNumChildren() - 1;
 		theMasterTree.removeChild(index, nullptr);

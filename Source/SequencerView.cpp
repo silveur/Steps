@@ -387,7 +387,7 @@ void SequencerView::buttonClicked(Button* button)
 	else if (button == theDeleteButton)
 	{
 		int i = theSequencerTree.getParent().indexOf(theSequencerTree);
-		theControllerView->removeSequencer(i);
+		if (theSequencerTree.getParent().getNumChildren() > 1) theControllerView->removeSequencer(i);
 	}
 	
 	else if (button == theImportButton)
