@@ -222,10 +222,10 @@ public:
 	
 	void getCommandInfo(CommandID commandID, ApplicationCommandInfo& result)
 	{
-		const String settingsCategory("Settings");
+		const String appCategory("Main");
+		const String editCategory("Settings");
 		const String viewCategory("Views");
-		const String sizeCategory("Size");
-		const String supportCategory("Support");
+		const String helpCategory("Help");
 		
 		switch (commandID)
 		{
@@ -233,14 +233,14 @@ public:
 			{
 				result.setInfo("About Steps",
 							   "About this software",
-							   settingsCategory, 0);
+							   appCategory, 0);
 				break;
 			}
 			case COMMAND_ID_EXPORTALL:
 			{
 				result.setInfo("Export All",
 							   "Export master sequencer",
-							   settingsCategory, 0);
+							   editCategory, 0);
 				result.addDefaultKeypress('s', ModifierKeys::commandModifier);
 				break;
 			}
@@ -248,7 +248,7 @@ public:
 			{
 				result.setInfo("Import All",
 							   "Import master sequencer",
-							   settingsCategory, 0);
+							   editCategory, 0);
 				result.addDefaultKeypress('s', ModifierKeys::commandModifier + ModifierKeys::altModifier);
 				break;
 			}
@@ -256,14 +256,14 @@ public:
 			{
 				result.setInfo("Change Preset Folder",
 							   "Select new preset folder",
-							   settingsCategory, 0);
+							   editCategory, 0);
 				break;
 			}
 			case COMMAND_ID_WEBSITE:
 			{
 				result.setInfo("Visit our website",
 							   "Nummer website",
-							   settingsCategory, 0);
+							   helpCategory, 0);
 				break;
 			}
 			case COMMAND_ID_TOOLTIP:
@@ -271,7 +271,7 @@ public:
 				String tooltip;
 				if (theToolTipState) tooltip = "Hide tooltip";
 				else tooltip = "Show tooltip";
-				result.setInfo(tooltip, "Add or hide tooltip", settingsCategory, 0);
+				result.setInfo(tooltip, "Add or hide tooltip", helpCategory, 0);
 				break;
 			}
 			case COMMAND_ID_SKIN1:

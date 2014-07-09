@@ -75,8 +75,9 @@ public:
 		
 		Colour textColour = button.findColour (ToggleButton::textColourId);
 		g.setColour(textColour);
-		String text(button.getName().getCharPointer(), 1);
-		g.drawFittedText(text, 0, 0, button.getWidth(), button.getHeight(), Justification::centred, 1);
+		g.setFont(Font ("Helvetica Neue",12.0000f, Font::plain));
+		String text(button.getName().getCharPointer(), 3);
+		g.drawText(text, 0, 0, button.getWidth(), button.getHeight(), Justification::centred, 1);
 	}
 	
 	void drawComboBox (Graphics& g, int _width, int _height, const bool /*isButtonDown*/,
@@ -149,13 +150,11 @@ public:
 					 .withMultipliedAlpha (button.isEnabled() ? 1.0f : 0.5f));
 		
 		const int yIndent = jmin (4, button.proportionOfHeight (0.3f));
-		const int cornerSize = jmin (button.getHeight(), button.getWidth()) / 2;
 		
-		const int fontHeight = roundToInt (font.getHeight() * 0.6f);
-		const int leftIndent  = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
-		const int rightIndent = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+		const int leftIndent  = 4;
+		const int rightIndent = 4;
 		
-		g.drawFittedText (button.getButtonText(),
+		g.drawText (button.getButtonText(),
 						  leftIndent,
 						  yIndent,
 						  button.getWidth() - leftIndent - rightIndent,
@@ -356,22 +355,22 @@ public:
 	
 	Font getPopupMenuFont()
 	{
-		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+		return (Font ("Helvetica Neue",11.0000f, Font::plain));
 	}
 	
 	Font getTextButtonFont (TextButton &)
 	{
-		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+		return (Font ("Helvetica Neue",11.0000f, Font::plain));
 	}
 	
 	Font getComboboxFont (ComboBox &)
 	{
-		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+		return (Font ("Helvetica Neue",11.0000f, Font::plain));
 	}
 	
 	Font getLabelFont (Label &)
 	{
-		return (Font ("Helvetica Neue",12.0000f, Font::plain));
+		return (Font ("Helvetica Neue",11.0000f, Font::plain));
 	}
 	
 	void drawTooltip (Graphics& g, const String& text, int width, int height)
@@ -467,7 +466,7 @@ public:
 			}
 			
 			r.removeFromRight (3);
-			g.drawFittedText (text, r, Justification::centredLeft, 1);
+			g.drawText (text, r, Justification::centredLeft, 1);
 			
 			if (shortcutKeyText.isNotEmpty())
 			{

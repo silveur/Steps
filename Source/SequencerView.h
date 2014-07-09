@@ -55,7 +55,7 @@ public:
 	}
 	void paint(Graphics& g)
 	{
-		g.setFont (Font ("Helvetica Neue",12.0000f, Font::plain));
+		g.setFont (Font ("Helvetica Neue",11.0000f, Font::plain));
 		g.setColour(SeqLookAndFeel::getColour(COLOUR_1));
 
 		float heigthDiv;
@@ -63,16 +63,16 @@ public:
 		else heigthDiv = getHeight() / 34.0f;
 		float widthDiv = getWidth() / 130.0f;
 		
-		g.drawFittedText("Root Note", widthDiv * 2, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Octave", widthDiv * 8, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Scales / Chords", widthDiv * 14, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Octave range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Start offset", widthDiv * 53, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Length", widthDiv * 57, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 13, heigthDiv * 2, Justification::centred, 1);
-		g.drawFittedText("Channel", widthDiv * 115, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Root Note", widthDiv * 2, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Octave", widthDiv * 8, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Scales / Chords", widthDiv * 14, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Offset", widthDiv * 53, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Length", widthDiv * 57, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 12, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Channel", widthDiv * 114, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		
 		g.drawLine(widthDiv * 32.9f, heigthDiv * 15.1f, widthDiv * 32.9f, heigthDiv * 16.95f, 0.3f);
 		g.drawLine(widthDiv * 64.9f, heigthDiv * 15.1f, widthDiv * 64.9f, heigthDiv * 16.95f, 0.3f);
@@ -96,6 +96,7 @@ private:
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
 	static const char * getTextForOnOffEnum(int enumVal);
 	static const char * getTextForScalesAndChordsEnum(int enumVal);
+	void setAllLeds(bool state);
 	void registerNotes();
 	void loadSuiteList();
 	String isOnScale(int value);
