@@ -36,25 +36,25 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 	theRandomAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theRandomAllButton->addListener(this);
 	
-	addAndMakeVisible(theVelocityButton = new ToggleButton("Velocity"));
+	addAndMakeVisible(theVelocityButton = new ToggleButton("V"));
 	theVelocityButton->setTooltip("Velocity");
 	theVelocityButton->setToggleState(theSequencerTree.getProperty("RandVelocity"), dontSendNotification);
 	theVelocityButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	theVelocityButton->addListener(this);
 	
-	addAndMakeVisible(theDecayButton = new ToggleButton("Decay"));
+	addAndMakeVisible(theDecayButton = new ToggleButton("D"));
 	theDecayButton->setTooltip("Decay");
 	theDecayButton->setToggleState(theSequencerTree.getProperty("RandDecay"), dontSendNotification);
 	theDecayButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	theDecayButton->addListener(this);
 	
-	addAndMakeVisible(thePitchButton = new ToggleButton("Pitch"));
+	addAndMakeVisible(thePitchButton = new ToggleButton("P"));
 	thePitchButton->setTooltip("Pitch");
 	thePitchButton->setToggleState(theSequencerTree.getProperty("RandPitch"), dontSendNotification);
 	thePitchButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	thePitchButton->addListener(this);
 	
-	addAndMakeVisible(theStateButton = new ToggleButton("OnOff"));
+	addAndMakeVisible(theStateButton = new ToggleButton("O"));
 	theStateButton->setTooltip("On/Off");
 	theStateButton->setToggleState(theSequencerTree.getProperty("RandState"), dontSendNotification);
 	theStateButton->setColour(ToggleButton::textColourId, textButtonTextColour);

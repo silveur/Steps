@@ -97,6 +97,8 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 		addAndMakeVisible(theLEDs.add(new StepView()));
 	}
 	
+	setAllLeds(!(bool)theSequencerTree.getProperty("Status"));
+	
 	int offset = theSequencerTree.getProperty("Offset");
 	theStepSliders[offset]->setColour(Slider::rotarySliderFillColourId, SeqLookAndFeel::getColour(COLOUR_3));
 
@@ -198,7 +200,19 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	
 	addAndMakeVisible(theOnOffButton = new ToggleButton(""));
 	theOnOffButton->setToggleState(theSequencerTree.getProperty("Status"), dontSendNotification);
+	if (theOnOffButton->getToggleState() == true)
+	{
+		theOnOffButton->setName("On");
+		theOnOffButton->setColour(ToggleButton::textColourId, SeqLookAndFeel::getColour(COLOUR_1));
+	}
+	else
+	{
+		theOnOffButton->setName("Off");
+		theOnOffButton->setColour(ToggleButton::textColourId, Colour::fromRGB(234, 46, 73));
+	}
 	theOnOffButton->addListener(this);
+	
+	
 
 	addAndMakeVisible(theMidiOutputList = new ComboBox("Midi Output list"));
 	theMidiOutputList->setColour(ComboBox::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_4));
@@ -239,7 +253,7 @@ SequencerView::SequencerView(ValueTree& sequencerTree, ControllerView* controlle
 	registerNotes();
 	
 	int suiteToFind = theSequencerTree.getProperty("Suite");
-	theCurrentSuite = Suite::getSuiteWithId(suiteToFind);
+	theCurrentSuite = Suite::getSuiteWithId(suiteToFind - 1);
 	
 	theRootNoteList->setSelectedItemIndex(theSequencerTree.getProperty("RootNote"));
 	theRootOctaveList->setSelectedItemIndex(theSequencerTree.getProperty("RootOctave"));
@@ -262,7 +276,6 @@ SequencerView::~SequencerView()
 
 void SequencerView::handleAsyncUpdate()
 {
-
 	theLEDs[thePosition]->update(true);
 	if (thePreviousStepPosition != -1) theLEDs[thePreviousStepPosition]->update(false);
 	thePreviousStepPosition = thePosition;
@@ -314,9 +327,10 @@ void SequencerView::resized()
 	thePasteButton->setBounds(theCopyButton->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
 	theExportButton->setBounds(theImportButton->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
 	
-	theMidiOutputList->setBounds(widthDiv * 102, heigthDiv, widthDiv * 13, heigthDiv * 2);
+	theMidiOutputList->setBounds(widthDiv * 102, heigthDiv, widthDiv * 12, heigthDiv * 2);
 	theChannelList->setBounds(theMidiOutputList->getRight(), heigthDiv, widthDiv * 5, heigthDiv * 2);
-	theDeleteButton->setBounds(widthDiv * 122, heigthDiv, widthDiv * 6, heigthDiv * 2);
+	theOnOffButton->setBounds(widthDiv * 120, heigthDiv, widthDiv * 4, heigthDiv * 2);
+	theDeleteButton->setBounds(theOnOffButton->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
 
 	for(int i=0;i<16;i++)
 	{
@@ -363,6 +377,12 @@ void SequencerView::randomiseAll()
 	}
 }
 
+void SequencerView::setAllLeds(bool state)
+{
+	for (int i=0;i<theLEDs.size();i++)
+		theLEDs[i]->update(state);
+}
+
 void SequencerView::buttonClicked(Button* button)
 {
 	if (button == theCopyButton)
@@ -382,6 +402,17 @@ void SequencerView::buttonClicked(Button* button)
 	}
 	else if (button == theOnOffButton)
 	{
+		if (theOnOffButton->getToggleState() == true)
+		{
+			theOnOffButton->setName("On");
+			theOnOffButton->setColour(ToggleButton::textColourId, Colours::black);
+		}
+		else
+		{
+			theOnOffButton->setName("Off");
+			theOnOffButton->setColour(ToggleButton::textColourId, Colour::fromRGB(234, 46, 73));
+		}
+		setAllLeds(!button->getToggleState());
 		theSequencerTree.setProperty("Status", theOnOffButton->getToggleState(), nullptr);
 	}
 	else if (button == theDeleteButton)

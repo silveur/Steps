@@ -101,7 +101,7 @@ public:
 	
 	static void initialiseSuitesArray()
 	{
-		const char* const scaleStrings[] = {"Major", "Harmonic Minor", "Pentatonic Major", "Pentatonic Minor", nullptr};
+		const char* const scaleStrings[] = {"Major", "Minor", "Harmonic Minor", "Pentatonic Major", "Pentatonic Minor", nullptr};
 		const char* const chordStrings[] = {"Major", "Minor", "5", "6", "Dominant 7th", "Major 7th", "Minor 7th", nullptr};
 		StringArray scaleSuites(scaleStrings); StringArray chordSuites(chordStrings);
 		
