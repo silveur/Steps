@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="i0GMhV" name="Steps" projectType="guiapp" version="1.3.2"
+<JUCERPROJECT id="i0GMhV" name="Steps" projectType="guiapp" version="1.3.3"
               bundleIdentifier="com.nummer.steps" includeBinaryInAppConfig="1"
               jucerVersion="3.1.0" companyWebsite="www.nummermusic.com" companyEmail="contact@nummermusic.com"
               companyName="Nummer">
