@@ -69,7 +69,7 @@ public:
 		theMenuBar->addCommandTarget(this, this);
 		theTooltipWindow.setColour(TooltipWindow::backgroundColourId, SeqLookAndFeel::getColour(COLOUR_BACKGROUND));
 		theTooltipWindow.setColour(TooltipWindow::textColourId, SeqLookAndFeel::getColour(COLOUR_5));
-		setResizable(true, true);
+		setResizable(false, false);
 		setVisible(true);
 	}
 	
