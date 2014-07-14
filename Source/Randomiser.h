@@ -39,7 +39,7 @@ public:
 	void valueTreeChildRemoved (ValueTree& parentTree, ValueTree& childWhichHasBeenRemoved){}
 	void valueTreeChildOrderChanged (ValueTree& parentTreeWhoseChildrenHaveMoved){}
 	void valueTreeParentChanged (ValueTree& treeWhoseParentHasChanged){}
-	
+
 private:
 	SequencerView* theSequencerView;
 	ValueTree theSequencerTree;
@@ -50,7 +50,5 @@ private:
 	ScopedPointer<ToggleButton> thePitchButton;
 	ScopedPointer<ToggleButton> theStateButton;
 };
-
-
 
 #endif  // RANDOMISER_H_INCLUDED

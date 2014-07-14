@@ -306,7 +306,7 @@ void SequencerView::resized()
 	theRootOctaveList->setBounds(theRootNoteList->getRight(), heigthDiv, widthDiv * 4, heigthDiv * 2);
 	theSuiteList->setBounds(widthDiv * 14, heigthDiv, widthDiv * 10, heigthDiv * 2);
 	theSpeedList->setBounds(widthDiv * 26, heigthDiv, widthDiv * 5, heigthDiv * 2);
-	theRandomiser->setBounds(widthDiv * 63, heigthDiv, widthDiv * 14.0f, heigthDiv * 2);
+	theRandomiser->setBounds(widthDiv * 60, heigthDiv, widthDiv * 17.0f, heigthDiv * 2);
 	theShuffleButtons[0]->setBounds(widthDiv * 33, heigthDiv, widthDiv * 2, heigthDiv * 2);
 	for (int i=1;i<5;i++)
 	{
@@ -319,8 +319,8 @@ void SequencerView::resized()
 		theRangeButtons[i]->setBounds(theRangeButtons[i-1]->getRight(), heigthDiv, widthDiv * 2, heigthDiv * 2);
 	}
 	
-	theOffsetSlider->setBounds(widthDiv * 54, heigthDiv, widthDiv * 2, heigthDiv * 2);
-	theSequencerLength->setBounds(widthDiv * 58, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theOffsetSlider->setBounds(widthDiv * 53, heigthDiv, widthDiv * 2, heigthDiv * 2);
+	theSequencerLength->setBounds(widthDiv * 56, heigthDiv, widthDiv * 2, heigthDiv * 2);
 	
 	theCopyButton->setBounds(widthDiv * 90, heigthDiv, widthDiv * 5, heigthDiv * 2);
 	theImportButton->setBounds(widthDiv * 79, heigthDiv, widthDiv * 5, heigthDiv * 2);
@@ -372,8 +372,8 @@ void SequencerView::randomiseAll()
 			child.setProperty("Pitch", pitch, theUndoManager);
 		}
 		if (theSequencerTree.getProperty("RandState")) child.setProperty("State", rand() % 2, theUndoManager);
-		if (theSequencerTree.getProperty("RandVelocity")) child.setProperty("Velocity", ((int)rand() % 127), theUndoManager);
-		if (theSequencerTree.getProperty("RandDecay")) child.setProperty("Decay", ((int)rand() % 200), theUndoManager);
+		if (theSequencerTree.getProperty("RandVelocity")) child.setProperty("Velocity", (theControllerView->randomise(0,127)), theUndoManager);
+		if (theSequencerTree.getProperty("RandDecay")) child.setProperty("Decay", (theControllerView->randomise(4,200)), theUndoManager);
 	}
 }
 
@@ -642,27 +642,35 @@ void SequencerView::valueTreePropertyChanged (ValueTree& tree, const Identifier&
 	}
 	else if(String(property) == "RootNote")
 	{
-		theRootNoteList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+		if ((int)tree.getProperty(property, -1) != -1)
+			theRootNoteList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "RootOctave")
 	{
-		theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
+		if ((int)tree.getProperty(property, -1) != -1)
+			theRootOctaveList->setSelectedItemIndex(tree.getProperty(property), dontSendNotification);
 	}
 	else if(String(property) == "Speed")
 	{
-		float speed = tree.getProperty(property); int index;
-		if (speed == 1) index = 1;
-		else if (speed == 0.5f) index = 2;
-		else if (speed == 0.25f) index = 3;
-		else if (speed == 0.125f) index = 4;
-		theSpeedList->setSelectedId(index, dontSendNotification);
+		if ((float)tree.getProperty(property, -1) != -1)
+		{
+			float speed = tree.getProperty(property); int index;
+			if (speed == 1) index = 1;
+			else if (speed == 0.5f) index = 2;
+			else if (speed == 0.25f) index = 3;
+			else if (speed == 0.125f) index = 4;
+			theSpeedList->setSelectedId(index, dontSendNotification);
+		}
 	}
 	else if(String(property) == "Suite")
 	{
-		int suiteIndex = tree.getProperty(property);
-		if(suiteIndex > 0) theCurrentSuite = Suite::getSuiteWithId(suiteIndex-1);
-		else theCurrentSuite = nullptr;
-		theSuiteList->setSelectedItemIndex(suiteIndex, dontSendNotification);
+		int suiteIndex = tree.getProperty(property, -1);
+		if (suiteIndex != -1)
+		{
+			if(suiteIndex > 0) theCurrentSuite = Suite::getSuiteWithId(suiteIndex-1);
+			else theCurrentSuite = nullptr;
+			theSuiteList->setSelectedItemIndex(suiteIndex, dontSendNotification);
+		}
 	}
 	else
 	{

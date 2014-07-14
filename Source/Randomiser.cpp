@@ -31,7 +31,7 @@ extern Colour textButtonTextColour;
 Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): theSequencerView(sequencerView), theSequencerTree(sequencerTree)
 {
 	addAndMakeVisible(theRandomAllButton = new TextButton("Randomise"));
-	theRandomAllButton->setTooltip("Randomise all selected parameters");
+	theRandomAllButton->setTooltip("Randomise selected parameters");
 	theRandomAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
 	theRandomAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
 	theRandomAllButton->addListener(this);
@@ -60,8 +60,10 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 	theStateButton->setColour(ToggleButton::textColourId, textButtonTextColour);
 	theStateButton->addListener(this);
 	
-	addAndMakeVisible(theResetAllButton = new TextButton("Reset all"));
-	theResetAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_5));
+	addAndMakeVisible(theResetAllButton = new TextButton("Reset"));
+	theResetAllButton->setColour(TextButton::buttonColourId, SeqLookAndFeel::getColour(COLOUR_4));
+	theResetAllButton->setColour(TextButton::textColourOffId, textButtonTextColour);
+	theResetAllButton->setTooltip("Reset selected parameters");
 	theResetAllButton->addListener(this);
 	
 	theSequencerTree.addListener(this);
@@ -69,14 +71,15 @@ Randomiser::Randomiser(SequencerView* sequencerView, ValueTree& sequencerTree): 
 
 void Randomiser::resized()
 {
-	float widthDiv = getWidth() / 14.0f;
+	float widthDiv = getWidth() / 16.0f;
 	
-	thePitchButton->setBounds(0, 0, widthDiv * 2, getHeight());
-	theVelocityButton->setBounds(thePitchButton->getRight() , 0, widthDiv * 2, getHeight());
-	theDecayButton->setBounds(theVelocityButton->getRight(), 0, widthDiv * 2, getHeight());
-	theStateButton->setBounds(theDecayButton->getRight(), 0, widthDiv * 2, getHeight());
+	thePitchButton->setBounds(0, 0, widthDiv * 1.5f, getHeight());
+	theVelocityButton->setBounds(thePitchButton->getRight() , 0, widthDiv * 1.5f, getHeight());
+	theDecayButton->setBounds(theVelocityButton->getRight(), 0, widthDiv * 1.5f, getHeight());
+	theStateButton->setBounds(theDecayButton->getRight(), 0, widthDiv * 1.5f, getHeight());
 
 	theRandomAllButton->setBounds(theStateButton->getRight(), 0, widthDiv * 6, getHeight());
+	theResetAllButton->setBounds(theRandomAllButton->getRight(), 0, widthDiv * 4, getHeight());
 }
 
 void Randomiser::buttonClicked(Button* button)
@@ -105,7 +108,6 @@ void Randomiser::buttonClicked(Button* button)
 	{
 		FileInputStream inputStream(theDefaultPreset);
 		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-		theSequencerTree.copyPropertiesFrom(treeToLoad, nullptr);
 		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
 		{
 			ValueTree sourceChild = treeToLoad.getChild(i);
