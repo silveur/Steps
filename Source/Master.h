@@ -48,6 +48,18 @@ public:
 		
 		theMidiInput = MidiInput::createNewDevice("Steps", this);
 		
+		if (!theDefaultPreset.exists())
+		{
+			theMasterTree = ValueTree("MasterTree");
+			ValueTree defaultTree = ValueTree("Steps");
+			Sequencer* seq = new Sequencer(defaultTree);
+			
+			theDefaultPreset.deleteFile();
+			FileOutputStream outputStream(theDefaultPreset);
+			defaultTree.writeToStream(outputStream);
+			
+			delete seq;
+		}
 		
 		if (theLastStateFile.exists())
 		{
