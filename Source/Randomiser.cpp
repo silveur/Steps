@@ -106,14 +106,7 @@ void Randomiser::buttonClicked(Button* button)
 	}
 	else if (button == theResetAllButton)
 	{
-		FileInputStream inputStream(theDefaultPreset);
-		ValueTree treeToLoad = ValueTree::readFromStream(inputStream);
-		for (int i=0; i<theSequencerTree.getNumChildren(); i++)
-		{
-			ValueTree sourceChild = treeToLoad.getChild(i);
-			ValueTree destinationChild = theSequencerTree.getChild(i);
-			destinationChild.copyPropertiesFrom(sourceChild, nullptr);
-		}
+		theSequencerView->resetAll();
 	}
 }
 
