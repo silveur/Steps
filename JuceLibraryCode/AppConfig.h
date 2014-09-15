@@ -71,6 +71,12 @@ enum ColourTheme
 	ETSI
 };
 
+enum TriggerMode
+{
+	SEQUENCER,
+	ARPEGGIATOR
+};
+
 enum SuiteType
 {
 	SCALE,

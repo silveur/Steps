@@ -59,6 +59,7 @@ private:
 	ValueTree theSequencerTree;
 	Suite* theCurrentSuite;
 	
+	TriggerMode theTriggerMode;
 	int theChannel;
 	int thePosition;
 	int theSyncTime;

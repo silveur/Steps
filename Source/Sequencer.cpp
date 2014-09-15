@@ -45,6 +45,7 @@ Sequencer::Sequencer(ValueTree& sequencerTree): theSequencerTree(sequencerTree),
 		theOffset = 0;
 		theSpeed = 1;
 		theOnOffStatus = ON;
+		theTriggerMode = SEQUENCER;
 		initSequencerTree();
 		for (int i=0; i<32; i++)
 		{
@@ -87,6 +88,7 @@ void Sequencer::triggerNote(int stepIndex = -1)
 
 void Sequencer::initSequencerTree()
 {
+	theSequencerTree.setProperty("TriggerMode", theTriggerMode, nullptr);
 	theSequencerTree.setProperty("Length", theLength, nullptr);
 	theSequencerTree.setProperty("RootNote", theRootNote, nullptr);
 	theSequencerTree.setProperty("RootOctave", theRootOctave, nullptr);
@@ -114,6 +116,7 @@ void Sequencer::loadFromTree()
 	theOnOffStatus = theSequencerTree.getProperty("Status");
 	theOffset = theSequencerTree.getProperty("Offset");
 	theSpeed = theSequencerTree.getProperty("Speed");
+	theTriggerMode = (TriggerMode)(int)theSequencerTree.getProperty("TriggerMode");
 	int suiteToFind = theSequencerTree.getProperty("Suite");
 	theCurrentSuite = Suite::getSuiteWithId(suiteToFind - 1);
 	String midiOutput = theSequencerTree.getProperty("MidiOutput").toString();
