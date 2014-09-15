@@ -48,6 +48,7 @@ public:
 	void handleAsyncUpdate();
 	void updateSelectedMidiOut(String& midiOut);
 	void randomiseAll();
+	void resetAll();
 	bool keyPressed(const KeyPress &key, Component *originatingComponent)
 	{
 		if (key.isKeyCode(82)) randomiseAll();
@@ -69,8 +70,8 @@ public:
 		g.drawText("Division", widthDiv * 26, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		g.drawText("Shuffle", widthDiv * 33, heigthDiv * 3, widthDiv * 10, heigthDiv * 2, Justification::centred, 1);
 		g.drawText("Range", widthDiv * 45, heigthDiv * 3, widthDiv * 6, heigthDiv * 2, Justification::centred, 1);
-		g.drawText("Offset", widthDiv * 53, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
-		g.drawText("Length", widthDiv * 57, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Offset", widthDiv * 52, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
+		g.drawText("Length", widthDiv * 55.5f, heigthDiv * 3, widthDiv * 4, heigthDiv * 2, Justification::centred, 1);
 		g.drawText("Midi output", widthDiv * 102, heigthDiv * 3, widthDiv * 12, heigthDiv * 2, Justification::centred, 1);
 		g.drawText("Channel", widthDiv * 114, heigthDiv * 3, widthDiv * 5, heigthDiv * 2, Justification::centred, 1);
 		

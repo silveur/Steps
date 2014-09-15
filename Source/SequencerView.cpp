@@ -377,6 +377,18 @@ void SequencerView::randomiseAll()
 	}
 }
 
+void SequencerView::resetAll()
+{
+	for (int i=0;i<theSequencerTree.getNumChildren();i++)
+	{
+		ValueTree child = theSequencerTree.getChild(i);
+		if (theSequencerTree.getProperty("RandPitch")) child.setProperty("Pitch", 0, theUndoManager);
+		if (theSequencerTree.getProperty("RandState")) child.setProperty("State", ON, theUndoManager);
+		if (theSequencerTree.getProperty("RandVelocity")) child.setProperty("Velocity", 127, theUndoManager);
+		if (theSequencerTree.getProperty("RandDecay")) child.setProperty("Decay", 40, theUndoManager);
+	}
+}
+
 void SequencerView::setAllLeds(bool state)
 {
 	for (int i=0;i<theLEDs.size();i++)
