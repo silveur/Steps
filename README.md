@@ -1,3 +1,5 @@
+*PROJECT UNMAINTAINED*
+
 Steps - Midi sequencer
 =========
  
